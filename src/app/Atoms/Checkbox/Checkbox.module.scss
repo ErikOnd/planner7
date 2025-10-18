@@ -50,6 +50,11 @@
 		transform: rotate(45deg);
 	}
 
+	input:checked ~ .label {
+		text-decoration: line-through;
+		text-decoration-thickness: 0.1rem;
+	}
+
 	.label {
 		font-weight: 300;
 	}
