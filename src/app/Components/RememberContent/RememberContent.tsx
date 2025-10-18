@@ -11,27 +11,20 @@ export function RememberContent(props: RememberContentProps) {
 	const {} = props;
 
 	const [modalOpen, setModalOpen] = useState(false);
-	const [editTask, setEditTask] = useState<string | undefined>(undefined);
-
-	const handleEdit = (taskName: string) => {
-		setEditTask(taskName);
-		setModalOpen(true);
-	};
 
 	return (
 		<div className={styles["remember-content"]}>
 			<div className={styles["task-items"]}>
-				<TaskItem taskName="Pay electric bill" onEdit={handleEdit} />
+				<TaskItem taskName="Pay electric bill"  />
 				<TaskItem
-					taskName="Call mom for birthday wishes Call mom for birthday wishes Call mom for birthday wishes Call mom for birthday wishes Call mom for birthday wishes "
-					onEdit={handleEdit}
+					taskName="Call mom for birthday wishes Call mom for birthday wishes Call mom for birthday wishes Call mom for birthday wishes Call mom for birthday wishes"
 				/>
-				<TaskItem taskName="Submit project proposal" onEdit={handleEdit} />
-				<TaskItem taskName="Book dental appointment" onEdit={handleEdit} />
-				<TaskItem taskName="Weekly team meeting" onEdit={handleEdit} />
-				<TaskItem taskName="Review contract documents" onEdit={handleEdit} />
+				<TaskItem taskName="Submit project proposal"  />
+				<TaskItem taskName="Book dental appointment"  />
+				<TaskItem taskName="Weekly team meeting"  />
+				<TaskItem taskName="Review contract documents"  />
 			</div>
-			<AddTaskModal open={modalOpen} setOpen={setModalOpen} defaultValue={editTask} />
+			<AddTaskModal open={modalOpen} setOpen={setModalOpen} />
 		</div>
 	);
 }

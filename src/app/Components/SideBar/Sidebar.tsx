@@ -6,6 +6,8 @@ import WeeklySlider from "@components/WeeklySlider/WeeklySlider";
 import { isCurrentWeek } from "@utils/usCurrentWeek";
 import Image from "next/image";
 import styles from "./Sidebar.module.scss";
+import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
+import { useState } from "react";
 
 type SidebarProps = {
 	baseDate: Date;
@@ -15,6 +17,7 @@ type SidebarProps = {
 
 export function Sidebar(props: SidebarProps) {
 	const { baseDate, setBaseDate, rangeLabel } = props;
+	const [isAddOpen, setIsAddOpen] = useState(false);
 	const generalTodos = [
 		"Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team",
 		"Order new supplies",
@@ -46,18 +49,26 @@ export function Sidebar(props: SidebarProps) {
 				)}
 			</div>
 			<div className={styles["remember-section"]}>
-				<Text size="xl" className={styles["remember-header"]}>
-					General Todos
-				</Text>
+				<div className={styles["remember-header-row"]}>
+					<Text size="xl" className={styles["remember-header"]}>
+						General Todos
+					</Text>
+					<button
+						type="button"
+						className={styles["add-header-button"]}
+						onClick={() => setIsAddOpen(true)}
+						aria-label="Add new item"
+						aria-haspopup="dialog"
+						aria-expanded={isAddOpen}
+					>
+						<Icon name="plus" />
+					</button>
+				</div>
 				<div className={styles["remember-items"]}>
 					{generalTodos.map((label, idx) => (
 						<Checkbox key={idx} label={label} />
 					))}
 				</div>
-				<button type="button" className={styles["add-item"]}>
-					<Icon name="plus" />
-					<Text>Add new Item</Text>
-				</button>
 			</div>
 			<div className={styles["settings-section"]}>
 				<button type="button" className={styles["settings-item"]}>
@@ -73,6 +84,9 @@ export function Sidebar(props: SidebarProps) {
 					<Text className={styles["settings-label"]}>Sign Out</Text>
 				</button>
 			</div>
+
+			{/* Controlled modal (triggered by the Add new Item button) */}
+			<AddTaskModal open={isAddOpen} setOpen={setIsAddOpen} renderTrigger={false} />
 		</div>
 	);
 }

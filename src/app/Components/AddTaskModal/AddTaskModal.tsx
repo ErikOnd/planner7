@@ -10,11 +10,13 @@ type AddTaskModalProps = {
 	open: boolean;
 	setOpen: (open: boolean) => void;
 	defaultValue?: string;
+	/** If true, renders the built-in Trigger button; set to false to control opening externally */
+	renderTrigger?: boolean;
 };
 
 export function AddTaskModal(props: AddTaskModalProps) {
-	const { open, setOpen, defaultValue } = props;
-	const [inputValue, setInputValue] = useState(defaultValue);
+	const { open, setOpen, defaultValue, renderTrigger = true } = props;
+	const [inputValue, setInputValue] = useState(defaultValue ?? "");
 
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -24,11 +26,13 @@ export function AddTaskModal(props: AddTaskModalProps) {
 
 	return (
 		<Dialog.Root open={open} onOpenChange={setOpen}>
-			<Dialog.Trigger asChild>
-				<button className={styles["add-task-button"]}>
-					<Icon name="plus" />
-				</button>
-			</Dialog.Trigger>
+			{renderTrigger && (
+				<Dialog.Trigger asChild>
+					<button className={styles["add-task-button"]}>
+						<Icon name="plus" />
+					</button>
+				</Dialog.Trigger>
+			)}
 			<Dialog.Portal>
 				<Dialog.Overlay className={styles["overlay"]} />
 				<Dialog.Content className={styles["content"]}>

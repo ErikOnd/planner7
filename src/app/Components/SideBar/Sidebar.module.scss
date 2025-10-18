@@ -86,7 +86,32 @@
 
 	.remember-header {
 		padding-inline: var(--space-lg);
+	}
+
+	.remember-header-row {
+		display: flex;
+		align-items: center;
 		margin-bottom: var(--space-lg);
+	}
+
+	.add-header-button {
+		background-color: var(--color-primary);
+		border: .1rem solid var(--color-border);
+		cursor: pointer;
+		color: white;
+		padding-inline: .6rem; /* compact button sizing */
+		padding-block: .25rem;
+		border-radius: variables.$radius-md;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0 1px 0 rgba(17,24,39,.04);
+		transition: background-color .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease, transform .05s ease;
+
+		&:focus-visible {
+			outline: .1rem solid var(--color-primary);
+			outline-offset: .1rem;
+		}
 	}
 
 	.remember-items {
@@ -98,22 +123,28 @@
 		padding: var(--space-lg) var(--space-lg) var(--space-lg) var(--space-lg);
 	}
 
-	.add-item {
-		color: var(--color-primary);
-		background-color: white;
+ .add-item {
+	 	margin-top: var(--space-lg);
+		background-color: var(--color-primary);
+		color: white;
 		border: none;
 		display: flex;
-		cursor: pointer;
-		gap: .3rem;
+		align-items: center;
 		justify-content: center;
-		padding-right: .3rem;
-		padding-block: .2rem;
+		gap: .5rem;
+		cursor: pointer;
 		margin-inline: var(--space-lg);
+		padding: .6rem .9rem;
+		border-radius: variables.$radius-lg;
+		font-weight: 600;
+
+		&:hover {
+			background-color: var(--color-primary-dark);
+		}
 
 		&:focus-visible {
-			border-radius: variables.$radius-sm;
-			outline: .1rem solid var(--color-primary);
-			outline-offset: .1rem;
+			outline: .16rem solid var(--color-primary-light);
+			outline-offset: 2px;
 		}
 	}
 
