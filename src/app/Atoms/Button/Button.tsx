@@ -1,36 +1,39 @@
 import { Text } from "@atoms/Text/Text";
 import clsx from "clsx";
-import { ReactNode } from "react";
+import { ButtonHTMLAttributes, ReactNode } from "react";
 import styles from "./Button.module.scss";
 
-type ButtonProps = {
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 	variant?: "primary" | "secondary";
 	children: ReactNode;
-	className?: string;
-	type?: "button" | "submit" | "reset";
 	size?: "xs" | "sm" | "base" | "lg" | "xl";
 	fontWeight?: 300 | 500 | 600 | 700;
-	onClick?: () => void;
+	wrapText?: boolean;
 };
 
-export function Button({
-	variant = "primary",
-	children,
-	className,
-	type = "button",
-	size,
-	fontWeight,
-	onClick,
-}: ButtonProps) {
+export function Button(props: ButtonProps) {
+	const {
+		variant = "primary",
+		children,
+		className,
+		type = "button",
+		size,
+		fontWeight,
+		wrapText = true,
+		...rest
+	} = props;
+
 	return (
 		<button
 			type={type}
-			onClick={onClick}
 			className={clsx(styles.button, styles[variant], className)}
+			{...rest}
 		>
-			<Text size={size} fontWeight={fontWeight}>
-				{children}
-			</Text>
+			{wrapText ? (
+				<Text size={size} fontWeight={fontWeight}>{children}</Text>
+			) : (
+				children
+			)}
 		</button>
 	);
 }

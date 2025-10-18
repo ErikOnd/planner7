@@ -108,7 +108,7 @@
 		justify-content: center;
 		padding-right: .3rem;
 		padding-block: .2rem;
-		margin-inline: var(--space-lg);;
+		margin-inline: var(--space-lg);
 
 		&:focus-visible {
 			border-radius: variables.$radius-sm;
@@ -142,8 +142,8 @@
 		}
 
 		&:focus-visible {
-			color: var(--color-text);;
-			outline: .1rem solid var(--color-text);;
+			color: var(--color-text);
+			outline: .1rem solid var(--color-text);
 			border-radius: variables.$radius-sm;
 		}
 	}

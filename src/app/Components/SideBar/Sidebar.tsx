@@ -15,10 +15,21 @@ type SidebarProps = {
 
 export function Sidebar(props: SidebarProps) {
 	const { baseDate, setBaseDate, rangeLabel } = props;
+	const generalTodos = [
+		"Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team",
+		"Order new supplies",
+		"Follow up with clients",
+		"Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team",
+		"Order new supplies",
+		"Follow up with clients",
+		"Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team",
+		"Order new supplies",
+		"Follow up with clients",
+	];
 	return (
 		<div className={styles["sidebar"]}>
 			<div className={styles["profile-section"]}>
-				<button className={styles["profile-button"]}>
+				<button type="button" aria-label="Open profile" className={styles["profile-button"]}>
 					<Image alt="profile image" src={profilePlaceholder} className={styles["profile-image"]} />
 				</button>
 				<div className={styles["profile-info"]}>
@@ -39,31 +50,25 @@ export function Sidebar(props: SidebarProps) {
 					General Todos
 				</Text>
 				<div className={styles["remember-items"]}>
-					<Checkbox label="Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team" />
-					<Checkbox label="Order new supplies" />
-					<Checkbox label="Follow up with clients" />
-					<Checkbox label="Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team" />
-					<Checkbox label="Order new supplies" />
-					<Checkbox label="Follow up with clients" />
-					<Checkbox label="Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team" />
-					<Checkbox label="Order new supplies" />
-					<Checkbox label="Follow up with clients" />
+					{generalTodos.map((label, idx) => (
+						<Checkbox key={idx} label={label} />
+					))}
 				</div>
-				<button className={styles["add-item"]}>
+				<button type="button" className={styles["add-item"]}>
 					<Icon name="plus" />
 					<Text>Add new Item</Text>
 				</button>
 			</div>
 			<div className={styles["settings-section"]}>
-				<button className={styles["settings-item"]}>
+				<button type="button" className={styles["settings-item"]}>
 					<Icon name="settings" />
 					<Text className={styles["settings-label"]}>Settings</Text>
 				</button>
-				<button className={styles["settings-item"]}>
+				<button type="button" className={styles["settings-item"]}>
 					<Icon name="questionmark" />
 					<Text className={styles["settings-label"]}>Help & Support</Text>
 				</button>
-				<button className={styles["settings-item"]}>
+				<button type="button" className={styles["settings-item"]}>
 					<Icon name="sign-out" />
 					<Text className={styles["settings-label"]}>Sign Out</Text>
 				</button>
