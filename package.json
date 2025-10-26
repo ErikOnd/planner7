@@ -16,6 +16,7 @@
 		"@blocknote/react": "^0.40.0",
 		"@mantine/core": "^7.17.8",
 		"@mantine/hooks": "^7.17.8",
+		"@prisma/client": "6.18.0",
 		"@radix-ui/react-dialog": "^1.1.15",
 		"@supabase/ssr": "^0.7.0",
 		"@supabase/supabase-js": "^2.76.1",
