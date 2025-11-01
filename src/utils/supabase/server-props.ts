@@ -3,8 +3,8 @@ import { type GetServerSidePropsContext } from "next";
 
 export function createClient({ req, res }: GetServerSidePropsContext) {
 	return createServerClient(
-		process.env.SUPABASE_URL!,
-		process.env.SUPABASE_PUBLISHABLE_KEY!,
+		process.env.NEXT_PUBLIC_SUPABASE_URL!,
+		process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
 		{
 			cookies: {
 				getAll() {

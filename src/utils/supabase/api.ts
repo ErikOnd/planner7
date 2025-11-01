@@ -3,8 +3,8 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 
 export default function createClient(req: NextApiRequest, res: NextApiResponse) {
 	return createServerClient(
-		process.env.SUPABASE_URL!,
-		process.env.SUPABASE_PUBLISHABLE_KEY!,
+		process.env.NEXT_PUBLIC_SUPABASE_URL!,
+		process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
 		{
 			cookies: {
 				getAll() {
