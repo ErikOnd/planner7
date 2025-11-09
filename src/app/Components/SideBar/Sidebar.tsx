@@ -6,8 +6,10 @@ import { Icon } from "@atoms/Icons/Icon";
 import { Text } from "@atoms/Text/Text";
 import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
 import WeeklySlider from "@components/WeeklySlider/WeeklySlider";
+import { createClient } from "@utils/supabase/client";
 import { isCurrentWeek } from "@utils/usCurrentWeek";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type SidebarProps = {
@@ -19,6 +21,14 @@ type SidebarProps = {
 export function Sidebar(props: SidebarProps) {
 	const { baseDate, setBaseDate, rangeLabel } = props;
 	const [isAddOpen, setIsAddOpen] = useState(false);
+	const router = useRouter();
+	const supabase = createClient();
+
+	const handleSignOut = async () => {
+		await supabase.auth.signOut();
+		router.push("/login");
+	};
+
 	const generalTodos = [
 		"Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team Check emails from team",
 		"Order new supplies",
@@ -80,7 +90,7 @@ export function Sidebar(props: SidebarProps) {
 					<Icon name="questionmark" />
 					<Text className={styles["settings-label"]}>Help & Support</Text>
 				</button>
-				<button type="button" className={styles["settings-item"]}>
+				<button type="button" className={styles["settings-item"]} onClick={handleSignOut}>
 					<Icon name="sign-out" />
 					<Text className={styles["settings-label"]}>Sign Out</Text>
 				</button>
