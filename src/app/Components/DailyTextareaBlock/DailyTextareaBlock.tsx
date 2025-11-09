@@ -42,7 +42,9 @@ export function DailyTextareaBlock(props: DailyTextareaProps) {
 				<Text className={styles["day-batch"]}>{weekday}</Text>
 				<Text className={styles["month-and-day"]}>{date}</Text>
 			</div>
-			<SmartEditor />
+			<div className={styles["editor-container"]}>
+				<SmartEditor />
+			</div>
 		</div>
 	);
 }

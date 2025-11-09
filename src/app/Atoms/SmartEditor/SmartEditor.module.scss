@@ -5,11 +5,43 @@
 .smart-editor {
 	padding-block: var(--space-md);
 	@include typography.text-base;
-	min-height: 12.5rem;
 
 	:global(.bn-block-content)[data-content-type="checkListItem"]
 	> input[type="checkbox"] {
-		margin-right: .5rem;
+		appearance: none;
+		width: 1.5rem;
+		height: 1.5rem;
+		border: 0.1rem solid black;
+		border-radius: variables.$radius-md;
+		margin-right: 0.5rem;
+		cursor: pointer;
+		position: relative;
+		flex-shrink: 0;
+
+		&:hover {
+			background-color: var(--color-primary-light);
+		}
+
+		&:focus-visible {
+			outline: 0.1rem solid var(--color-primary);
+			outline-offset: 0.1rem;
+		}
+
+		&:checked {
+			background-color: var(--color-primary);
+		}
+
+		&:checked::after {
+			content: "";
+			position: absolute;
+			left: 0.5rem;
+			top: 0.3rem;
+			width: 0.3rem;
+			height: 0.6rem;
+			border: solid white;
+			border-width: 0 0.1rem 0.1rem 0;
+			transform: rotate(45deg);
+		}
 	}
 }
 

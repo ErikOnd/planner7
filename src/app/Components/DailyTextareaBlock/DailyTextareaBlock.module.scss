@@ -34,6 +34,10 @@
 		color: var(--color-text-muted);
 	}
 
+	.editor-container {
+		min-height: 12.5rem;
+	}
+
 	.textarea {
 		@include typography.text-base;
 		min-height: 12.5rem;
@@ -53,6 +57,10 @@
 	}
 
 	@include mixins.tablet {
+		.editor-container {
+			min-height: 25rem;
+		}
+
 		.textarea {
 			min-height: 25rem;
 		}
