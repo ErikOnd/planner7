@@ -5,7 +5,7 @@
 .mobile-navigation {
 	display: flex;
 	flex-direction: column;
-	background-color: white;
+	background-color: var(--color-surface);
 
 	.logo-section {
 		display: flex;
@@ -25,7 +25,7 @@
 	.slider-button {
 		@include typography.text-base;
 		color: var(--color-text-muted);
-		background-color: white;
+		background-color: var(--color-surface);
 		border: none;
 		cursor: pointer;
 
@@ -76,7 +76,7 @@
 	}
 
 	.day-button {
-		background-color: white;
+		background-color: var(--color-surface);
 		border: none;
 		display: flex;
 		flex-direction: column;

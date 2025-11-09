@@ -1,0 +1,19 @@
+@use "../../styles/variables" as variables;
+
+.message-error {
+	color: var(--color-error);
+	background-color: var(--color-error-background);
+	padding: var(--space-sm);
+	border-radius: variables.$radius-md;
+	margin-top: var(--space-sm);
+	border: 0.1rem solid var(--color-error-border);
+}
+
+.message-info {
+	color: var(--color-info);
+	background-color: var(--color-info-background);
+	padding: var(--space-sm);
+	border-radius: variables.$radius-md;
+	margin-top: var(--space-sm);
+	border: 0.1rem solid var(--color-info-border);
+}

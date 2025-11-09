@@ -15,8 +15,8 @@ export async function createClient() {
 				setAll(cookiesToSet) {
 					try {
 						cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
-					} catch {
-						// Todo: log error
+					} catch (error) {
+						console.error("Failed to set cookies:", error);
 					}
 				},
 			},

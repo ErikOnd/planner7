@@ -3,6 +3,7 @@ $color-text-muted: #6b7280;
 $color-text-light: #9ca3af;
 $color-text-placeholder: #ADAEBC;
 $color-text-settings: #4B5563;
+$color-text-secondary: #444;
 $color-background: #f9fafb;
 $color-border: #e5e7eb;
 $color-surface: #fff;
@@ -12,6 +13,21 @@ $color-primary-dark: #2c1cd5;
 $color-primary-light: #eef2ff;
 $color-gray-light: #f9fafb;
 $color-day-label: #f3f4f6;
+
+$color-error: #dc2626;
+$color-error-background: #fee2e2;
+$color-error-border: #fecaca;
+
+$color-info: #2563eb;
+$color-info-background: #dbeafe;
+$color-info-border: #bfdbfe;
+
+// shadows and overlays
+$color-overlay: rgba(0, 0, 0, 0.4);
+$color-shadow-xs: rgba(0, 0, 0, 0.04);
+$color-shadow-sm: rgba(0, 0, 0, 0.05);
+$color-shadow-md: rgba(0, 0, 0, 0.06);
+$color-shadow-lg: rgba(0, 0, 0, 0.08);
 
 // border radius
 $radius-sm: 0.3rem;

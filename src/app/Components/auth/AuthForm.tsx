@@ -4,6 +4,7 @@ import styles from "./AuthForm.module.scss";
 
 import { Button } from "@atoms/Button/Button";
 import { InputField } from "@atoms/InputField/InputField";
+import { Message } from "@atoms/Message/Message";
 import { Text } from "@atoms/Text/Text";
 import { useAuthActions } from "@hooks/useAuthActions";
 import { FormEvent, useState } from "react";
@@ -52,9 +53,8 @@ export function AuthForm() {
 					Forgot password?
 				</Button>
 			</div>
-			{/*todo: stying for error and info message*/}
-			<p>{errorMsg}</p>
-			<p>{infoMsg}</p>
+			<Message variant="error">{errorMsg}</Message>
+			<Message variant="info">{infoMsg}</Message>
 			<div className={styles.actionsRow}>
 				<Button type="submit" variant="primary" disabled={loading} fontWeight={700}>
 					{loading ? "Signing in..." : "Log in"}

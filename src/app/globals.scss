@@ -41,6 +41,7 @@
 	--color-text-light: #{variables.$color-text-light};
 	--color-text-placeholder: #{variables.$color-text-placeholder};
 	--color-text-settings: #{variables.$color-text-settings};
+	--color-text-secondary: #{variables.$color-text-secondary};
 	--color-background: #{variables.$color-background};
 	--color-border: #{variables.$color-border};
 	--color-surface: #{variables.$color-surface};
@@ -50,6 +51,20 @@
 	--color-primary-light: #{variables.$color-primary-light};
 	--color-gray-light: #{variables.$color-gray-light};
 	--color-day-label: #{variables.$color-day-label};
+
+	--color-error: #{variables.$color-error};
+	--color-error-background: #{variables.$color-error-background};
+	--color-error-border: #{variables.$color-error-border};
+
+	--color-info: #{variables.$color-info};
+	--color-info-background: #{variables.$color-info-background};
+	--color-info-border: #{variables.$color-info-border};
+
+	--color-overlay: #{variables.$color-overlay};
+	--color-shadow-xs: #{variables.$color-shadow-xs};
+	--color-shadow-sm: #{variables.$color-shadow-sm};
+	--color-shadow-md: #{variables.$color-shadow-md};
+	--color-shadow-lg: #{variables.$color-shadow-lg};
 
 	/* Spacings */
 	--space-xs: #{mixins.clamp-builder(0.4, 0.8)};

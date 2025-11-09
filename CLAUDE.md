@@ -114,3 +114,5 @@ Required in `.env.local`:
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 - `DATABASE_URL` (PostgreSQL connection string)
 - `DIRECT_URL` (Direct database connection for migrations)
+- When dealing with Continually applied css classes use clsx
+- don't use new colours like #dc2626, first look in my _global.scss and look if a color that might fit is there. If not, go to the _variables.scss and add a new color variable there than add it in my _global.scss and that use it in the component

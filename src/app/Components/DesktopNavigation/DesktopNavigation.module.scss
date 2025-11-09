@@ -6,7 +6,7 @@
 	display: flex;
 	align-items: center;
 	border-bottom: .1rem solid var(--color-border);
-	background-color: white;
+	background-color: var(--color-surface);
 	height: variables.$desktop-navi-height;
 
 	.logo-section {

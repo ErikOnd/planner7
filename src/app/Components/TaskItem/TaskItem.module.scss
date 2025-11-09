@@ -7,14 +7,14 @@
 	padding-inline: var(--space-lg);
 	padding-block: var(--space-xl);
 	border-radius: variables.$radius-md;
-	background: white;
-	box-shadow: 0 .1rem .1rem 0 rgba(0, 0, 0, 0.05);
+	background: var(--color-surface);
+	box-shadow: 0 .1rem .1rem 0 var(--color-shadow-sm);
 	justify-content: space-between;
 	gap: var(--space-xl);
 
 	.edit-button {
 		height: fit-content;
-		background-color: white;
+		background-color: var(--color-surface);
 		color: var(--color-text-light);
 		cursor: pointer;
 		border: none;

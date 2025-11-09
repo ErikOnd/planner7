@@ -5,7 +5,7 @@
 .daily-textarea-block {
 	display: flex;
 	flex-direction: column;
-	background-color: white;
+	background-color: var(--color-surface);
 	border-radius: variables.$radius-lg;
 	border: .1rem solid var(--color-border);
 
@@ -44,7 +44,7 @@
 		resize: vertical;
 		padding: var(--space-md);
 		margin: var(--space-md);
-		border: 1px solid #ccc;
+		border: 1px solid var(--color-border);
 		border-radius: 0.3rem;
 
 		&:focus-visible {
