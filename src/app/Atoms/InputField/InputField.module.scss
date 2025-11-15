@@ -1,18 +1,37 @@
 @use "../../styles/typography" as typography;
 @use "../../styles/variables" as variables;
+@use "../../styles/mixins" as mixins;
 
 .input-field {
 	@include typography.text-base;
-	padding: var(--space-md);
-	border: 1px solid #ccc;
+	padding: 0.75rem 1rem;
+	background-color: var(--color-surface);
+	border: 0.09rem solid var(--color-border);
 	border-radius: variables.$radius-md;
 	width: 100%;
+	color: var(--color-text);
+	transition: all variables.$transition-base;
 
+	&:hover:not(:disabled) {
+		border-color: var(--color-border-focus);
+	}
+
+	&:focus,
 	&:focus-visible {
-		outline: 0.1rem solid var(--color-primary);
+		outline: none;
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 0.19rem var(--shadow-primary-sm);
 	}
 
 	&::placeholder {
 		color: var(--color-text-placeholder);
+	}
+
+	&:disabled {
+		background-color: var(--color-gray-light);
+		border-color: var(--color-border-light);
+		color: var(--color-text-muted);
+		cursor: not-allowed;
+		opacity: 0.6;
 	}
 }

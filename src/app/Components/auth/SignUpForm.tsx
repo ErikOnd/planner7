@@ -33,34 +33,38 @@ export function SignUpForm() {
 				Sign up to start planning your week
 			</Text>
 
-			<label htmlFor="displayName">
-				<Text as="span" size="sm" fontWeight={600}>Name</Text>
-			</label>
 			<div className={styles["input-group"]}>
-				<InputField
-					id="displayName"
-					type="text"
-					value={displayName}
-					placeholder="Your name or nickname"
-					autoComplete="name"
-					required
-					disabled={loading}
-					onChange={(e) => setDisplayName(e.target.value)}
-				/>
+				<div>
+					<label htmlFor="displayName">
+						<Text as="span" size="sm" fontWeight={600}>Name</Text>
+					</label>
+					<InputField
+						id="displayName"
+						type="text"
+						value={displayName}
+						placeholder="Your name or nickname"
+						autoComplete="name"
+						required
+						disabled={loading}
+						onChange={(e) => setDisplayName(e.target.value)}
+					/>
+				</div>
 
-				<label htmlFor="email">
-					<Text as="span" size="sm" fontWeight={600}>Email</Text>
-				</label>
-				<InputField
-					id="email"
-					type="email"
-					value={email}
-					placeholder="you@example.com"
-					autoComplete="email"
-					required
-					disabled={loading}
-					onChange={(e) => setEmail(e.target.value)}
-				/>
+				<div>
+					<label htmlFor="email">
+						<Text as="span" size="sm" fontWeight={600}>Email</Text>
+					</label>
+					<InputField
+						id="email"
+						type="email"
+						value={email}
+						placeholder="you@example.com"
+						autoComplete="email"
+						required
+						disabled={loading}
+						onChange={(e) => setEmail(e.target.value)}
+					/>
+				</div>
 
 				<PasswordField value={password} onChange={setPassword} disabled={loading} />
 			</div>

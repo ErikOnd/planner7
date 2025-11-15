@@ -12,7 +12,6 @@ export type FormState = {
 
 export async function createGeneralTodo(_prevState: FormState, formData: FormData): Promise<FormState> {
 	try {
-
 		const supabase = await createClient();
 		const { data: { user }, error: authError } = await supabase.auth.getUser();
 

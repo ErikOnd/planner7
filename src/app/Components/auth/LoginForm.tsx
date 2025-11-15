@@ -32,20 +32,22 @@ export function LoginForm() {
 				Please sign in to continue to Weekly Planner
 			</Text>
 
-			<label htmlFor="email">
-				<Text as="span" size="sm" fontWeight={600}>Email</Text>
-			</label>
 			<div className={styles["input-group"]}>
-				<InputField
-					id="email"
-					type="email"
-					value={email}
-					placeholder="you@example.com"
-					autoComplete="email"
-					required
-					disabled={loading}
-					onChange={(e) => setEmail(e.target.value)}
-				/>
+				<div>
+					<label htmlFor="email">
+						<Text as="span" size="sm" fontWeight={600}>Email</Text>
+					</label>
+					<InputField
+						id="email"
+						type="email"
+						value={email}
+						placeholder="you@example.com"
+						autoComplete="email"
+						required
+						disabled={loading}
+						onChange={(e) => setEmail(e.target.value)}
+					/>
+				</div>
 
 				<PasswordField value={password} onChange={setPassword} disabled={loading} />
 			</div>

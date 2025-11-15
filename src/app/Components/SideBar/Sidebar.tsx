@@ -111,20 +111,20 @@ export function Sidebar({ baseDate, setBaseDate, rangeLabel }: SidebarProps) {
 						</button>
 					</div>
 					<div className={styles["remember-items"]}>
-						{loading ? (
-							<Text size="sm">Loading...</Text>
-						) : todos.length === 0 ? (
-							<Text size="sm">No todos yet. Click + to add one!</Text>
-						) : (
-							todos.map(todo => (
-								<Checkbox
-									key={todo.id}
-									label={todo.text}
-									checked={checkedTodos.has(todo.id)}
-									onChange={checked => handleTodoToggle(todo.id, checked)}
-								/>
-							))
-						)}
+						{loading
+							? <Text size="sm">Loading...</Text>
+							: todos.length === 0
+							? <Text size="sm">No todos yet. Click + to add one!</Text>
+							: (
+								todos.map(todo => (
+									<Checkbox
+										key={todo.id}
+										label={todo.text}
+										checked={checkedTodos.has(todo.id)}
+										onChange={checked => handleTodoToggle(todo.id, checked)}
+									/>
+								))
+							)}
 					</div>
 				</div>
 			</div>

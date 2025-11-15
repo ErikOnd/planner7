@@ -35,36 +35,66 @@
 
 :root {
 	--font-inter: 'Inter', sans-serif;
-	/* Colors */
+
+	/* Text Colors */
 	--color-text: #{variables.$color-text};
 	--color-text-muted: #{variables.$color-text-muted};
 	--color-text-light: #{variables.$color-text-light};
 	--color-text-placeholder: #{variables.$color-text-placeholder};
 	--color-text-settings: #{variables.$color-text-settings};
 	--color-text-secondary: #{variables.$color-text-secondary};
-	--color-background: #{variables.$color-background};
-	--color-border: #{variables.$color-border};
-	--color-surface: #{variables.$color-surface};
 
+	/* Background Colors */
+	--color-background: #{variables.$color-background};
+	--color-surface: #{variables.$color-surface};
+	--color-surface-elevated: #{variables.$color-surface-elevated};
+
+	/* Border Colors */
+	--color-border: #{variables.$color-border};
+	--color-border-light: #{variables.$color-border-light};
+	--color-border-focus: #{variables.$color-border-focus};
+
+	/* Primary Colors */
 	--color-primary: #{variables.$color-primary};
 	--color-primary-dark: #{variables.$color-primary-dark};
+	--color-primary-darker: #{variables.$color-primary-darker};
 	--color-primary-light: #{variables.$color-primary-light};
+	--color-primary-lighter: #{variables.$color-primary-lighter};
+	--color-primary-subtle: #{variables.$color-primary-subtle};
+
+	/* Neutral Grays */
 	--color-gray-light: #{variables.$color-gray-light};
+	--color-gray-medium: #{variables.$color-gray-medium};
 	--color-day-label: #{variables.$color-day-label};
 
+	/* Status Colors - Error */
 	--color-error: #{variables.$color-error};
+	--color-error-dark: #{variables.$color-error-dark};
 	--color-error-background: #{variables.$color-error-background};
 	--color-error-border: #{variables.$color-error-border};
 
+	/* Status Colors - Info */
 	--color-info: #{variables.$color-info};
 	--color-info-background: #{variables.$color-info-background};
 	--color-info-border: #{variables.$color-info-border};
 
+	/* Status Colors - Success */
+	--color-success: #{variables.$color-success};
+	--color-success-background: #{variables.$color-success-background};
+	--color-success-border: #{variables.$color-success-border};
+
+	/* Overlays */
 	--color-overlay: #{variables.$color-overlay};
-	--color-shadow-xs: #{variables.$color-shadow-xs};
-	--color-shadow-sm: #{variables.$color-shadow-sm};
-	--color-shadow-md: #{variables.$color-shadow-md};
-	--color-shadow-lg: #{variables.$color-shadow-lg};
+	--color-overlay-light: #{variables.$color-overlay-light};
+
+	/* Shadows */
+	--shadow-xs: #{variables.$shadow-color-sm};
+	--shadow-sm: #{variables.$shadow-color-sm};
+	--shadow-md: #{variables.$shadow-color-md};
+	--shadow-lg: #{variables.$shadow-color-lg};
+	--shadow-xl: #{variables.$shadow-color-xl};
+	--shadow-primary: #{variables.$shadow-primary};
+	--shadow-primary-sm: #{variables.$shadow-primary-sm};
 
 	/* Spacings */
 	--space-xs: #{mixins.clamp-builder(0.4, 0.8)};
@@ -79,6 +109,7 @@
 
 html {
 	font-size: 100%;
+	scroll-behavior: smooth;
 }
 
 *,
@@ -90,11 +121,13 @@ html {
 }
 
 body {
-	line-height: 1.5;
+	line-height: 1.6;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	background: var(--color-background);
-	font-family: var(--font-inter), sans-serif;
+	font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+	color: var(--color-text);
+	min-height: 100dvh;
 }
 
 ul, ol {
@@ -104,6 +137,7 @@ ul, ol {
 a {
 	text-decoration: none;
 	color: inherit;
+	transition: color variables.$transition-base;
 }
 
 img, picture {
@@ -113,4 +147,22 @@ img, picture {
 
 input, button, textarea, select {
 	font: inherit;
+}
+
+/* Better focus styles for accessibility */
+:focus-visible {
+	outline: 0.13rem solid var(--color-primary);
+	outline-offset: 0.13rem;
+}
+
+/* Remove default focus outline on mouse click, keep for keyboard */
+*:focus:not(:focus-visible) {
+	outline: none;
+}
+
+/* Smooth transitions for theme changes */
+* {
+	transition-property: background-color, border-color, color;
+	transition-duration: variables.$transition-base;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }

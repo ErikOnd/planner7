@@ -43,6 +43,6 @@ export function useGeneralTodos() {
 		loading,
 		error,
 		deleteTodo,
-		refresh: fetchTodos
+		refresh: fetchTodos,
 	};
 }

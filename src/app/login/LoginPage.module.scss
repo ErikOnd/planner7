@@ -1,5 +1,11 @@
 .login-holder {
 	display: grid;
 	place-items: center;
-	min-height: 70vh;
+	min-height: 100vh;
+	padding: var(--space-lg);
+	background: linear-gradient(
+		135deg,
+		var(--color-background) 0%,
+		var(--color-gray-light) 100%
+	);
 }

@@ -2,10 +2,10 @@
 @use "sass:map";
 
 $breakpoints: (
-	phone: 767px,
-	tablet: 1024px,
-	desktop: 1280px,
-	desktop-lg: 1600px
+	phone: 50rem,
+	tablet: 64rem,
+	desktop: 80rem,
+	desktop-lg: 100rem
 );
 
 @mixin phone {
@@ -53,6 +53,55 @@ $breakpoints: (
 	);
 }
 
+@mixin shadow-sm {
+	box-shadow:
+		0 0.06rem 0.13rem 0 var(--shadow-sm),
+		0 0.06rem 0.19rem 0 var(--shadow-xs);
+}
+
+@mixin shadow-md {
+	box-shadow:
+		0 0.25rem 0.38rem -0.06rem var(--shadow-md),
+		0 0.13rem 0.25rem -0.06rem var(--shadow-sm);
+}
+
+@mixin shadow-lg {
+	box-shadow:
+		0 0.63rem 0.94rem -0.19rem var(--shadow-lg),
+		0 0.25rem 0.38rem -0.13rem var(--shadow-md);
+}
+
+@mixin shadow-xl {
+	box-shadow:
+		0 1.25rem 1.56rem -0.31rem var(--shadow-xl),
+		0 0.63rem 0.63rem -0.31rem var(--shadow-lg);
+}
+
+@mixin shadow-2xl {
+	box-shadow:
+		0 1.56rem 3.13rem -0.75rem var(--shadow-xl);
+}
+
+@mixin shadow-card {
+	box-shadow:
+		0 0.25rem 0.38rem -0.06rem var(--shadow-md),
+		0 0.13rem 0.25rem -0.06rem var(--shadow-sm),
+		0 0 0 0.06rem var(--color-border);
+}
+
+@mixin shadow-card-hover {
+	box-shadow:
+		0 0.63rem 0.94rem -0.19rem var(--shadow-lg),
+		0 0.25rem 0.38rem -0.13rem var(--shadow-md),
+		0 0 0 0.06rem var(--color-border-light);
+}
+
+@mixin shadow-focus {
+	box-shadow:
+		0 0 0 0.19rem var(--shadow-primary),
+		0 0.06rem 0.13rem 0 var(--shadow-sm);
+}
+
 @mixin background-shadow {
-	box-shadow: 0 .2rem .6rem var(--color-shadow-lg), 0 .1rem .3rem var(--color-shadow-md);
+	@include shadow-card;
 }

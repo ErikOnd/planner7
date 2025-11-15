@@ -2,39 +2,71 @@
 @use "../../styles/mixins" as mixins;
 
 .button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	border: none;
-	border-radius: variables.$radius-lg;
-	padding: 1rem 2rem;
+	border-radius: variables.$radius-md;
+	padding: 0.75rem 1.5rem;
 	cursor: pointer;
-	transition: background-color 0.2s ease, color 0.2s ease;
+	font-weight: 500;
+	position: relative;
+	overflow: hidden;
+	transition:
+		background-color variables.$transition-base,
+		color variables.$transition-base,
+		transform variables.$transition-fast;
+
+
+	&:active:not(:disabled) {
+		transform: scale(0.98);
+	}
+
+	&:disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
 
 	&:focus-visible {
-		outline-offset: 0.1rem;
+		outline: none;
 	}
 }
 
 .primary {
 	background-color: var(--color-primary);
-	color: var(--color-surface);
+	color: white;
 
-	&:hover, &:focus-visible {
+	&:hover:not(:disabled) {
 		background-color: var(--color-primary-dark);
 	}
 
 	&:focus-visible {
-		outline: 0.1rem solid var(--color-primary);
+		outline: 0.13rem solid var(--color-primary-dark);
+		outline-offset: 0.13rem;
+	}
+
+	&:active:not(:disabled) {
+		background-color: var(--color-primary-darker);
 	}
 }
 
 .secondary {
-	background-color: var(--color-day-label);
+	background-color: var(--color-surface);
 	color: var(--color-text);
+	border: 0.09rem solid var(--color-border);
 
-	&:hover, &:focus-visible {
-		background-color: var(--color-primary-light);
+	&:hover:not(:disabled) {
+		background-color: var(--color-gray-light);
+		border-color: var(--color-text-muted);
 	}
 
 	&:focus-visible {
-		outline: 0.1rem solid var(--color-primary);
+		outline: 0.13rem solid var(--color-primary);
+		outline-offset: 0.13rem;
+		border-color: var(--color-border);
+	}
+
+	&:active:not(:disabled) {
+		background-color: var(--color-gray-medium);
 	}
 }
