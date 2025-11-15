@@ -31,7 +31,7 @@ npm run check-format
 ## Database Commands
 
 ```bash
-# Generate Prisma client (outputs to src/generated/prisma)
+# Generate Prisma client
 npx prisma generate
 
 # Create a new migration
@@ -86,7 +86,7 @@ The app has separate mobile and desktop layouts:
 
 ### Database Layer
 
-- Prisma client generated to `src/generated/prisma/` (not `node_modules`)
+- Prisma client generated to `node_modules/@prisma/client`
 - Schema in `prisma/schema.prisma`
 - Current models: Profile (id, email, displayName, timestamps)
 - Uses PostgreSQL with Supabase (DATABASE_URL and DIRECT_URL required)

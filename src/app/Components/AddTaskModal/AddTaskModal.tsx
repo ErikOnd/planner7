@@ -1,29 +1,39 @@
+"use client";
+
 import styles from "./AddTaskModal.module.scss";
 
 import { Button } from "@atoms/Button/Button";
 import { Icon } from "@atoms/Icons/Icon";
 import { InputField } from "@atoms/InputField/InputField";
+import { Message } from "@atoms/Message/Message";
 import { Text } from "@atoms/Text/Text";
 import * as Dialog from "@radix-ui/react-dialog";
-import { FormEvent, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useFormState } from "react-dom";
+import { createGeneralTodo, FormState } from "../../actions/generalTodos";
 
 type AddTaskModalProps = {
 	open: boolean;
 	setOpen: (open: boolean) => void;
 	defaultValue?: string;
-	/** If true, renders the built-in Trigger button; set to false to control opening externally */
 	renderTrigger?: boolean;
+};
+
+const initialState: FormState = {
+	error: undefined,
 };
 
 export function AddTaskModal(props: AddTaskModalProps) {
 	const { open, setOpen, defaultValue, renderTrigger = true } = props;
-	const [inputValue, setInputValue] = useState(defaultValue ?? "");
+	const [state, formAction] = useFormState(createGeneralTodo, initialState);
+	const formRef = useRef<HTMLFormElement>(null);
 
-	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		setOpen(false);
-		setInputValue("");
-	};
+	useEffect(() => {
+		if (state.success) {
+			setOpen(false);
+			formRef.current?.reset();
+		}
+	}, [state.success, setOpen]);
 
 	return (
 		<Dialog.Root open={open} onOpenChange={setOpen}>
@@ -40,11 +50,11 @@ export function AddTaskModal(props: AddTaskModalProps) {
 					<Dialog.Title className={styles["title"]}>
 						<Text>Add New Task</Text>
 					</Dialog.Title>
-					<form onSubmit={handleSubmit}>
+					<form action={formAction} ref={formRef}>
 						<fieldset className={styles["fieldset"]}>
-							<InputField value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
+							<InputField name="text" value={defaultValue} required />
 						</fieldset>
-
+						{state.error && <Message variant="error">{state.error}</Message>}
 						<div className={styles["button-group"]}>
 							<Button type="submit" variant="primary" fontWeight={700}>
 								Save Task

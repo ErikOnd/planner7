@@ -1,8 +1,9 @@
+import { ChangeEvent } from "react";
 import styles from "./InputField.module.scss";
 
 type InputFieldProps = {
 	value?: string;
-	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 	id?: string;
 	name?: string;
 	placeholder?: string;

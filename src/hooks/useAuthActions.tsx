@@ -4,6 +4,7 @@ import { mapAuthError } from "@utils/authErrors";
 import { createClient } from "@utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
+import { ensureProfileExists } from "../app/actions/profile";
 
 export function useAuthActions() {
 	const router = useRouter();
@@ -31,6 +32,7 @@ export function useAuthActions() {
 				setErrorMsg(mapAuthError(error, "sign_in"));
 				return;
 			}
+			await ensureProfileExists();
 			router.push("/");
 		} catch (err) {
 			setErrorMsg(mapAuthError(err, "sign_in"));
@@ -47,7 +49,13 @@ export function useAuthActions() {
 		}
 		setLoading(true);
 		try {
-			const { data, error } = await supabase.auth.signUp({ email, password });
+			const { data, error } = await supabase.auth.signUp({
+				email,
+				password,
+				options: {
+					emailRedirectTo: typeof window !== "undefined" ? `${location.origin}/auth/callback` : undefined,
+				},
+			});
 			if (error) {
 				setErrorMsg(mapAuthError(error, "sign_up"));
 				return;
@@ -56,6 +64,7 @@ export function useAuthActions() {
 				setInfoMsg("Success! Please check your email to confirm your account.");
 				return;
 			}
+			await ensureProfileExists();
 			router.push("/");
 		} catch (err) {
 			setErrorMsg(mapAuthError(err, "sign_up"));
@@ -73,7 +82,9 @@ export function useAuthActions() {
 		setLoading(true);
 		try {
 			const { error } = await supabase.auth.resetPasswordForEmail(email, {
-				redirectTo: typeof window !== "undefined" ? `${location.origin}/auth/callback` : undefined,
+				redirectTo: typeof window !== "undefined"
+					? `${location.origin}/auth/callback?type=recovery`
+					: undefined,
 			});
 			if (error) {
 				setErrorMsg(mapAuthError(error, "reset"));

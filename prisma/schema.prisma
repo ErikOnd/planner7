@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -10,9 +9,38 @@ datasource db {
 }
 
 model Profile {
-  id          String   @id @db.Uuid
-  email       String   @unique
+  id          String       @id @db.Uuid
+  email       String       @unique
   displayName String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  dailyNotes  DailyNote[]
+  generalTodos GeneralTodo[]
+}
+
+model DailyNote {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  date      DateTime @db.Date
+  content   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile   Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+model GeneralTodo {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @db.Uuid
+  text        String
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  profile     Profile   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

@@ -26,7 +26,9 @@
 			"@atoms/*": ["app/Atoms/*"],
 			"@hooks/*": ["hooks/*"],
 			"@utils/*": ["utils/*"],
-			"@app": ["app"]
+			"@app": ["app"],
+			"@/lib/*": ["lib/*"],
+			"@/generated/*": ["generated/*"]
 		}
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

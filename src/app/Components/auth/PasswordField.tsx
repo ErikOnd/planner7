@@ -16,6 +16,7 @@ export type PasswordFieldProps = {
 	disabled?: boolean;
 	name?: string;
 	autoComplete?: string;
+	id?: string;
 };
 
 export function PasswordField({
