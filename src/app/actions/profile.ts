@@ -27,7 +27,7 @@ export async function checkUserExists() {
 	}
 }
 
-export async function createNewUser() {
+export async function createNewUser(displayName?: string) {
 	try {
 		const supabase = await createClient();
 		const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -41,10 +41,14 @@ export async function createNewUser() {
 			return { success: false, error: "Email not verified" };
 		}
 
+		// Get displayName from parameter or user metadata
+		const userDisplayName = displayName || (user.user_metadata?.displayName as string) || null;
+
 		await prisma.profile.create({
 			data: {
 				id: user.id,
 				email: user.email ?? "",
+				displayName: userDisplayName,
 			},
 		});
 

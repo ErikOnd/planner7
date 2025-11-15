@@ -7,11 +7,13 @@ import { InputField } from "@atoms/InputField/InputField";
 import { Message } from "@atoms/Message/Message";
 import { Text } from "@atoms/Text/Text";
 import { useAuthActions } from "@hooks/useAuthActions";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { PasswordField } from "./PasswordField";
 
-export function AuthForm() {
-	const { loading, logIn, signUp, sendResetPassword, errorMsg, infoMsg } = useAuthActions();
+export function LoginForm() {
+	const { loading, logIn, sendResetPassword, errorMsg, infoMsg } = useAuthActions();
+	const router = useRouter();
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -59,14 +61,8 @@ export function AuthForm() {
 				<Button type="submit" variant="primary" disabled={loading} fontWeight={700}>
 					{loading ? "Signing in..." : "Log in"}
 				</Button>
-				<Button
-					type="button"
-					variant="secondary"
-					onClick={() => signUp(email, password)}
-					disabled={loading}
-					fontWeight={700}
-				>
-					{loading ? "Please wait..." : "Sign up"}
+				<Button type="button" variant="secondary" fontWeight={700} onClick={() => router.push("/signup")}>
+					Sign up
 				</Button>
 			</div>
 		</form>

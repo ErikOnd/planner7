@@ -41,10 +41,14 @@ export function useAuthActions() {
 		}
 	}, [clearMessages, router, supabase]);
 
-	const signUp = useCallback(async (email: string, password: string) => {
+	const signUp = useCallback(async (email: string, password: string, displayName?: string) => {
 		clearMessages();
 		if (!email || !password) {
 			setErrorMsg("Please enter both email and password.");
+			return;
+		}
+		if (!displayName) {
+			setErrorMsg("Please enter your name.");
 			return;
 		}
 		setLoading(true);
@@ -54,10 +58,17 @@ export function useAuthActions() {
 				password,
 				options: {
 					emailRedirectTo: typeof window !== "undefined" ? `${location.origin}/auth/callback` : undefined,
+					data: {
+						displayName: displayName,
+					},
 				},
 			});
 			if (error) {
 				setErrorMsg(mapAuthError(error, "sign_up"));
+				return;
+			}
+			if (data?.user && !data?.session && data.user.identities && data.user.identities.length === 0) {
+				setErrorMsg("An account with this email already exists. Please log in instead.");
 				return;
 			}
 			if (!data?.session) {

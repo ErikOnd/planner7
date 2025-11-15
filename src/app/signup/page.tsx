@@ -1,10 +1,10 @@
-import styles from "./LoginPage.module.scss";
+import styles from "./SignUpPage.module.scss";
 
-import { LoginForm } from "@components/auth/LoginForm";
+import { SignUpForm } from "@components/auth/SignUpForm";
 import { createClient } from "@utils/supabase/server";
 import { redirect } from "next/navigation";
 
-export default async function LoginPage() {
+export default async function SignUpPage() {
 	const supabase = await createClient();
 
 	const { data, error } = await supabase.auth.getUser();
@@ -14,8 +14,8 @@ export default async function LoginPage() {
 	}
 
 	return (
-		<main className={styles["login-holder"]}>
-			<LoginForm />
+		<main className={styles["signup-holder"]}>
+			<SignUpForm />
 		</main>
 	);
 }
