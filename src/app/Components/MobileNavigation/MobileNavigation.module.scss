@@ -95,20 +95,20 @@
 		}
 
 		&:hover {
-			background-color: var(--color-primary-light);
-			color: var(--color-primary);
+			background-color: var(--color-primary-subtle);
+			color: var(--color-primary-darker);
 
 			.day-date {
-				color: var(--color-primary);
+				color: var(--color-primary-darker);
 			}
 		}
 
 		&.active-day {
-			background-color: var(--color-primary-light);
-			color: var(--color-primary);
+			background-color: var(--color-primary);
+			color: var(--color-surface);
 
 			.day-date {
-				color: var(--color-primary);
+				color: var(--color-surface);
 			}
 		}
 	}

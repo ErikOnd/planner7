@@ -77,10 +77,11 @@
 		width: 100%;
 		justify-content: center;
 		margin-top: var(--space-md);
-		background-color: var(--color-primary-light);
+		background-color: var(--color-primary);
 		padding: var(--space-sm);
 		border-radius: variables.$radius-md;
-		color: var(--color-primary);
+		color: var(--color-surface);
+		font-weight: 600;
 	}
 
 	.remember-section {

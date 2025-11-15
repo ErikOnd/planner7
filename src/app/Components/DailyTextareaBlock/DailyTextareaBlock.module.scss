@@ -23,11 +23,12 @@
 	}
 
 	.day-batch {
-		color: var(--color-primary);
+		color: var(--color-primary-darker);
 		padding-inline: .5rem;
 		padding-block: .3rem;
 		border-radius: variables.$radius-md;
-		background-color: var(--color-primary-light);
+		background-color: var(--color-primary-subtle);
+		font-weight: 600;
 	}
 
 	.month-and-day {
