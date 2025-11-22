@@ -87,6 +87,11 @@
 		align-self: center;
 	}
 
+	.drag-overlay-item {
+		cursor: grabbing;
+		user-select: none;
+	}
+
  .add-item {
 	 	margin-top: var(--space-lg);
 		background-color: var(--color-primary);

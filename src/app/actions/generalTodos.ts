@@ -121,3 +121,44 @@ export async function deleteGeneralTodo(todoId: string): Promise<FormState> {
 		};
 	}
 }
+
+export async function reorderGeneralTodos(todoIds: string[]): Promise<FormState> {
+	try {
+		const supabase = await createClient();
+		const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+		if (authError || !user) {
+			return {
+				error: "You must be logged in to reorder tasks",
+				success: false,
+			};
+		}
+
+		await prisma.$transaction(
+			todoIds.map((id, index) =>
+				prisma.generalTodo.updateMany({
+					where: {
+						id,
+						userId: user.id,
+					},
+					data: {
+						order: index,
+					},
+				})
+			),
+		);
+
+		revalidatePath("/");
+
+		return {
+			message: "Tasks reordered successfully",
+			success: true,
+		};
+	} catch (error) {
+		console.error("Error reordering general todos:", error);
+		return {
+			error: "Failed to reorder tasks",
+			success: false,
+		};
+	}
+}

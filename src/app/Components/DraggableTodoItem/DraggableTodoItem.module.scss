@@ -1,0 +1,16 @@
+@use "../../styles/variables" as variables;
+
+.draggable-todo {
+	position: relative;
+	cursor: grab;
+	user-select: none;
+	touch-action: none;
+
+	&:active {
+		cursor: grabbing;
+	}
+
+	&.dragging {
+		opacity: 0;
+	}
+}

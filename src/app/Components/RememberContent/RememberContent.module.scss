@@ -11,4 +11,14 @@
 	.remember-loading {
 		align-self: center;
 	}
+
+	.drag-overlay-item {
+		background-color: var(--color-surface);
+		border: .1rem solid var(--color-primary);
+		border-radius: variables.$radius-md;
+		padding: var(--space-md);
+		box-shadow: 0 8px 24px var(--color-shadow-lg);
+		cursor: grabbing;
+		user-select: none;
+	}
 }

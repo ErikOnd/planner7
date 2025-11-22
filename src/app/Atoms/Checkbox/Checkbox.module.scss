@@ -26,9 +26,9 @@
 
 	.checkmark {
 		display: inline-block;
-			width: 1.5rem;
-	height: 1.5rem;
-	border: 0.1rem solid black;
+		width: 1.5rem;
+		height: 1.5rem;
+		border: 0.1rem solid var(--color-border);
 		border-radius: variables.$radius-md;
 		position: relative;
 		flex-shrink: 0;
