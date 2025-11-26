@@ -28,7 +28,8 @@
 			"@utils/*": ["utils/*"],
 			"@app": ["app"],
 			"@/lib/*": ["lib/*"],
-			"@/generated/*": ["generated/*"]
+			"@/generated/*": ["generated/*"],
+			"@/contexts/*": ["contexts/*"]
 		}
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

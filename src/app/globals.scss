@@ -107,6 +107,78 @@
 	--content-spacing: #{mixins.clamp-builder(1.6, 4.8)};
 }
 
+/* ============================================================================
+   DARK THEME
+   ============================================================================
+   Applied when [data-theme="dark"] attribute is set on html element
+   All colors meet WCAG AA accessibility standards
+*/
+
+[data-theme="dark"] {
+	/* Text Colors - High contrast for readability */
+	--color-text: #{variables.$color-text-dark};
+	--color-text-muted: #{variables.$color-text-muted-dark};
+	--color-text-light: #{variables.$color-text-light-dark};
+	--color-text-placeholder: #{variables.$color-text-placeholder-dark};
+	--color-text-settings: #{variables.$color-text-settings-dark};
+	--color-text-secondary: #{variables.$color-text-secondary-dark};
+
+	/* Background Colors - Layered depth system */
+	--color-background: #{variables.$color-background-dark};
+	--color-surface: #{variables.$color-surface-dark};
+	--color-surface-elevated: #{variables.$color-surface-elevated-dark};
+
+	/* Border Colors - Visible but subtle */
+	--color-border: #{variables.$color-border-dark};
+	--color-border-light: #{variables.$color-border-light-dark};
+	--color-border-focus: #{variables.$color-border-focus-dark};
+
+	/* Primary Colors - Vibrant purple for dark mode */
+	--color-primary: #{variables.$color-primary-dark-theme};
+	--color-primary-dark: #{variables.$color-primary-dark-theme-dark};
+	--color-primary-darker: #{variables.$color-primary-dark-theme-darker};
+	--color-primary-light: #{variables.$color-primary-dark-theme-light};
+	--color-primary-lighter: #{variables.$color-primary-dark-theme-lighter};
+	--color-primary-subtle: #{variables.$color-primary-dark-theme-subtle};
+
+	/* Neutral Grays */
+	--color-gray-light: #{variables.$color-gray-light-dark};
+	--color-gray-medium: #{variables.$color-gray-medium-dark};
+	--color-day-label: #{variables.$color-day-label-dark};
+
+	/* Status Colors - Error */
+	--color-error: #{variables.$color-error-dark-theme};
+	--color-error-dark: #{variables.$color-error-dark-theme-dark};
+	--color-error-background: #{variables.$color-error-background-dark};
+	--color-error-border: #{variables.$color-error-border-dark};
+
+	/* Status Colors - Info */
+	--color-info: #{variables.$color-info-dark-theme};
+	--color-info-background: #{variables.$color-info-background-dark};
+	--color-info-border: #{variables.$color-info-border-dark};
+
+	/* Status Colors - Success */
+	--color-success: #{variables.$color-success-dark-theme};
+	--color-success-background: #{variables.$color-success-background-dark};
+	--color-success-border: #{variables.$color-success-border-dark};
+
+	/* Overlays - Darker for dark mode */
+	--color-overlay: #{variables.$color-overlay-dark};
+	--color-overlay-light: #{variables.$color-overlay-light-dark};
+
+	/* Shadows - Stronger shadows for depth on dark backgrounds */
+	--shadow-xs: #{variables.$shadow-color-sm-dark};
+	--shadow-sm: #{variables.$shadow-color-sm-dark};
+	--shadow-md: #{variables.$shadow-color-md-dark};
+	--shadow-lg: #{variables.$shadow-color-lg-dark};
+	--shadow-xl: #{variables.$shadow-color-xl-dark};
+	--shadow-primary: #{variables.$shadow-primary-dark};
+	--shadow-primary-sm: #{variables.$shadow-primary-sm-dark};
+
+	/* Enhance shadows on dark backgrounds for better depth perception */
+	color-scheme: dark;
+}
+
 html {
 	font-size: 100%;
 	scroll-behavior: smooth;

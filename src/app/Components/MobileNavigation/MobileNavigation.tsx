@@ -3,6 +3,7 @@
 import styles from "./MobileNavigation.module.scss";
 
 import { Text } from "@atoms/Text/Text";
+import ThemeToggle from "@atoms/ThemeToggle/ThemeToggle";
 import WeeklySlider from "@components/WeeklySlider/WeeklySlider";
 import { getCurrentWeek } from "@utils/getCurrentWeek";
 import clsx from "clsx";
@@ -62,7 +63,11 @@ export function MobileNavigation(props: MobileNavigationProps) {
 	return (
 		<nav className={styles["mobile-navigation"]}>
 			<div className={styles["logo-section"]}>
+				<div />
 				<Text size="lg" className={styles["logo-text"]}>WeeklyPlanner</Text>
+				<div className={styles["theme-toggle-wrapper"]}>
+					<ThemeToggle />
+				</div>
 			</div>
 			<div className={styles["slider-section"]} ref={containerRef}>
 				{navItems.map(({ value, label }) => (

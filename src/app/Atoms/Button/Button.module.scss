@@ -53,7 +53,7 @@
 .secondary {
 	background-color: var(--color-surface);
 	color: var(--color-text);
-	border: 0.09rem solid var(--color-border);
+	border: 0.1rem solid var(--color-border);
 
 	&:hover:not(:disabled) {
 		background-color: var(--color-gray-light);

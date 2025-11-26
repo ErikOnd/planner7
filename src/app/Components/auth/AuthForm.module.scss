@@ -8,7 +8,7 @@
 	padding: var(--space-2xl);
 	max-width: 28rem;
 	width: 100%;
-	border: 0.06rem solid var(--color-border-light);
+	border: 0.1rem solid var(--color-border-light);
 	transition: box-shadow variables.$transition-smooth;
 
 	@media (max-width: 40rem) {

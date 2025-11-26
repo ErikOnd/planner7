@@ -13,11 +13,11 @@
 	color: var(--color-surface);
 	border: none;
 	cursor: pointer;
-	transition: background-color 0.2s ease, color 0.2s ease;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	line-height: 0;
+	transition: background-color variables.$transition-base;
 
 	&:hover, &:focus-visible {
 		background-color: var(--color-primary-dark);

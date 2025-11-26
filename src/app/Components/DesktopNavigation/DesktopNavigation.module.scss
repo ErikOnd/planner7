@@ -30,10 +30,18 @@
 		gap: var(--space-md);
 		padding: var(--space-lg);
 		flex: 1;
+		align-items: center;
 	}
 
 	.current-week {
 		font-weight: 300;
 		color: var(--color-text-muted);
+	}
+
+	.actions-section {
+		display: flex;
+		align-items: center;
+		gap: var(--space-md);
+		padding: var(--space-lg);
 	}
 }

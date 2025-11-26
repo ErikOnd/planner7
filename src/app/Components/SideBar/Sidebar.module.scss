@@ -66,7 +66,11 @@
 		align-items: center;
 		justify-content: center;
 		box-shadow: 0 1px 0 var(--color-shadow-xs);
-		transition: background-color .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease, transform .05s ease;
+		transition: background-color variables.$transition-base;
+
+		&:hover {
+			background-color: var(--color-primary-dark);
+		}
 
 		&:focus-visible {
 			outline: .1rem solid var(--color-primary);
