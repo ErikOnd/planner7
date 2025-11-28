@@ -53,6 +53,8 @@ export function AddTaskModal(props: AddTaskModalProps) {
 			return;
 		}
 
+		const tempId = `temp-${Date.now()}`;
+
 		if (isEditMode) {
 			if (onOptimisticUpdate) {
 				onOptimisticUpdate(editMode.todoId, text.trim());
@@ -60,7 +62,7 @@ export function AddTaskModal(props: AddTaskModalProps) {
 		} else {
 			if (onOptimisticAdd) {
 				const tempTodo: GeneralTodo = {
-					id: `temp-${Date.now()}`,
+					id: tempId,
 					userId: "",
 					text: text.trim(),
 					order: 0,

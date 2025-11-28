@@ -1,6 +1,5 @@
 "use client";
 
-import { Spinner } from "@atoms/Spinner/Spinner";
 import { Text } from "@atoms/Text/Text";
 import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
 import { DraggableTaskItem } from "@components/DraggableTaskItem/DraggableTaskItem";
@@ -16,7 +15,6 @@ type TodosState = {
 	todos: GeneralTodo[];
 	loading: boolean;
 	error: string | null;
-	isPending: boolean;
 	deleteTodo: (todoId: string) => Promise<void>;
 	addTodo: (todo: GeneralTodo) => void;
 	updateTodo: (todoId: string, text: string) => void;
@@ -30,7 +28,7 @@ type RememberContentProps = {
 
 export function RememberContent(props: RememberContentProps) {
 	const { todosState } = props;
-	const { todos, loading, deleteTodo, addTodo, updateTodo, silentRefresh } = todosState;
+	const { todos, deleteTodo, addTodo, updateTodo, silentRefresh } = todosState;
 
 	const [modalOpen, setModalOpen] = useState(false);
 	const [editingTodo, setEditingTodo] = useState<GeneralTodo | null>(null);

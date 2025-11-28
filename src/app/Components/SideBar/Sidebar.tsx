@@ -1,7 +1,6 @@
 "use client";
 
 import { Icon } from "@atoms/Icons/Icon";
-import { Spinner } from "@atoms/Spinner/Spinner";
 import { Text } from "@atoms/Text/Text";
 import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
 import { DraggableTodoItem } from "@components/DraggableTodoItem/DraggableTodoItem";
@@ -19,7 +18,6 @@ type TodosState = {
 	todos: GeneralTodo[];
 	loading: boolean;
 	error: string | null;
-	isPending: boolean;
 	deleteTodo: (todoId: string) => Promise<void>;
 	addTodo: (todo: GeneralTodo) => void;
 	updateTodo: (todoId: string, text: string) => void;
@@ -35,7 +33,7 @@ type SidebarProps = {
 };
 
 export function Sidebar({ baseDate, setBaseDateAction, rangeLabel, todosState }: SidebarProps) {
-	const { todos, loading, deleteTodo, addTodo, updateTodo, silentRefresh } = todosState;
+	const { todos, deleteTodo, addTodo, updateTodo, silentRefresh } = todosState;
 
 	const [isAddOpen, setIsAddOpen] = useState(false);
 	const [editingTodo, setEditingTodo] = useState<GeneralTodo | null>(null);
