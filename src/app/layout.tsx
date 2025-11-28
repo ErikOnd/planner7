@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.scss";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { TodosProvider } from "@/contexts/TodosContext";
 import React, { ReactNode } from "react";
 
 export const metadata: Metadata = {
@@ -28,7 +29,9 @@ export default function RootLayout({ children }: Readonly<{
 					}}
 				/>
 				<ThemeProvider>
-					{children}
+					<TodosProvider>
+						{children}
+					</TodosProvider>
 				</ThemeProvider>
 			</body>
 		</html>

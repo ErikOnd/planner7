@@ -5,33 +5,27 @@
 	padding-block: var(--space-md);
 	@include typography.text-base;
 
-	// Override Blocknote's default colors with theme colors
 	:global {
-		// Background colors
 		.bn-container,
 		.bn-editor {
 			background-color: var(--color-surface);
 			color: var(--color-text);
 		}
 
-		// Text content
 		.bn-block-content {
 			color: var(--color-text);
 		}
 
-		// Placeholder text
 		.bn-block-content[data-content-type="paragraph"]::before {
 			color: var(--color-text-placeholder);
 		}
 
-		// Headings
 		h1.bn-block-content,
 		h2.bn-block-content,
 		h3.bn-block-content {
 			color: var(--color-text);
 		}
 
-		// Links
 		.bn-inline-content a {
 			color: var(--color-primary);
 			text-decoration: underline;
@@ -41,13 +35,11 @@
 			}
 		}
 
-		// Lists
 		ul.bn-block-group,
 		ol.bn-block-group {
 			color: var(--color-text);
 		}
 
-		// Slash menu
 		.bn-suggestion-menu {
 			background-color: var(--color-surface-elevated);
 			border: 0.1rem solid var(--color-border);
@@ -69,7 +61,6 @@
 			}
 		}
 
-		// Checkboxes
 		.bn-block-content[data-content-type="checkListItem"] > input[type="checkbox"] {
 			appearance: none;
 			width: 1.5rem;
@@ -111,12 +102,10 @@
 			}
 		}
 
-		// Selection
 		.bn-block-content ::selection {
 			background-color: var(--color-primary-subtle);
 		}
 
-		// Code blocks (if you add them later)
 		.bn-block-content code {
 			background-color: var(--color-surface-elevated);
 			color: var(--color-text);
@@ -124,7 +113,6 @@
 			border-radius: variables.$radius-sm;
 		}
 
-		// Formatting toolbar (if visible)
 		.bn-formatting-toolbar {
 			background-color: var(--color-surface-elevated);
 			border: 0.1rem solid var(--color-border);
