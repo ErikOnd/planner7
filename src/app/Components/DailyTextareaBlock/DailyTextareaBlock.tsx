@@ -13,12 +13,11 @@ const SmartEditor = dynamic(() => import("@atoms/SmartEditor/SmartEditor"), {
 import { Text } from "@atoms/Text/Text";
 import { formatToDayLabel } from "@utils/formatToDayLabel";
 import clsx from "clsx";
-import { saveDailyNote } from "../../actions/dailyNotes";
+import { getDailyNote, saveDailyNote } from "../../actions/dailyNotes";
 
 type NotesCache = {
-	getNote: (dateString: string) => Promise<Block[] | undefined>;
-	getCachedNote: (dateString: string) => { content: Block[] | undefined; loading: boolean } | undefined;
-	updateNote: (dateString: string, content: Block[]) => void;
+	setCache: (dateString: string, content: Block[] | undefined) => void;
+	getCache: (dateString: string) => Block[] | undefined;
 };
 
 type DailyTextareaProps = {
@@ -32,10 +31,14 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	const { weekday, date } = formatToDayLabel(textareaDate);
 	const isToday = textareaDate.toDateString() === new Date().toDateString();
 	const textareaBlock = useRef<HTMLDivElement | null>(null);
-	const [initialContent, setInitialContent] = useState<Block[] | undefined>(undefined);
+	const [contentState, setContentState] = useState<{
+		dateKey: string;
+		content: Block[] | undefined;
+	}>({ dateKey: "", content: undefined });
 	const [isLoading, setIsLoading] = useState(true);
 	const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const dateKey = textareaDate.toISOString().split("T")[0];
+	const currentDateRef = useRef<string>(dateKey);
 
 	useEffect(() => {
 		if (!isToday || !textareaBlock.current) return;
@@ -49,20 +52,33 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	}, [isToday]);
 
 	useEffect(() => {
-		const loadNote = async () => {
-			const dateString = textareaDate.toISOString().split("T")[0];
-			const cached = notesCache.getCachedNote(dateString);
+		const dateString = textareaDate.toISOString().split("T")[0];
+		currentDateRef.current = dateString;
 
+		const loadNote = async () => {
+			const cached = notesCache.getCache(dateString);
 			if (cached !== undefined) {
-				setInitialContent(cached.content);
-				setIsLoading(cached.loading);
+				setContentState({ dateKey: dateString, content: cached });
+				setIsLoading(false);
 				return;
 			}
 
 			setIsLoading(true);
-			const content = await notesCache.getNote(dateString);
-			setInitialContent(content);
-			setIsLoading(false);
+			try {
+				const note = await getDailyNote(dateString);
+				const content = note?.content as Block[] | undefined;
+
+				if (currentDateRef.current === dateString) {
+					notesCache.setCache(dateString, content);
+					setContentState({ dateKey: dateString, content });
+					setIsLoading(false);
+				}
+			} catch (error) {
+				console.error("Error loading note:", error);
+				if (currentDateRef.current === dateString) {
+					setIsLoading(false);
+				}
+			}
 		};
 
 		loadNote();
@@ -71,7 +87,8 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	const handleChange = useCallback(
 		(content: Block[]) => {
 			const dateString = textareaDate.toISOString().split("T")[0];
-			notesCache.updateNote(dateString, content);
+			notesCache.setCache(dateString, content);
+			setContentState({ dateKey: dateString, content });
 
 			if (saveTimeoutRef.current) {
 				clearTimeout(saveTimeoutRef.current);
@@ -93,6 +110,7 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	}, []);
 
 	const DailyTextareaBlockClass = clsx(styles["daily-textarea-block"], isToday && styles["is-today"]);
+	const isContentForCurrentDate = contentState.dateKey === dateKey;
 
 	return (
 		<div ref={textareaBlock} className={DailyTextareaBlockClass}>
@@ -101,7 +119,9 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 				<Text className={styles["month-and-day"]}>{date}</Text>
 			</div>
 			<div className={styles["editor-container"]}>
-				{!isLoading && <SmartEditor key={dateKey} initialContent={initialContent} onChange={handleChange} />}
+				{!isLoading && isContentForCurrentDate && (
+					<SmartEditor key={dateKey} initialContent={contentState.content} onChange={handleChange} />
+				)}
 			</div>
 		</div>
 	);

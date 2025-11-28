@@ -6,9 +6,8 @@ import type { Block } from "@blocknote/core";
 import { DailyTextareaBlock } from "@components/DailyTextareaBlock/DailyTextareaBlock";
 
 type NotesCache = {
-	getNote: (dateString: string) => Promise<Block[] | undefined>;
-	getCachedNote: (dateString: string) => { content: Block[] | undefined; loading: boolean } | undefined;
-	updateNote: (dateString: string, content: Block[]) => void;
+	setCache: (dateString: string, content: Block[] | undefined) => void;
+	getCache: (dateString: string) => Block[] | undefined;
 };
 
 type WeeklyContentProps = {
