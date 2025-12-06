@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.scss";
+import { NotesProvider } from "@/contexts/NotesContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { TodosProvider } from "@/contexts/TodosContext";
 import React, { ReactNode } from "react";
@@ -31,7 +32,9 @@ export default function RootLayout({ children }: Readonly<{
 				/>
 				<ThemeProvider>
 					<TodosProvider>
-						{children}
+						<NotesProvider>
+							{children}
+						</NotesProvider>
 					</TodosProvider>
 				</ThemeProvider>
 			</body>

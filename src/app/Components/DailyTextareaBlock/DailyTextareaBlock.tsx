@@ -4,42 +4,33 @@ import styles from "./DailyTextareaBlock.module.scss";
 
 import type { Block } from "@blocknote/core";
 import dynamic from "next/dynamic";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 
 const SmartEditor = dynamic(() => import("@atoms/SmartEditor/SmartEditor"), {
 	ssr: false,
 });
 
+import { useNotes } from "@/contexts/NotesContext";
 import { Text } from "@atoms/Text/Text";
 import { formatToDayLabel } from "@utils/formatToDayLabel";
 import clsx from "clsx";
-import { getDailyNote, saveDailyNote } from "../../actions/dailyNotes";
-
-type NotesCache = {
-	setCache: (dateString: string, content: Block[] | undefined) => void;
-	getCache: (dateString: string) => Block[] | undefined;
-	hasCache: (dateString: string) => boolean;
-};
 
 type DailyTextareaProps = {
 	textareaDate: Date;
 	autoFocus?: boolean;
-	notesCache: NotesCache;
 };
 
 function DailyTextareaBlockComponent(props: DailyTextareaProps) {
-	const { textareaDate, notesCache } = props;
+	const { textareaDate } = props;
 	const { weekday, date } = formatToDayLabel(textareaDate);
 	const isToday = textareaDate.toDateString() === new Date().toDateString();
 	const textareaBlock = useRef<HTMLDivElement | null>(null);
-	const [contentState, setContentState] = useState<{
-		dateKey: string;
-		content: Block[] | undefined;
-	}>({ dateKey: "", content: undefined });
-	const [isLoading, setIsLoading] = useState(true);
 	const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const dateKey = textareaDate.toISOString().split("T")[0];
-	const currentDateRef = useRef<string>(dateKey);
+
+	const { getNote, hasNote, saveNote } = useNotes();
+	const content = getNote(dateKey);
+	const isLoading = !hasNote(dateKey);
 
 	useEffect(() => {
 		if (!isToday || !textareaBlock.current) return;
@@ -52,56 +43,17 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 		}
 	}, [isToday]);
 
-	useEffect(() => {
-		const dateString = textareaDate.toISOString().split("T")[0];
-		currentDateRef.current = dateString;
-
-		const loadNote = async () => {
-			// Check if we have this date in cache (even if the value is undefined)
-			if (notesCache.hasCache(dateString)) {
-				const cached = notesCache.getCache(dateString);
-				setContentState({ dateKey: dateString, content: cached });
-				setIsLoading(false);
-				return;
-			}
-
-			// Not in cache, fetch from server
-			setIsLoading(true);
-			try {
-				const note = await getDailyNote(dateString);
-				const content = note?.content as Block[] | undefined;
-
-				if (currentDateRef.current === dateString) {
-					notesCache.setCache(dateString, content);
-					setContentState({ dateKey: dateString, content });
-					setIsLoading(false);
-				}
-			} catch (error) {
-				console.error("Error loading note:", error);
-				if (currentDateRef.current === dateString) {
-					setIsLoading(false);
-				}
-			}
-		};
-
-		loadNote();
-	}, [textareaDate, notesCache]);
-
 	const handleChange = useCallback(
-		(content: Block[]) => {
-			const dateString = textareaDate.toISOString().split("T")[0];
-			notesCache.setCache(dateString, content);
-			setContentState({ dateKey: dateString, content });
-
+		(newContent: Block[]) => {
 			if (saveTimeoutRef.current) {
 				clearTimeout(saveTimeoutRef.current);
 			}
 
 			saveTimeoutRef.current = setTimeout(async () => {
-				await saveDailyNote(dateString, content);
+				await saveNote(dateKey, newContent);
 			}, 1000);
 		},
-		[textareaDate, notesCache],
+		[dateKey, saveNote],
 	);
 
 	useEffect(() => {
@@ -113,7 +65,6 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	}, []);
 
 	const DailyTextareaBlockClass = clsx(styles["daily-textarea-block"], isToday && styles["is-today"]);
-	const isContentForCurrentDate = contentState.dateKey === dateKey;
 
 	return (
 		<div ref={textareaBlock} className={DailyTextareaBlockClass}>
@@ -122,9 +73,7 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 				<Text className={styles["month-and-day"]}>{date}</Text>
 			</div>
 			<div className={styles["editor-container"]}>
-				{!isLoading && isContentForCurrentDate && (
-					<SmartEditor key={dateKey} initialContent={contentState.content} onChange={handleChange} />
-				)}
+				{!isLoading && <SmartEditor key={dateKey} initialContent={content} onChange={handleChange} />}
 			</div>
 		</div>
 	);
