@@ -17,7 +17,7 @@ type SmartEditorProps = {
 };
 
 export default function SmartEditor({ initialContent, onChange }: SmartEditorProps) {
-	const { theme, mounted } = useTheme();
+	const { effectiveTheme, mounted } = useTheme();
 
 	const editor = useCreateBlockNote({
 		dictionary: {
@@ -33,11 +33,12 @@ export default function SmartEditor({ initialContent, onChange }: SmartEditorPro
 
 	const aliasMap = { "Check list": ["todo", "to-do"] };
 
+
 	return (
 		<BlockNoteView
 			editor={editor}
 			className={styles["smart-editor"]}
-			theme={theme}
+			theme={effectiveTheme}
 			slashMenu={false}
 			onChange={() => {
 				if (onChange) {

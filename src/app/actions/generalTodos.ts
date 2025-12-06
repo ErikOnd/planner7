@@ -53,6 +53,8 @@ export async function createGeneralTodo(_prevState: FormState, formData: FormDat
 			},
 		});
 
+		revalidatePath("/");
+
 		return {
 			message: "Task created successfully",
 			success: true,
@@ -99,6 +101,8 @@ export async function deleteGeneralTodo(todoId: string): Promise<FormState> {
 				userId: authResult.userId,
 			},
 		});
+
+		revalidatePath("/");
 
 		return {
 			message: "Task deleted successfully",
@@ -150,6 +154,8 @@ export async function updateGeneralTodo(_prevState: FormState, formData: FormDat
 			},
 		});
 
+		revalidatePath("/");
+
 		return {
 			message: "Task updated successfully",
 			success: true,
@@ -186,6 +192,8 @@ export async function reorderGeneralTodos(todoIds: string[]): Promise<FormState>
 				})
 			),
 		);
+
+		revalidatePath("/");
 
 		return {
 			message: "Tasks reordered successfully",

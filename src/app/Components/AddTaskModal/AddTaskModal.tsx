@@ -90,6 +90,11 @@ export function AddTaskModal(props: AddTaskModalProps) {
 		});
 	};
 
+	const handleFormSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		handleSaveClick();
+	};
+
 	const formKey = isEditMode ? editMode.todoId : "create";
 
 	return (
@@ -107,7 +112,7 @@ export function AddTaskModal(props: AddTaskModalProps) {
 					<Dialog.Title className={styles["title"]}>
 						<Text>{isEditMode ? "Edit Task" : "Add New Task"}</Text>
 					</Dialog.Title>
-					<form ref={formRef} key={formKey}>
+					<form ref={formRef} key={formKey} onSubmit={handleFormSubmit}>
 						{isEditMode && <input type="hidden" name="todoId" value={editMode.todoId} />}
 						<fieldset className={styles["fieldset"]}>
 							<InputField
