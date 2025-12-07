@@ -1,6 +1,6 @@
 import { createClient } from "@utils/supabase/server";
 import { NextResponse } from "next/server";
-import { createNewUser } from "../../actions/profile";
+import { createNewUser, syncEmailFromAuth } from "../../actions/profile";
 
 export async function GET(request: Request) {
 	const { searchParams, origin } = new URL(request.url);
@@ -17,7 +17,11 @@ export async function GET(request: Request) {
 				return NextResponse.redirect(`${origin}/auth/reset-password`);
 			}
 
+			// Try to create new user (will fail silently if already exists)
 			await createNewUser();
+
+			// Sync email from Auth to Profile (handles email confirmation)
+			await syncEmailFromAuth();
 
 			const forwardedHost = request.headers.get("x-forwarded-host");
 			const isLocalEnv = process.env.NODE_ENV === "development";

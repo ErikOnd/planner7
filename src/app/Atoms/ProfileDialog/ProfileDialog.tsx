@@ -18,6 +18,7 @@ type TabType = "general" | "account" | "connectors";
 type ProfileData = {
 	displayName: string;
 	email: string;
+ 	pendingEmail?: string;
 };
 
 export function ProfileDialog({ children }: ProfileDialogProps) {
@@ -30,6 +31,7 @@ export function ProfileDialog({ children }: ProfileDialogProps) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
 	const hasChanges = originalProfile
 		&& (displayName !== originalProfile.displayName || email !== originalProfile.email);
@@ -37,6 +39,12 @@ export function ProfileDialog({ children }: ProfileDialogProps) {
 	useEffect(() => {
 		const fetchProfile = async () => {
 			setIsLoading(true);
+
+			// Refresh the session to get latest email status
+			const { createClient } = await import("@utils/supabase/client");
+			const supabase = createClient();
+			await supabase.auth.refreshSession();
+
 			const result = await getUserProfile();
 
 			if (result.success && result.data) {
@@ -58,6 +66,9 @@ export function ProfileDialog({ children }: ProfileDialogProps) {
 
 		setIsSaving(true);
 		setError(null);
+		setSuccessMessage(null);
+
+		const emailChanged = originalProfile && email !== originalProfile.email;
 
 		const result = await updateUserProfile({
 			displayName,
@@ -68,6 +79,14 @@ export function ProfileDialog({ children }: ProfileDialogProps) {
 			setOriginalProfile(result.data);
 			setDisplayName(result.data.displayName);
 			setEmail(result.data.email);
+
+			if (emailChanged) {
+				setSuccessMessage(
+					"A confirmation email has been sent to your new email address. Please check your inbox and confirm your new email.",
+				);
+			} else {
+				setSuccessMessage("Profile updated successfully!");
+			}
 		} else {
 			setError(result.error || "Failed to save profile");
 		}
@@ -83,6 +102,7 @@ export function ProfileDialog({ children }: ProfileDialogProps) {
 						<section className={styles["settings-section"]}>
 							<h3 className={styles["section-heading"]}>Profile</h3>
 							{error && <div className={styles["error-message"]}>{error}</div>}
+							{successMessage && <div className={styles["success-message"]}>{successMessage}</div>}
 							<div className={styles["form-group"]}>
 								<label className={styles["form-label"]} htmlFor="name">Name</label>
 								<input
@@ -106,6 +126,13 @@ export function ProfileDialog({ children }: ProfileDialogProps) {
 									onChange={(e) => setEmail(e.target.value)}
 									disabled={isLoading || isSaving}
 								/>
+								{originalProfile?.pendingEmail && (
+									<div className={styles["pending-email-notice"]}>
+										<span className={styles["pending-email-label"]}>Pending confirmation:</span>
+										{" "}
+										<span className={styles["pending-email-value"]}>{originalProfile.pendingEmail}</span>
+									</div>
+								)}
 							</div>
 							{hasChanges && (
 								<div className={styles["save-button-container"]}>

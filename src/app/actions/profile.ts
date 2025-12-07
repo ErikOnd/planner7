@@ -32,6 +32,15 @@ export async function getUserProfile() {
 			return { success: false, error: authResult.error };
 		}
 
+		// Get the current auth email from Supabase
+		const { createClient } = await import("@utils/supabase/server");
+		const supabase = await createClient();
+		const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+		if (authError || !user) {
+			return { success: false, error: "Failed to get auth user" };
+		}
+
 		const profile = await prisma.profile.findUnique({
 			where: { id: authResult.userId },
 			select: {
@@ -44,11 +53,30 @@ export async function getUserProfile() {
 			return { success: false, error: "Profile not found" };
 		}
 
+		// Sync email from Auth to Profile table if they differ
+		// This happens after user confirms their new email
+		if (user.email && user.email !== profile.email) {
+			await prisma.profile.update({
+				where: { id: authResult.userId },
+				data: { email: user.email },
+			});
+
+			return {
+				success: true,
+				data: {
+					email: user.email,
+					displayName: profile.displayName,
+					pendingEmail: user.new_email || undefined,
+				},
+			};
+		}
+
 		return {
 			success: true,
 			data: {
 				email: profile.email,
 				displayName: profile.displayName,
+				pendingEmail: user.new_email || undefined,
 			},
 		};
 	} catch (error) {
@@ -87,11 +115,29 @@ export async function updateUserProfile(data: { displayName?: string; email?: st
 			}
 		}
 
+		// Update Supabase Auth email if email is being changed
+		if (data.email !== undefined) {
+			const { createClient } = await import("@utils/supabase/server");
+			const supabase = await createClient();
+
+			const { error: authError } = await supabase.auth.updateUser({
+				email: data.email,
+			});
+
+			if (authError) {
+				return {
+					success: false,
+					error: `Failed to update authentication email: ${authError.message}`,
+				};
+			}
+		}
+
+		// Only update Profile table with displayName, NOT email
+		// Email will be synced from Auth after user confirms the new email
 		const updatedProfile = await prisma.profile.update({
 			where: { id: authResult.userId },
 			data: {
 				...(data.displayName !== undefined && { displayName: data.displayName }),
-				...(data.email !== undefined && { email: data.email }),
 			},
 			select: {
 				email: true,
@@ -105,10 +151,49 @@ export async function updateUserProfile(data: { displayName?: string; email?: st
 				email: updatedProfile.email,
 				displayName: updatedProfile.displayName,
 			},
+			emailConfirmationRequired: data.email !== undefined,
 		};
 	} catch (error) {
 		console.error("Error updating user profile:", error);
 		return { success: false, error: "Failed to update profile" };
+	}
+}
+
+export async function syncEmailFromAuth() {
+	try {
+		const { createClient } = await import("@utils/supabase/server");
+		const supabase = await createClient();
+		const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+		if (authError || !user) {
+			return { success: false, error: "Not authenticated" };
+		}
+
+		if (!user.email) {
+			return { success: false, error: "No email found" };
+		}
+
+		// Check if profile exists
+		const profile = await prisma.profile.findUnique({
+			where: { id: user.id },
+		});
+
+		if (!profile) {
+			return { success: false, error: "Profile not found" };
+		}
+
+		// Only update if emails differ
+		if (profile.email !== user.email) {
+			await prisma.profile.update({
+				where: { id: user.id },
+				data: { email: user.email },
+			});
+		}
+
+		return { success: true };
+	} catch (error) {
+		console.error("Error syncing email from auth:", error);
+		return { success: false, error: "Failed to sync email" };
 	}
 }
 
