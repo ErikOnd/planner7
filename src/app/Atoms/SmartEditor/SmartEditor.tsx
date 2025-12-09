@@ -33,7 +33,6 @@ export default function SmartEditor({ initialContent, onChange }: SmartEditorPro
 
 	const aliasMap = { "Check list": ["todo", "to-do"] };
 
-
 	return (
 		<BlockNoteView
 			editor={editor}

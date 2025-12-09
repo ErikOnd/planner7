@@ -11,6 +11,7 @@ import SignOut from "@assets/icons/sign-out.svg";
 import Star from "@assets/icons/star.svg";
 import Sun from "@assets/icons/sun.svg";
 import User from "@assets/icons/user.svg";
+import Close from "@assets/icons/close.svg";
 
 import clsx from "clsx";
 
@@ -28,6 +29,7 @@ const icons = {
 	"sun": Sun,
 	"moon": Moon,
 	"user": User,
+	"close": Close,
 };
 
 type IconName = keyof typeof icons;

@@ -22,7 +22,7 @@ export function TaskItem(props: TaskItemProps) {
 					aria-label="Edit task"
 					type="button"
 				>
-					<Icon name="pencil" size={20} />
+					<Icon name="pencil" />
 				</button>
 			)}
 		</div>

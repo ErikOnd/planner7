@@ -24,7 +24,7 @@ export function DesktopNavigation({ rangeLabel }: DesktopNavigationProps) {
 			<div className={styles["actions-section"]}>
 				<ProfileDialog>
 					<Button variant="secondary">
-						<Icon name="user" size={20} ariaLabel="Profile" />
+						<Icon name="user" ariaLabel="Profile" />
 					</Button>
 				</ProfileDialog>
 			</div>

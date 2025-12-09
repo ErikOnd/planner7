@@ -7,19 +7,6 @@
 	flex-direction: column;
 	background-color: var(--color-surface);
 
-	.logo-section {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		margin-top: var(--space-sm);
-		padding-inline: var(--content-spacing);
-	}
-
-	.logo-text {
-		font-weight: 700;
-		color: var(--color-primary);
-	}
-
 	.slider-section {
 		position: relative;
 		display: flex;
