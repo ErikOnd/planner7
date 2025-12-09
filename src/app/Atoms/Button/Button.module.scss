@@ -2,12 +2,12 @@
 @use "../../styles/mixins" as mixins;
 
 .button {
-	display: inline-flex;
+	display: flex;
 	align-items: center;
 	justify-content: center;
 	border: none;
 	border-radius: variables.$radius-md;
-	padding: 0.75rem 1.5rem;
+	padding: .75rem 1.5rem;
 	cursor: pointer;
 	font-weight: 500;
 	position: relative;
@@ -30,6 +30,10 @@
 	&:focus-visible {
 		outline: none;
 	}
+}
+
+.icon-button {
+	padding: .75rem;
 }
 
 .primary {
@@ -68,5 +72,25 @@
 
 	&:active:not(:disabled) {
 		background-color: var(--color-gray-medium);
+	}
+}
+
+.ghost {
+	background-color: transparent;
+	color: var(--color-primary);
+	border: .1rem solid transparent;
+
+	&:hover:not(:disabled) {
+		border: .1rem solid var(--color-primary);
+	}
+
+	&:focus-visible {
+		outline: 0.13rem solid var(--color-primary);
+		outline-offset: 0.13rem;
+	}
+
+	&:active:not(:disabled) {
+		border: .1rem solid var(--color-primary);
+		color: var(--color-primary-dark);
 	}
 }

@@ -1,5 +1,6 @@
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import ChevronRight from "@assets/icons/chevron-right.svg";
+import Close from "@assets/icons/close.svg";
 import ClosedEye from "@assets/icons/closed-eye.svg";
 import Eye from "@assets/icons/eye.svg";
 import Moon from "@assets/icons/moon.svg";
@@ -11,7 +12,6 @@ import SignOut from "@assets/icons/sign-out.svg";
 import Star from "@assets/icons/star.svg";
 import Sun from "@assets/icons/sun.svg";
 import User from "@assets/icons/user.svg";
-import Close from "@assets/icons/close.svg";
 
 import clsx from "clsx";
 
@@ -32,7 +32,7 @@ const icons = {
 	"close": Close,
 };
 
-type IconName = keyof typeof icons;
+export type IconName = keyof typeof icons;
 
 type IconProps = {
 	name: IconName;

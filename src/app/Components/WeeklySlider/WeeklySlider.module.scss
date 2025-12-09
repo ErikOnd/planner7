@@ -3,24 +3,5 @@
 .weekly-slider {
 	display: flex;
 	justify-content: space-between;
-}
-
-.icon-button {
-	color: var(--color-text-muted);
-	background-color: var(--color-surface);
-	border: none;
-	cursor: pointer;
-	width: 24px;
-	height: 24px;
-	border-radius: variables.$radius-rounded;
-
-	&:hover {
-		color: var(--color-primary);
-	}
-
-	&:focus-visible {
-		color: var(--color-primary);
-		outline: .1rem solid var(--color-primary);
-		outline-offset: .3rem;
-	}
+	align-items: center;
 }

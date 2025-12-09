@@ -1,6 +1,5 @@
 "use client";
 
-import { Icon } from "@atoms/Icons/Icon";
 import { Text } from "@atoms/Text/Text";
 import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
 import { DraggableTodoItem } from "@components/DraggableTodoItem/DraggableTodoItem";
@@ -13,6 +12,7 @@ import type { GeneralTodo } from "@prisma/client";
 import { isCurrentWeek } from "@utils/usCurrentWeek";
 import { useState } from "react";
 import styles from "./Sidebar.module.scss";
+import {Button} from "@atoms/Button/Button";
 
 type TodosState = {
 	todos: GeneralTodo[];
@@ -70,16 +70,14 @@ export function Sidebar({ baseDate, setBaseDateAction, rangeLabel, todosState }:
 						<Text size="xl" className={styles["remember-header"]}>
 							General Todos
 						</Text>
-						<button
-							type="button"
+						<Button
+							variant="primary"
+							icon="plus"
 							className={styles["add-header-button"]}
 							onClick={() => setIsAddOpen(true)}
-							aria-label="Add new todo"
 							aria-haspopup="dialog"
 							aria-expanded={isAddOpen}
-						>
-							<Icon name="plus" />
-						</button>
+						/>
 					</div>
 					<div className={styles["remember-items"]}>
 						{localTodos.length === 0

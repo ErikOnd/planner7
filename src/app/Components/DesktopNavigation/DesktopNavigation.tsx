@@ -3,7 +3,6 @@
 import styles from "./DesktopNavigation.module.scss";
 
 import { Button } from "@atoms/Button/Button";
-import { Icon } from "@atoms/Icons/Icon";
 import { ProfileDialog } from "@atoms/ProfileDialog/ProfileDialog";
 import { Text } from "@atoms/Text/Text";
 
@@ -23,9 +22,7 @@ export function DesktopNavigation({ rangeLabel }: DesktopNavigationProps) {
 			</div>
 			<div className={styles["actions-section"]}>
 				<ProfileDialog>
-					<Button variant="secondary">
-						<Icon name="user" ariaLabel="Profile" />
-					</Button>
+					<Button variant="secondary" icon="user" iconSize={36}/>
 				</ProfileDialog>
 			</div>
 		</nav>

@@ -1,7 +1,7 @@
 import styles from "./WeeklySlider.module.scss";
 
-import { Icon } from "@atoms/Icons/Icon";
 import { Text } from "@atoms/Text/Text";
+import {Button} from "@atoms/Button/Button";
 
 type WeeklySlider = {
 	baseDate: Date;
@@ -14,19 +14,17 @@ export default function WeeklySlider(props: WeeklySlider) {
 	const dayInMs = 86400000;
 	return (
 		<div className={styles["weekly-slider"]}>
-			<button
-				className={styles["icon-button"]}
+			<Button
+				variant="ghost"
+				icon="chevron-left"
 				onClick={() => setBaseDate(new Date(baseDate.getTime() - 7 * dayInMs))}
-			>
-				<Icon name="chevron-left" />
-			</button>
+			/>
 			<Text>{rangeLabel}</Text>
-			<button
-				className={styles["icon-button"]}
+			<Button
+				variant="ghost"
+				icon="chevron-right"
 				onClick={() => setBaseDate(new Date(baseDate.getTime() + 7 * dayInMs))}
-			>
-				<Icon name="chevron-right" />
-			</button>
+			/>
 		</div>
 	);
 }

@@ -54,30 +54,6 @@
 		margin-bottom: var(--space-lg);
 	}
 
-	.add-header-button {
-		background-color: var(--color-primary);
-		border: .1rem solid var(--color-border);
-		cursor: pointer;
-		color: var(--color-surface);
-		padding-inline: .6rem;
-		padding-block: .25rem;
-		border-radius: variables.$radius-md;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		box-shadow: 0 1px 0 var(--color-shadow-xs);
-		transition: background-color variables.$transition-base;
-
-		&:hover {
-			background-color: var(--color-primary-dark);
-		}
-
-		&:focus-visible {
-			outline: .1rem solid var(--color-primary);
-			outline-offset: .1rem;
-		}
-	}
-
 	.remember-items {
 		display: flex;
 		flex-direction: column;

@@ -6,7 +6,6 @@ import { useProfileSettings } from "@hooks/useProfileSettings";
 import * as Dialog from "@radix-ui/react-dialog";
 import React from "react";
 import styles from "./ProfileDialog.module.scss";
-import {Icon} from "@atoms/Icons/Icon";
 
 type ProfileDialogProps = {
 	children: React.ReactNode;
@@ -26,9 +25,7 @@ export function ProfileDialog({ children }: ProfileDialogProps) {
 					<div className={styles["dialog-header"]}>
 						<Dialog.Title className={styles["dialog-title"]}>Profile</Dialog.Title>
 						<Dialog.Close asChild>
-							<Button variant="secondary" className={styles["close-button"]}>
-								<Icon name="close" />
-							</Button>
+							<Button variant="secondary" icon="close" className={styles["close-button"]} />
 						</Dialog.Close>
 					</div>
 					<div className={styles["dialog-body"]}>
