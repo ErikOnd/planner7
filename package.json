@@ -8,7 +8,8 @@
 		"start": "next start",
 		"lint": "next lint",
 		"format": "dprint fmt",
-		"check-format": "dprint check"
+		"check-format": "dprint check",
+		"postinstall": "prisma generate"
 	},
 	"dependencies": {
 		"@blocknote/core": "^0.42.3",
