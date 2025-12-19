@@ -44,5 +44,16 @@
 		"eslint-config-next": "15.5.4",
 		"prisma": "^6.19.1",
 		"typescript": "^5.9.3"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"@parcel/watcher",
+			"@prisma/client",
+			"@prisma/engines",
+			"dprint",
+			"prisma",
+			"sharp",
+			"unrs-resolver"
+		]
 	}
 }
