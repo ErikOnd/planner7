@@ -18,11 +18,12 @@
 		border-right: .1rem solid var(--color-border);
 		max-width: 25rem;
 		width: 30dvw;
+		display: flex;
+		align-items: center;
 	}
 
-	.logo-text {
-		font-weight: 700;
-		color: var(--color-primary);
+	.logo {
+		display: block;
 	}
 
 	.main-section {

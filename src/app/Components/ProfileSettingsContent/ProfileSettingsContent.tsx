@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "@/contexts/ThemeContext";
+import { Badge } from "@atoms/Badge/Badge";
 import { Button } from "@atoms/Button/Button";
 import * as Switch from "@radix-ui/react-switch";
 import clsx from "clsx";
@@ -96,13 +97,16 @@ export function ProfileSettingsContent({
 						</section>
 
 						<section className={styles["settings-section"]}>
-							<h3 className={styles["section-heading"]}>Notifications</h3>
-							<div className={styles["notification-item"]}>
+							<div className={styles["section-header"]}>
+								<h3 className={styles["section-heading"]}>Notifications</h3>
+								<Badge variant="coming-soon">Coming soon</Badge>
+							</div>
+							<div className={clsx(styles["notification-item"], styles["notification-item--disabled"])}>
 								<div className={styles["notification-info"]}>
 									<span className={styles["notification-label"]}>Email notifications</span>
 									<span className={styles["notification-description"]}>Receive email updates about your tasks</span>
 								</div>
-								<Switch.Root className={styles["switch"]} defaultChecked aria-label="Email notifications">
+								<Switch.Root className={styles["switch"]} disabled aria-label="Email notifications">
 									<Switch.Thumb className={styles["switch-thumb"]} />
 								</Switch.Root>
 							</div>
@@ -111,7 +115,7 @@ export function ProfileSettingsContent({
 									<span className={styles["notification-label"]}>Push notifications</span>
 									<span className={styles["notification-description"]}>Get notified about upcoming tasks</span>
 								</div>
-								<Switch.Root className={styles["switch"]} aria-label="Push notifications">
+								<Switch.Root className={styles["switch"]} disabled aria-label="Push notifications">
 									<Switch.Thumb className={styles["switch-thumb"]} />
 								</Switch.Root>
 							</div>
