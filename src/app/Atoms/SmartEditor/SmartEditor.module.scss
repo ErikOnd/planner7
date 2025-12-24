@@ -61,6 +61,23 @@
 			}
 		}
 
+		.bn-mt-suggestion-menu-item-section {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.bn-mt-suggestion-menu-item-title {
+			font-size: 1rem;
+			font-weight: 500;
+		}
+
+		.bn-mt-suggestion-menu-item-subtitle {
+			font-size: 0.75rem;
+			color: var(--color-text-secondary);
+			opacity: 0.8;
+		}
+
 		.bn-block-content[data-content-type="checkListItem"] > input[type="checkbox"] {
 			appearance: none;
 			width: 1.5rem;
@@ -92,13 +109,13 @@
 			&:checked::after {
 				content: "";
 				position: absolute;
-				left: 0.45rem;
-				top: 0.15rem;
+				left: 50%;
+				top: 50%;
 				width: 0.3rem;
 				height: 0.7rem;
 				border: solid var(--color-surface);
 				border-width: 0 0.15rem 0.15rem 0;
-				transform: rotate(45deg);
+				transform: translate(-50%, -60%) rotate(45deg);
 			}
 		}
 

@@ -2,11 +2,13 @@
 
 import styles from "./SmartEditor.module.scss";
 
-import { en } from "@blocknote/core/locales";
+import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
+import "@mantine/core/styles.css";
 import { useTheme } from "@/contexts/ThemeContext";
-import { type Block, filterSuggestionItems } from "@blocknote/core";
+import { type Block } from "@blocknote/core";
+import { filterSuggestionItems } from "@blocknote/core/extensions";
 import { SuggestionMenuController, useCreateBlockNote } from "@blocknote/react";
 import { useBlocknoteArrowUpFix } from "@hooks/useBlocknoteArrowUpFix";
 import { getSlashMenuItemsWithAliases } from "@utils/blocknoteSlashMenu";
@@ -21,10 +23,6 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 	const { effectiveTheme, mounted } = useTheme();
 
 	const editor = useCreateBlockNote({
-		dictionary: {
-			...en,
-			placeholders: { ...en.placeholders, emptyDocument: "Start typing.." },
-		},
 		initialContent,
 	});
 
