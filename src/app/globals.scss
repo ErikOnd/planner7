@@ -40,7 +40,6 @@
 	--color-text-muted: #{variables.$color-text-muted};
 	--color-text-light: #{variables.$color-text-light};
 	--color-text-placeholder: #{variables.$color-text-placeholder};
-	--color-text-settings: #{variables.$color-text-settings};
 	--color-text-secondary: #{variables.$color-text-secondary};
 
 	--color-background: #{variables.$color-background};
@@ -53,17 +52,13 @@
 
 	--color-primary: #{variables.$color-primary};
 	--color-primary-dark: #{variables.$color-primary-dark};
-	--color-primary-darker: #{variables.$color-primary-darker};
 	--color-primary-light: #{variables.$color-primary-light};
-	--color-primary-lighter: #{variables.$color-primary-lighter};
 	--color-primary-subtle: #{variables.$color-primary-subtle};
 
 	--color-gray-light: #{variables.$color-gray-light};
 	--color-gray-medium: #{variables.$color-gray-medium};
-	--color-day-label: #{variables.$color-day-label};
 
 	--color-error: #{variables.$color-error};
-	--color-error-dark: #{variables.$color-error-dark};
 	--color-error-background: #{variables.$color-error-background};
 	--color-error-border: #{variables.$color-error-border};
 
@@ -76,14 +71,11 @@
 	--color-success-border: #{variables.$color-success-border};
 
 	--color-overlay: #{variables.$color-overlay};
-	--color-overlay-light: #{variables.$color-overlay-light};
 
-	--shadow-xs: #{variables.$shadow-color-sm};
 	--shadow-sm: #{variables.$shadow-color-sm};
 	--shadow-md: #{variables.$shadow-color-md};
 	--shadow-lg: #{variables.$shadow-color-lg};
 	--shadow-xl: #{variables.$shadow-color-xl};
-	--shadow-primary: #{variables.$shadow-primary};
 	--shadow-primary-sm: #{variables.$shadow-primary-sm};
 
 	--space-xs: #{mixins.clamp-builder(0.4, 0.8)};
@@ -107,7 +99,6 @@
 	--color-text-muted: #{variables.$color-text-muted-dark};
 	--color-text-light: #{variables.$color-text-light-dark};
 	--color-text-placeholder: #{variables.$color-text-placeholder-dark};
-	--color-text-settings: #{variables.$color-text-settings-dark};
 	--color-text-secondary: #{variables.$color-text-secondary-dark};
 
 	--color-background: #{variables.$color-background-dark};
@@ -119,18 +110,14 @@
 	--color-border-focus: #{variables.$color-border-focus-dark};
 
 	--color-primary: #{variables.$color-primary-dark-theme};
-	--color-primary-dark: #{variables.$color-primary-dark-theme-dark};
-	--color-primary-darker: #{variables.$color-primary-dark-theme-darker};
-	--color-primary-light: #{variables.$color-primary-dark-theme-light};
-	--color-primary-lighter: #{variables.$color-primary-dark-theme-lighter};
-	--color-primary-subtle: #{variables.$color-primary-dark-theme-subtle};
+	--color-primary-dark: #{variables.$color-primary-dark-dark-theme};
+	--color-primary-light: #{variables.$color-primary-light-dark-theme};
+	--color-primary-subtle: #{variables.$color-primary-subtle-dark-theme};
 
 	--color-gray-light: #{variables.$color-gray-light-dark};
 	--color-gray-medium: #{variables.$color-gray-medium-dark};
-	--color-day-label: #{variables.$color-day-label-dark};
 
 	--color-error: #{variables.$color-error-dark-theme};
-	--color-error-dark: #{variables.$color-error-dark-theme-dark};
 	--color-error-background: #{variables.$color-error-background-dark};
 	--color-error-border: #{variables.$color-error-border-dark};
 
@@ -143,14 +130,11 @@
 	--color-success-border: #{variables.$color-success-border-dark};
 
 	--color-overlay: #{variables.$color-overlay-dark};
-	--color-overlay-light: #{variables.$color-overlay-light-dark};
 
-	--shadow-xs: #{variables.$shadow-color-sm-dark};
 	--shadow-sm: #{variables.$shadow-color-sm-dark};
 	--shadow-md: #{variables.$shadow-color-md-dark};
 	--shadow-lg: #{variables.$shadow-color-lg-dark};
 	--shadow-xl: #{variables.$shadow-color-xl-dark};
-	--shadow-primary: #{variables.$shadow-primary-dark};
 	--shadow-primary-sm: #{variables.$shadow-primary-sm-dark};
 
 	color-scheme: dark;
