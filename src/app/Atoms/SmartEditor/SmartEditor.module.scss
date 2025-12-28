@@ -10,9 +10,10 @@
 		.bn-editor {
 			background-color: var(--color-surface);
 			color: var(--color-text);
+			padding: .5rem;
 
-			@media (max-width: 640px) {
-				padding: 1rem;
+			@include mixins.phone {
+				padding-inline: 54px;
 			}
 		}
 
