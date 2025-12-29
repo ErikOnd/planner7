@@ -5,6 +5,7 @@ import styles from "./SmartEditor.module.scss";
 import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
+import { uploadImage } from "@/actions/upload-image";
 import { useTheme } from "@/contexts/ThemeContext";
 import { type Block } from "@blocknote/core";
 import { filterSuggestionItems } from "@blocknote/core/extensions";
@@ -23,8 +24,15 @@ type SmartEditorProps = {
 export default function SmartEditor({ initialContent, onChange, ariaLabel }: SmartEditorProps) {
 	const { effectiveTheme, mounted } = useTheme();
 
+	const handleUpload = async (file: File) => {
+		const formData = new FormData();
+		formData.append("file", file);
+		return await uploadImage(formData);
+	};
+
 	const editor = useCreateBlockNote({
 		initialContent,
+		uploadFile: handleUpload,
 	});
 
 	const screenSize = useScreenSize();
@@ -43,6 +51,7 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 			theme={effectiveTheme}
 			slashMenu={false}
 			sideMenu={isNotMobile}
+			filePanel={true}
 			onChange={() => {
 				if (onChange) {
 					onChange(editor.document);
