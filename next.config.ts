@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+	experimental: {
+		serverActions: {
+			bodySizeLimit: "10mb",
+		},
+	},
 	webpack(config) {
 		// Find Next.js's default SVG loader and exclude SVG files
 		const fileLoaderRule = config.module.rules.find((rule: any) => rule.test?.test?.(".svg"));

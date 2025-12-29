@@ -9,13 +9,14 @@ datasource db {
 }
 
 model Profile {
-  id           String        @id @db.Uuid
-  email        String        @unique
-  displayName  String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  dailyNotes   DailyNote[]
-  generalTodos GeneralTodo[]
+  id             String          @id @db.Uuid
+  email          String          @unique
+  displayName    String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  dailyNotes     DailyNote[]
+  generalTodos   GeneralTodo[]
+  uploadedImages UploadedImage[]
 }
 
 model DailyNote {
@@ -37,6 +38,21 @@ model GeneralTodo {
   userId    String   @db.Uuid
   text      String
   order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model UploadedImage {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  url       String
+  key       String
+  fileSize  Int
+  mimeType  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

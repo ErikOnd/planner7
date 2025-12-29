@@ -5,7 +5,6 @@ import styles from "./SmartEditor.module.scss";
 import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
-import { uploadImage } from "@/actions/upload-image";
 import { useTheme } from "@/contexts/ThemeContext";
 import { type Block } from "@blocknote/core";
 import { filterSuggestionItems } from "@blocknote/core/extensions";
@@ -14,6 +13,7 @@ import { useBlocknoteArrowUpFix } from "@hooks/useBlocknoteArrowUpFix";
 import useScreenSize from "@hooks/useScreenSize";
 import { getSlashMenuItemsWithAliases } from "@utils/blocknoteSlashMenu";
 import { BREAKPOINTS } from "../../constants";
+import {uploadImage} from "../../../actions/upload-image";
 
 type SmartEditorProps = {
 	initialContent?: Block[];
@@ -24,10 +24,17 @@ type SmartEditorProps = {
 export default function SmartEditor({ initialContent, onChange, ariaLabel }: SmartEditorProps) {
 	const { effectiveTheme, mounted } = useTheme();
 
-	const handleUpload = async (file: File) => {
+	const handleUpload = async (file: File): Promise<string> => {
 		const formData = new FormData();
 		formData.append("file", file);
-		return await uploadImage(formData);
+		const result = await uploadImage(formData);
+
+		if (!result.success) {
+			alert(result.error);
+			return "";
+		}
+
+		return result.url;
 	};
 
 	const editor = useCreateBlockNote({
