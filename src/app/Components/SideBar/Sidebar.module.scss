@@ -14,6 +14,7 @@
 	width: 30dvw;
 	border-right: .1rem solid var(--color-border);
 	overflow: hidden;
+	flex-shrink: 0;
 
 	.sticky-section {
 		position: sticky;

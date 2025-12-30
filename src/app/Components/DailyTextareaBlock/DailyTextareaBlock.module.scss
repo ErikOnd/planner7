@@ -8,6 +8,7 @@
 	background-color: var(--color-surface);
 	border-radius: variables.$radius-lg;
 	border: .1rem solid var(--color-border);
+	overflow: hidden;
 
 	&.is-today {
 		border-color: var(--color-primary);

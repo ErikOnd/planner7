@@ -1,7 +1,7 @@
 "use server";
 
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import prisma from "@/lib/prisma";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { createClient } from "@utils/supabase/server";
 
 const s3Client = new S3Client({
@@ -50,7 +50,9 @@ export async function getUserStorageInfo() {
 	};
 }
 
-export async function uploadImage(formData: FormData): Promise<{ success: true; url: string } | { success: false; error: string }> {
+export async function uploadImage(
+	formData: FormData,
+): Promise<{ success: true; url: string } | { success: false; error: string }> {
 	try {
 		const supabase = await createClient();
 		const { data: { user }, error: authError } = await supabase.auth.getUser();

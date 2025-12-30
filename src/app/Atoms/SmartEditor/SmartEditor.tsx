@@ -12,8 +12,8 @@ import { SuggestionMenuController, useCreateBlockNote } from "@blocknote/react";
 import { useBlocknoteArrowUpFix } from "@hooks/useBlocknoteArrowUpFix";
 import useScreenSize from "@hooks/useScreenSize";
 import { getSlashMenuItemsWithAliases } from "@utils/blocknoteSlashMenu";
+import { uploadImage } from "../../../actions/upload-image";
 import { BREAKPOINTS } from "../../constants";
-import {uploadImage} from "../../../actions/upload-image";
 
 type SmartEditorProps = {
 	initialContent?: Block[];
