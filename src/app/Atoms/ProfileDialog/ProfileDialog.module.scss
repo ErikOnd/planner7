@@ -102,6 +102,7 @@
 	flex: 1;
 	overflow-y: auto;
 	padding-right: var(--space-sm);
+	min-height: 50rem;
 	max-height: calc(85vh - 12rem);
 }
 
