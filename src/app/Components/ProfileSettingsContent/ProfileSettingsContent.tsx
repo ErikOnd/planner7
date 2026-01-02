@@ -1,14 +1,14 @@
 "use client";
 
 import { useTheme } from "@/contexts/ThemeContext";
-import { Badge } from "@atoms/Badge/Badge";
-import { Button } from "@atoms/Button/Button";
-import * as Switch from "@radix-ui/react-switch";
+import { ProfileData } from "@hooks/useProfileSettings";
 import clsx from "clsx";
 import { useState } from "react";
-import { ProfileData } from "../../../hooks/useProfileSettings";
+import { ConnectorsSettings } from "./ConnectorsSettings";
+import { GeneralSettings } from "./GeneralSettings";
+import { PreferencesSettings } from "./PreferencesSettings";
 
-type TabType = "general" | "account" | "connectors";
+type TabType = "general" | "preferences" | "connectors";
 
 type ProfileSettingsContentProps = {
 	originalProfile: ProfileData | null;
@@ -48,140 +48,26 @@ export function ProfileSettingsContent({
 		switch (selectedTab) {
 			case "general":
 				return (
-					<div className={styles["tab-content"]}>
-						<section className={styles["settings-section"]}>
-							<h3 className={styles["section-heading"]}>Profile</h3>
-							{error && <div className={styles["error-message"]}>{error}</div>}
-							{successMessage && <div className={styles["success-message"]}>{successMessage}</div>}
-							<div className={styles["form-group"]}>
-								<label className={styles["form-label"]} htmlFor="name">Name</label>
-								<input
-									type="text"
-									id="name"
-									className={styles["form-input"]}
-									placeholder="Enter your name"
-									value={displayName}
-									onChange={(e) => setDisplayName(e.target.value)}
-									disabled={isLoading || isSaving}
-								/>
-							</div>
-							<div className={styles["form-group"]}>
-								<label className={styles["form-label"]} htmlFor="email">Email</label>
-								<input
-									type="email"
-									id="email"
-									className={styles["form-input"]}
-									placeholder="Enter your email"
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-									disabled={isLoading || isSaving}
-								/>
-								{originalProfile?.pendingEmail && (
-									<div className={styles["pending-email-notice"]}>
-										<span className={styles["pending-email-label"]}>Pending confirmation:</span>{" "}
-										<span className={styles["pending-email-value"]}>{originalProfile.pendingEmail}</span>
-									</div>
-								)}
-							</div>
-							{hasChanges && (
-								<div className={styles["save-button-container"]}>
-									<Button
-										variant="primary"
-										onClick={handleSave}
-										disabled={isSaving}
-									>
-										{isSaving ? "Saving..." : "Save Changes"}
-									</Button>
-								</div>
-							)}
-						</section>
-
-						<section className={styles["settings-section"]}>
-							<div className={styles["section-header"]}>
-								<h3 className={styles["section-heading"]}>Notifications</h3>
-								<Badge variant="coming-soon">Coming soon</Badge>
-							</div>
-							<div className={clsx(styles["notification-item"], styles["notification-item--disabled"])}>
-								<div className={styles["notification-info"]}>
-									<span className={styles["notification-label"]}>Email notifications</span>
-									<span className={styles["notification-description"]}>Receive email updates about your tasks</span>
-								</div>
-								<Switch.Root className={styles["switch"]} disabled aria-label="Email notifications">
-									<Switch.Thumb className={styles["switch-thumb"]} />
-								</Switch.Root>
-							</div>
-							<div className={styles["notification-item"]}>
-								<div className={styles["notification-info"]}>
-									<span className={styles["notification-label"]}>Push notifications</span>
-									<span className={styles["notification-description"]}>Get notified about upcoming tasks</span>
-								</div>
-								<Switch.Root className={styles["switch"]} disabled aria-label="Push notifications">
-									<Switch.Thumb className={styles["switch-thumb"]} />
-								</Switch.Root>
-							</div>
-						</section>
-
-						<section className={styles["settings-section"]}>
-							<h3 className={styles["section-heading"]}>Appearance</h3>
-							<p className={styles["section-description"]}>Color mode</p>
-							<div className={styles["theme-selector"]}>
-								<button
-									className={clsx(styles["theme-card"], theme === "light" && styles["theme-card--active"])}
-									onClick={() => setTheme("light")}
-								>
-									<div className={styles["theme-preview"]}>
-										<div className={styles["theme-preview-light"]}></div>
-									</div>
-									<span className={styles["theme-label"]}>Light</span>
-								</button>
-								<button
-									className={clsx(styles["theme-card"], theme === "system" && styles["theme-card--active"])}
-									onClick={() => setTheme("system")}
-								>
-									<div className={styles["theme-preview"]}>
-										<div className={styles["theme-preview-system"]}></div>
-									</div>
-									<span className={styles["theme-label"]}>Match system</span>
-								</button>
-								<button
-									className={clsx(styles["theme-card"], theme === "dark" && styles["theme-card--active"])}
-									onClick={() => setTheme("dark")}
-								>
-									<div className={styles["theme-preview"]}>
-										<div className={styles["theme-preview-dark"]}></div>
-									</div>
-									<span className={styles["theme-label"]}>Dark</span>
-								</button>
-							</div>
-						</section>
-
-						{handleLogout && (
-							<section className={styles["settings-section"]}>
-								<h3 className={styles["section-heading"]}>Sign Out</h3>
-								<p className={styles["section-description"]}>Sign out of your account</p>
-								<div className={styles["save-button-container"]}>
-									<Button variant="secondary" onClick={handleLogout}>
-										Logout
-									</Button>
-								</div>
-							</section>
-						)}
-					</div>
+					<GeneralSettings
+						originalProfile={originalProfile}
+						displayName={displayName}
+						setDisplayName={setDisplayName}
+						email={email}
+						setEmail={setEmail}
+						isLoading={isLoading}
+						isSaving={isSaving}
+						error={error}
+						successMessage={successMessage}
+						hasChanges={hasChanges}
+						handleSave={handleSave}
+						handleLogout={handleLogout}
+						styles={styles}
+					/>
 				);
-			case "account":
-				return (
-					<div className={styles["tab-content"]}>
-						<h2 className={styles["section-title"]}>Account Settings</h2>
-						<p>Account settings content goes here</p>
-					</div>
-				);
+			case "preferences":
+				return <PreferencesSettings theme={theme} setTheme={setTheme} styles={styles} />;
 			case "connectors":
-				return (
-					<div className={styles["tab-content"]}>
-						<h2 className={styles["section-title"]}>Connectors</h2>
-						<p>Connectors content goes here</p>
-					</div>
-				);
+				return <ConnectorsSettings styles={styles} />;
 			default:
 				return null;
 		}
@@ -197,10 +83,10 @@ export function ProfileSettingsContent({
 					General
 				</button>
 				<button
-					className={clsx(styles["tab-button"], selectedTab === "account" && styles["tab-button--active"])}
-					onClick={() => setSelectedTab("account")}
+					className={clsx(styles["tab-button"], selectedTab === "preferences" && styles["tab-button--active"])}
+					onClick={() => setSelectedTab("preferences")}
 				>
-					Account
+					Preferences
 				</button>
 				<button
 					className={clsx(styles["tab-button"], selectedTab === "connectors" && styles["tab-button--active"])}
