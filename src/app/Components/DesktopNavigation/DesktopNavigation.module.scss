@@ -22,6 +22,11 @@
 		align-items: center;
 	}
 
+	.logo-image {
+		display: block;
+		border-radius: var(--radius-sm);
+	}
+
 	.logo {
 		display: block;
 	}

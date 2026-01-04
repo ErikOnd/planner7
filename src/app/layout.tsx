@@ -8,6 +8,13 @@ import React, { ReactNode } from "react";
 export const metadata: Metadata = {
 	title: "Planner7",
 	description: "A minimal weekly planner for scheduling, todos, and personal organization",
+	applicationName: "Planner7",
+	appleWebApp: {
+		capable: true,
+		statusBarStyle: "default",
+		title: "Planner7",
+	},
+	manifest: "/manifest.json",
 };
 
 export default function RootLayout({ children }: Readonly<{
