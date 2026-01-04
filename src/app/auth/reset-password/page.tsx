@@ -60,7 +60,7 @@ export default function ResetPasswordPage() {
 	return (
 		<main className={styles.container}>
 			<form onSubmit={onSubmit} className={styles.form}>
-				<Text as="div" size="xl" fontWeight={700} className={styles.title}>
+				<Text as="p" size="xl" fontWeight={700} className={styles.title}>
 					Reset Your Password
 				</Text>
 				<Text as="p" size="sm" className={styles.subtitle}>

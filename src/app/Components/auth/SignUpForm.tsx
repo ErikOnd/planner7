@@ -26,7 +26,7 @@ export function SignUpForm() {
 
 	return (
 		<form onSubmit={onSubmit} className={styles.form}>
-			<Text as="div" size="xl" fontWeight={700} className={styles.title}>
+			<Text as="p" size="xl" fontWeight={700} className={styles.title}>
 				Create an account
 			</Text>
 			<Text as="p" size="sm" className={styles.subtitle}>

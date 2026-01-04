@@ -5,7 +5,6 @@ import { Button } from "@atoms/Button/Button";
 import { Text } from "@atoms/Text/Text";
 import { ProfileData } from "@hooks/useProfileSettings";
 import * as Switch from "@radix-ui/react-switch";
-import clsx from "clsx";
 
 type GeneralSettingsProps = {
 	originalProfile: ProfileData | null;
@@ -91,15 +90,6 @@ export function GeneralSettings({
 				<div className={styles["section-header"]}>
 					<h3 className={styles["section-heading"]}>Notifications</h3>
 					<Badge variant="coming-soon">Coming soon</Badge>
-				</div>
-				<div className={clsx(styles["notification-item"], styles["notification-item--disabled"])}>
-					<div className={styles["notification-info"]}>
-						<span className={styles["notification-label"]}>Email notifications</span>
-						<span className={styles["notification-description"]}>Receive email updates about your tasks</span>
-					</div>
-					<Switch.Root className={styles["switch"]} disabled aria-label="Email notifications">
-						<Switch.Thumb className={styles["switch-thumb"]} />
-					</Switch.Root>
 				</div>
 				<div className={styles["notification-item"]}>
 					<div className={styles["notification-info"]}>

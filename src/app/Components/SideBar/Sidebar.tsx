@@ -8,6 +8,7 @@ import WeeklySlider from "@components/WeeklySlider/WeeklySlider";
 import { closestCenter, DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useDraggableTodos } from "@hooks/useDraggableTodos";
+import { useKeyboardShortcut } from "@hooks/useKeyboardShortcut";
 import { useTodoToggle } from "@hooks/useTodoToggle";
 import type { GeneralTodo } from "@prisma/client";
 import { isCurrentWeek } from "@utils/usCurrentWeek";
@@ -54,6 +55,11 @@ export function Sidebar({ baseDate, setBaseDateAction, rangeLabel, todosState }:
 		}
 	};
 
+	useKeyboardShortcut({
+		key: "k",
+		callback: () => setIsAddOpen(true),
+	});
+
 	return (
 		<div className={styles["sidebar"]}>
 			<div className={styles["sticky-section"]}>
@@ -75,14 +81,14 @@ export function Sidebar({ baseDate, setBaseDateAction, rangeLabel, todosState }:
 							icon="plus"
 							className={styles["add-header-button"]}
 							onClick={() => setIsAddOpen(true)}
-							aria-label="Add todo"
+							aria-label="Add todo (Cmd+K)"
 							aria-haspopup="dialog"
 							aria-expanded={isAddOpen}
 						/>
 					</div>
 					<div className={styles["remember-items"]}>
 						{localTodos.length === 0
-							? <Text size="sm">No todos yet. Click + to add one!</Text>
+							? <Text size="sm">No todos yet. Press Cmd+K (or click +) to add one!</Text>
 							: (
 								<DndContext
 									sensors={sensors}
