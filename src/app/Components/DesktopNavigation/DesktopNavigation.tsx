@@ -15,13 +15,12 @@ export function DesktopNavigation({ rangeLabel }: DesktopNavigationProps) {
 	return (
 		<nav className={styles["desktop-navigation"]}>
 			<div className={styles["logo-section"]}>
-				<Image
-					src="/icon-192.png"
-					alt="Planner7"
-					width={50}
-					height={50}
-					className={styles["logo-image"]}
-				/>
+				<div className={styles["logo-text-container"]}>
+					<span className={styles["logo-text"]}>
+						<span className={styles["logo-text-main"]}>PLANNER</span>
+						<span className={styles["logo-text-number"]}>7</span>
+					</span>
+				</div>
 			</div>
 			<div className={styles["main-section"]}>
 				<Text size="xl">Weekly Overview</Text>
