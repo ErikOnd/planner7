@@ -21,15 +21,16 @@ export function getCurrentWeek(baseDate: Date) {
 		});
 	}
 
+	const sunday = new Date(monday.getTime() + 6 * 86400000);
 	const rangeLabel = `${
 		monday.toLocaleString("en-US", {
 			month: "short",
 		})
 	} ${monday.getDate()} - ${
-		(new Date(monday.getTime() + 6 * 86400000)).toLocaleString("en-US", {
+		sunday.toLocaleString("en-US", {
 			month: "short",
 		})
-	} ${(new Date(monday.getTime() + 6 * 86400000)).getDate()}`;
+	} ${sunday.getDate()}, ${sunday.getFullYear()}`;
 
 	return { days: week, rangeLabel };
 }
