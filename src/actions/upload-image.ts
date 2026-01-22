@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { createClient } from "@utils/supabase/server";
+import sharp from "sharp";
 
 const s3Client = new S3Client({
 	endpoint: process.env.DIGITALOCEAN_SPACES_ENDPOINT,
@@ -15,8 +16,9 @@ const s3Client = new S3Client({
 
 const BUCKET_NAME = process.env.DIGITALOCEAN_SPACES_BUCKET || "";
 const CDN_URL = process.env.DIGITALOCEAN_SPACES_CDN_URL || "";
-const MAX_FILE_SIZE = 1024 * 1024;
 const MAX_TOTAL_STORAGE = 5 * 1024 * 1024;
+const MAX_IMAGE_WIDTH = 1920;
+const COMPRESSION_QUALITY = 85;
 
 async function getUserStorageUsed(userId: string): Promise<number> {
 	const result = await prisma.uploadedImage.aggregate({
@@ -50,6 +52,16 @@ export async function getUserStorageInfo() {
 	};
 }
 
+async function compressImage(buffer: Buffer): Promise<Buffer> {
+	return await sharp(buffer)
+		.resize(MAX_IMAGE_WIDTH, null, {
+			fit: "inside",
+			withoutEnlargement: true,
+		})
+		.webp({ quality: COMPRESSION_QUALITY })
+		.toBuffer();
+}
+
 export async function uploadImage(
 	formData: FormData,
 ): Promise<{ success: true; url: string } | { success: false; error: string }> {
@@ -71,28 +83,27 @@ export async function uploadImage(
 			return { success: false, error: "File must be an image" };
 		}
 
-		if (file.size > MAX_FILE_SIZE) {
-			return { success: false, error: "File size must be less than 1MB" };
-		}
-
 		const currentStorageUsed = await getUserStorageUsed(user.id);
 
-		if (currentStorageUsed + file.size > MAX_TOTAL_STORAGE) {
+		const timestamp = Date.now();
+		const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_").replace(/\.[^.]+$/, ".webp");
+		const fileName = `${user.id}/${timestamp}-${sanitizedFileName}`;
+
+		const originalBuffer = Buffer.from(await file.arrayBuffer());
+		const compressedBuffer = await compressImage(originalBuffer);
+
+		const compressedSize = compressedBuffer.length;
+
+		if (currentStorageUsed + compressedSize > MAX_TOTAL_STORAGE) {
 			const remainingMB = ((MAX_TOTAL_STORAGE - currentStorageUsed) / 1024 / 1024).toFixed(2);
 			return { success: false, error: `Storage limit exceeded. You have ${remainingMB}MB remaining out of 5MB total.` };
 		}
 
-		const timestamp = Date.now();
-		const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-		const fileName = `${user.id}/${timestamp}-${sanitizedFileName}`;
-
-		const buffer = Buffer.from(await file.arrayBuffer());
-
 		const uploadParams = {
 			Bucket: BUCKET_NAME,
 			Key: fileName,
-			Body: buffer,
-			ContentType: file.type,
+			Body: compressedBuffer,
+			ContentType: "image/webp",
 			ACL: "public-read" as const,
 		};
 
@@ -105,8 +116,8 @@ export async function uploadImage(
 				userId: user.id,
 				url: imageUrl,
 				key: fileName,
-				fileSize: file.size,
-				mimeType: file.type,
+				fileSize: compressedSize,
+				mimeType: "image/webp",
 			},
 		});
 
