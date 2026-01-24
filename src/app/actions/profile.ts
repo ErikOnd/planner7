@@ -227,3 +227,60 @@ export async function createNewUser(displayName?: string) {
 		return { success: false, error: "Failed to create user" };
 	}
 }
+
+export async function updateUserPassword(data: {
+	currentPassword: string;
+	newPassword: string;
+}) {
+	try {
+		const authResult = await getCurrentUser();
+		if (!authResult.success) {
+			return { success: false, error: authResult.error };
+		}
+
+		// Validate input
+		if (!data.currentPassword || data.currentPassword.trim().length === 0) {
+			return { success: false, error: "Current password is required" };
+		}
+
+		if (!data.newPassword || data.newPassword.trim().length < 8) {
+			return { success: false, error: "New password must be at least 8 characters" };
+		}
+
+		const { createClient } = await import("@utils/supabase/server");
+		const supabase = await createClient();
+
+		// Get user email to verify current password
+		const { data: { user }, error: getUserError } = await supabase.auth.getUser();
+		if (getUserError || !user?.email) {
+			return { success: false, error: "Failed to get user information" };
+		}
+
+		// Verify current password by attempting to sign in
+		const { error: signInError } = await supabase.auth.signInWithPassword({
+			email: user.email,
+			password: data.currentPassword,
+		});
+
+		if (signInError) {
+			return { success: false, error: "Current password is incorrect" };
+		}
+
+		// Update to new password
+		const { error: updateError } = await supabase.auth.updateUser({
+			password: data.newPassword,
+		});
+
+		if (updateError) {
+			return {
+				success: false,
+				error: `Failed to update password: ${updateError.message}`,
+			};
+		}
+
+		return { success: true };
+	} catch (error) {
+		console.error("Error updating password:", error);
+		return { success: false, error: "Failed to update password" };
+	}
+}

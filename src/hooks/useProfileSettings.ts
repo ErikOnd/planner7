@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUserProfile, updateUserProfile } from "../app/actions/profile";
+import { getUserProfile, updateUserPassword, updateUserProfile } from "../app/actions/profile";
 
 export type ProfileData = {
 	displayName: string;
@@ -11,10 +11,16 @@ export function useProfileSettings() {
 	const [originalProfile, setOriginalProfile] = useState<ProfileData | null>(null);
 	const [displayName, setDisplayName] = useState("");
 	const [email, setEmail] = useState("");
+	const [currentPassword, setCurrentPassword] = useState("");
+	const [newPassword, setNewPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
+	const [isChangingPassword, setIsChangingPassword] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
+	const [passwordError, setPasswordError] = useState<string | null>(null);
+	const [passwordSuccessMessage, setPasswordSuccessMessage] = useState<string | null>(null);
 
 	const hasChanges = Boolean(
 		originalProfile
@@ -78,17 +84,56 @@ export function useProfileSettings() {
 		setIsSaving(false);
 	};
 
+	const handlePasswordChange = async () => {
+		setIsChangingPassword(true);
+		setPasswordError(null);
+		setPasswordSuccessMessage(null);
+
+		// Validate passwords match
+		if (newPassword !== confirmPassword) {
+			setPasswordError("Passwords do not match");
+			setIsChangingPassword(false);
+			return;
+		}
+
+		const result = await updateUserPassword({
+			currentPassword,
+			newPassword,
+		});
+
+		if (result.success) {
+			setPasswordSuccessMessage("Password updated successfully!");
+			setCurrentPassword("");
+			setNewPassword("");
+			setConfirmPassword("");
+		} else {
+			setPasswordError(result.error || "Failed to update password");
+		}
+
+		setIsChangingPassword(false);
+	};
+
 	return {
 		originalProfile,
 		displayName,
 		setDisplayName,
 		email,
 		setEmail,
+		currentPassword,
+		setCurrentPassword,
+		newPassword,
+		setNewPassword,
+		confirmPassword,
+		setConfirmPassword,
 		isLoading,
 		isSaving,
+		isChangingPassword,
 		error,
 		successMessage,
+		passwordError,
+		passwordSuccessMessage,
 		hasChanges,
 		handleSave,
+		handlePasswordChange,
 	};
 }
