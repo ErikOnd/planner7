@@ -1,7 +1,14 @@
 "use client";
 
 import { useTheme } from "@/contexts/ThemeContext";
-import { ProfileData } from "@hooks/useProfileSettings";
+import {
+	Messages,
+	PasswordFormData,
+	ProfileActions,
+	ProfileData,
+	ProfileFormData,
+	UIState,
+} from "@hooks/useProfileSettings";
 import clsx from "clsx";
 import { useState } from "react";
 import { ConnectorsSettings } from "./ConnectorsSettings";
@@ -12,52 +19,22 @@ type TabType = "general" | "preferences" | "connectors";
 
 type ProfileSettingsContentProps = {
 	originalProfile: ProfileData | null;
-	displayName: string;
-	setDisplayName: (value: string) => void;
-	email: string;
-	setEmail: (value: string) => void;
-	currentPassword: string;
-	setCurrentPassword: (value: string) => void;
-	newPassword: string;
-	setNewPassword: (value: string) => void;
-	confirmPassword: string;
-	setConfirmPassword: (value: string) => void;
-	isLoading: boolean;
-	isSaving: boolean;
-	isChangingPassword: boolean;
-	error: string | null;
-	successMessage: string | null;
-	passwordError: string | null;
-	passwordSuccessMessage: string | null;
-	hasChanges: boolean;
-	handleSave: () => Promise<void>;
-	handlePasswordChange: () => Promise<void>;
+	profileForm: ProfileFormData;
+	passwordForm: PasswordFormData;
+	uiState: UIState;
+	messages: Messages;
+	actions: ProfileActions;
 	handleLogout?: () => Promise<void>;
 	styles: Record<string, string>;
 };
 
 export function ProfileSettingsContent({
 	originalProfile,
-	displayName,
-	setDisplayName,
-	email,
-	setEmail,
-	currentPassword,
-	setCurrentPassword,
-	newPassword,
-	setNewPassword,
-	confirmPassword,
-	setConfirmPassword,
-	isLoading,
-	isSaving,
-	isChangingPassword,
-	error,
-	successMessage,
-	passwordError,
-	passwordSuccessMessage,
-	hasChanges,
-	handleSave,
-	handlePasswordChange,
+	profileForm,
+	passwordForm,
+	uiState,
+	messages,
+	actions,
 	handleLogout,
 	styles,
 }: ProfileSettingsContentProps) {
@@ -70,26 +47,11 @@ export function ProfileSettingsContent({
 				return (
 					<GeneralSettings
 						originalProfile={originalProfile}
-						displayName={displayName}
-						setDisplayName={setDisplayName}
-						email={email}
-						setEmail={setEmail}
-						currentPassword={currentPassword}
-						setCurrentPassword={setCurrentPassword}
-						newPassword={newPassword}
-						setNewPassword={setNewPassword}
-						confirmPassword={confirmPassword}
-						setConfirmPassword={setConfirmPassword}
-						isLoading={isLoading}
-						isSaving={isSaving}
-						isChangingPassword={isChangingPassword}
-						error={error}
-						successMessage={successMessage}
-						passwordError={passwordError}
-						passwordSuccessMessage={passwordSuccessMessage}
-						hasChanges={hasChanges}
-						handleSave={handleSave}
-						handlePasswordChange={handlePasswordChange}
+						profileForm={profileForm}
+						passwordForm={passwordForm}
+						uiState={uiState}
+						messages={messages}
+						actions={actions}
 						handleLogout={handleLogout}
 						styles={styles}
 					/>

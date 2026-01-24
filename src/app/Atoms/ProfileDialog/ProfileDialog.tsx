@@ -14,7 +14,7 @@ type ProfileDialogProps = {
 };
 
 export function ProfileDialog({ children }: ProfileDialogProps) {
-	const profileSettings = useProfileSettings();
+	const { originalProfile, profileForm, passwordForm, uiState, messages, actions } = useProfileSettings();
 	const router = useRouter();
 	const supabase = createClient();
 
@@ -38,7 +38,16 @@ export function ProfileDialog({ children }: ProfileDialogProps) {
 						</Dialog.Close>
 					</div>
 					<div className={styles["dialog-body"]}>
-						<ProfileSettingsContent {...profileSettings} handleLogout={handleLogout} styles={styles} />
+						<ProfileSettingsContent
+							originalProfile={originalProfile}
+							profileForm={profileForm}
+							passwordForm={passwordForm}
+							uiState={uiState}
+							messages={messages}
+							actions={actions}
+							handleLogout={handleLogout}
+							styles={styles}
+						/>
 					</div>
 				</Dialog.Content>
 			</Dialog.Portal>

@@ -3,57 +3,34 @@
 import { Badge } from "@atoms/Badge/Badge";
 import { Button } from "@atoms/Button/Button";
 import { Text } from "@atoms/Text/Text";
-import { ProfileData } from "@hooks/useProfileSettings";
+import {
+	Messages,
+	PasswordFormData,
+	ProfileActions,
+	ProfileData,
+	ProfileFormData,
+	UIState,
+} from "@hooks/useProfileSettings";
 import * as Switch from "@radix-ui/react-switch";
 
 type GeneralSettingsProps = {
 	originalProfile: ProfileData | null;
-	displayName: string;
-	setDisplayName: (value: string) => void;
-	email: string;
-	setEmail: (value: string) => void;
-	currentPassword: string;
-	setCurrentPassword: (value: string) => void;
-	newPassword: string;
-	setNewPassword: (value: string) => void;
-	confirmPassword: string;
-	setConfirmPassword: (value: string) => void;
-	isLoading: boolean;
-	isSaving: boolean;
-	isChangingPassword: boolean;
-	error: string | null;
-	successMessage: string | null;
-	passwordError: string | null;
-	passwordSuccessMessage: string | null;
-	hasChanges: boolean;
-	handleSave: () => Promise<void>;
-	handlePasswordChange: () => Promise<void>;
+	profileForm: ProfileFormData;
+	passwordForm: PasswordFormData;
+	uiState: UIState;
+	messages: Messages;
+	actions: ProfileActions;
 	handleLogout?: () => Promise<void>;
 	styles: Record<string, string>;
 };
 
 export function GeneralSettings({
 	originalProfile,
-	displayName,
-	setDisplayName,
-	email,
-	setEmail,
-	currentPassword,
-	setCurrentPassword,
-	newPassword,
-	setNewPassword,
-	confirmPassword,
-	setConfirmPassword,
-	isLoading,
-	isSaving,
-	isChangingPassword,
-	error,
-	successMessage,
-	passwordError,
-	passwordSuccessMessage,
-	hasChanges,
-	handleSave,
-	handlePasswordChange,
+	profileForm,
+	passwordForm,
+	uiState,
+	messages,
+	actions,
 	handleLogout,
 	styles,
 }: GeneralSettingsProps) {
@@ -61,8 +38,8 @@ export function GeneralSettings({
 		<div className={styles["tab-content"]}>
 			<section className={styles["settings-section"]}>
 				<h3 className={styles["section-heading"]}>Profile</h3>
-				{error && <div className={styles["error-message"]}>{error}</div>}
-				{successMessage && <div className={styles["success-message"]}>{successMessage}</div>}
+				{messages.error && <div className={styles["error-message"]}>{messages.error}</div>}
+				{messages.successMessage && <div className={styles["success-message"]}>{messages.successMessage}</div>}
 				<div className={styles["form-group"]}>
 					<label className={styles["form-label"]} htmlFor="name">Name</label>
 					<input
@@ -70,9 +47,9 @@ export function GeneralSettings({
 						id="name"
 						className={styles["form-input"]}
 						placeholder="Enter your name"
-						value={displayName}
-						onChange={(e) => setDisplayName(e.target.value)}
-						disabled={isLoading || isSaving}
+						value={profileForm.displayName}
+						onChange={(e) => profileForm.setDisplayName(e.target.value)}
+						disabled={uiState.isLoading || uiState.isSaving}
 					/>
 				</div>
 				<div className={styles["form-group"]}>
@@ -82,9 +59,9 @@ export function GeneralSettings({
 						id="email"
 						className={styles["form-input"]}
 						placeholder="Enter your email"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-						disabled={isLoading || isSaving}
+						value={profileForm.email}
+						onChange={(e) => profileForm.setEmail(e.target.value)}
+						disabled={uiState.isLoading || uiState.isSaving}
 					/>
 					{originalProfile?.pendingEmail && (
 						<div className={styles["pending-email-notice"]}>
@@ -93,14 +70,14 @@ export function GeneralSettings({
 						</div>
 					)}
 				</div>
-				{hasChanges && (
+				{actions.hasChanges && (
 					<div className={styles["save-button-container"]}>
 						<Button
 							variant="primary"
-							onClick={handleSave}
-							disabled={isSaving}
+							onClick={actions.handleSave}
+							disabled={uiState.isSaving}
 						>
-							{isSaving ? "Saving..." : "Save Changes"}
+							{uiState.isSaving ? "Saving..." : "Save Changes"}
 						</Button>
 					</div>
 				)}
@@ -108,8 +85,10 @@ export function GeneralSettings({
 
 			<section className={styles["settings-section"]}>
 				<h3 className={styles["section-heading"]}>Password</h3>
-				{passwordError && <div className={styles["error-message"]}>{passwordError}</div>}
-				{passwordSuccessMessage && <div className={styles["success-message"]}>{passwordSuccessMessage}</div>}
+				{messages.passwordError && <div className={styles["error-message"]}>{messages.passwordError}</div>}
+				{messages.passwordSuccessMessage && (
+					<div className={styles["success-message"]}>{messages.passwordSuccessMessage}</div>
+				)}
 				<div className={styles["form-group"]}>
 					<label className={styles["form-label"]} htmlFor="currentPassword">Current Password</label>
 					<input
@@ -117,9 +96,9 @@ export function GeneralSettings({
 						id="currentPassword"
 						className={styles["form-input"]}
 						placeholder="Enter your current password"
-						value={currentPassword}
-						onChange={(e) => setCurrentPassword(e.target.value)}
-						disabled={isLoading || isChangingPassword}
+						value={passwordForm.currentPassword}
+						onChange={(e) => passwordForm.setCurrentPassword(e.target.value)}
+						disabled={uiState.isLoading || uiState.isChangingPassword}
 					/>
 				</div>
 				<div className={styles["form-group"]}>
@@ -129,9 +108,9 @@ export function GeneralSettings({
 						id="newPassword"
 						className={styles["form-input"]}
 						placeholder="Enter your new password"
-						value={newPassword}
-						onChange={(e) => setNewPassword(e.target.value)}
-						disabled={isLoading || isChangingPassword}
+						value={passwordForm.newPassword}
+						onChange={(e) => passwordForm.setNewPassword(e.target.value)}
+						disabled={uiState.isLoading || uiState.isChangingPassword}
 					/>
 				</div>
 				<div className={styles["form-group"]}>
@@ -141,19 +120,24 @@ export function GeneralSettings({
 						id="confirmPassword"
 						className={styles["form-input"]}
 						placeholder="Confirm your new password"
-						value={confirmPassword}
-						onChange={(e) => setConfirmPassword(e.target.value)}
-						disabled={isLoading || isChangingPassword}
+						value={passwordForm.confirmPassword}
+						onChange={(e) => passwordForm.setConfirmPassword(e.target.value)}
+						disabled={uiState.isLoading || uiState.isChangingPassword}
 					/>
 				</div>
-				{(currentPassword || newPassword || confirmPassword) && (
+				{(passwordForm.currentPassword || passwordForm.newPassword || passwordForm.confirmPassword) && (
 					<div className={styles["save-button-container"]}>
 						<Button
 							variant="primary"
-							onClick={handlePasswordChange}
-							disabled={isChangingPassword || !currentPassword || !newPassword || !confirmPassword}
+							onClick={actions.handlePasswordChange}
+							disabled={
+								uiState.isChangingPassword
+								|| !passwordForm.currentPassword
+								|| !passwordForm.newPassword
+								|| !passwordForm.confirmPassword
+							}
 						>
-							{isChangingPassword ? "Changing Password..." : "Change Password"}
+							{uiState.isChangingPassword ? "Changing Password..." : "Change Password"}
 						</Button>
 					</div>
 				)}

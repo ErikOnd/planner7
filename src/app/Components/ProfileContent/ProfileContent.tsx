@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import styles from "./ProfileContent.module.scss";
 
 export function ProfileContent() {
-	const profileSettings = useProfileSettings();
+	const { originalProfile, profileForm, passwordForm, uiState, messages, actions } = useProfileSettings();
 	const router = useRouter();
 	const supabase = createClient();
 
@@ -18,7 +18,16 @@ export function ProfileContent() {
 
 	return (
 		<div className={styles["profile-container"]}>
-			<ProfileSettingsContent {...profileSettings} handleLogout={handleLogout} styles={styles} />
+			<ProfileSettingsContent
+				originalProfile={originalProfile}
+				profileForm={profileForm}
+				passwordForm={passwordForm}
+				uiState={uiState}
+				messages={messages}
+				actions={actions}
+				handleLogout={handleLogout}
+				styles={styles}
+			/>
 		</div>
 	);
 }

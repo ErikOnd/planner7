@@ -7,6 +7,41 @@ export type ProfileData = {
 	pendingEmail?: string;
 };
 
+export type ProfileFormData = {
+	displayName: string;
+	setDisplayName: (value: string) => void;
+	email: string;
+	setEmail: (value: string) => void;
+};
+
+export type PasswordFormData = {
+	currentPassword: string;
+	setCurrentPassword: (value: string) => void;
+	newPassword: string;
+	setNewPassword: (value: string) => void;
+	confirmPassword: string;
+	setConfirmPassword: (value: string) => void;
+};
+
+export type UIState = {
+	isLoading: boolean;
+	isSaving: boolean;
+	isChangingPassword: boolean;
+};
+
+export type Messages = {
+	error: string | null;
+	successMessage: string | null;
+	passwordError: string | null;
+	passwordSuccessMessage: string | null;
+};
+
+export type ProfileActions = {
+	hasChanges: boolean;
+	handleSave: () => Promise<void>;
+	handlePasswordChange: () => Promise<void>;
+};
+
 export function useProfileSettings() {
 	const [originalProfile, setOriginalProfile] = useState<ProfileData | null>(null);
 	const [displayName, setDisplayName] = useState("");
@@ -113,27 +148,47 @@ export function useProfileSettings() {
 		setIsChangingPassword(false);
 	};
 
-	return {
-		originalProfile,
+	const profileForm: ProfileFormData = {
 		displayName,
 		setDisplayName,
 		email,
 		setEmail,
+	};
+
+	const passwordForm: PasswordFormData = {
 		currentPassword,
 		setCurrentPassword,
 		newPassword,
 		setNewPassword,
 		confirmPassword,
 		setConfirmPassword,
+	};
+
+	const uiState: UIState = {
 		isLoading,
 		isSaving,
 		isChangingPassword,
+	};
+
+	const messages: Messages = {
 		error,
 		successMessage,
 		passwordError,
 		passwordSuccessMessage,
+	};
+
+	const actions: ProfileActions = {
 		hasChanges,
 		handleSave,
 		handlePasswordChange,
+	};
+
+	return {
+		originalProfile,
+		profileForm,
+		passwordForm,
+		uiState,
+		messages,
+		actions,
 	};
 }
