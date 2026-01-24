@@ -6,10 +6,12 @@
 	align-items: center;
 	justify-content: center;
 	border: none;
-	border-radius: variables.$radius-md;
-	padding: .75rem 1.5rem;
+	border-radius: variables.$radius-sm;
+	padding: var(--space-sm) var(--space-lg);
 	cursor: pointer;
 	font-weight: 500;
+	font-size: var(--font-size-base);
+	min-height: 3.6rem;
 	position: relative;
 	overflow: hidden;
 	transition:
@@ -33,7 +35,11 @@
 }
 
 .icon-button {
-	padding: .75rem;
+	padding: var(--space-sm);
+	width: 3.2rem;
+	height: 3.2rem;
+	min-height: 3.2rem;
+	min-width: 3.2rem;
 }
 
 .primary {

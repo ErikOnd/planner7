@@ -12,6 +12,14 @@
 @font-face {
 	font-family: 'Inter';
 	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('assets/fonts/inter-v19-latin-500.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
 	font-weight: 500;
 	font-display: swap;
 	src: url('assets/fonts/inter-v19-latin-500.woff2') format('woff2');
@@ -78,20 +86,20 @@
 	--shadow-xl: #{variables.$shadow-color-xl};
 	--shadow-primary-sm: #{variables.$shadow-primary-sm};
 
-	--space-xs: #{mixins.clamp-builder(0.4, 0.8)};
-	--space-sm: #{mixins.clamp-builder(0.8, 1.2)};
-	--space-md: #{mixins.clamp-builder(1.2, 1.6)};
-	--space-lg: #{mixins.clamp-builder(1.6, 2.4)};
-	--space-xl: #{mixins.clamp-builder(2.4, 3.2)};
-	--space-2xl: #{mixins.clamp-builder(3.2, 4.0)};
+	--space-xs: #{mixins.clamp-builder(0.4, 0.6)};
+	--space-sm: #{mixins.clamp-builder(0.6, 0.8)};
+	--space-md: #{mixins.clamp-builder(0.8, 1.0)};
+	--space-lg: #{mixins.clamp-builder(1.2, 1.6)};
+	--space-xl: #{mixins.clamp-builder(1.6, 2.0)};
+	--space-2xl: #{mixins.clamp-builder(2.0, 2.4)};
 
 	--content-spacing: #{mixins.clamp-builder(1.6, 4.8)};
 
-	--font-size-xl: 1.3rem;
-	--font-size-lg: 1.1rem;
-	--font-size-base: 1rem;
-	--font-size-sm: 0.9rem;
-	--font-size-xs: 0.8rem;
+	--font-size-xl: 1.25rem;
+	--font-size-lg: 1.0625rem;
+	--font-size-base: 0.9375rem;
+	--font-size-sm: 0.875rem;
+	--font-size-xs: 0.8125rem;
 }
 
 [data-theme="dark"] {
@@ -154,13 +162,14 @@ html {
 }
 
 body {
-	line-height: 1.6;
+	line-height: 1.5;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	background: var(--color-background);
 	font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
 	color: var(--color-text);
 	min-height: 100dvh;
+	font-weight: 400;
 }
 
 ul, ol {

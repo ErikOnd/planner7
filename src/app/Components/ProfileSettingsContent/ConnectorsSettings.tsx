@@ -15,7 +15,7 @@ export function ConnectorsSettings({ styles }: ConnectorsSettingsProps) {
 					<h3 className={styles["section-heading"]}>Third-party Integrations</h3>
 					<Badge variant="coming-soon">Coming soon</Badge>
 				</div>
-				<Text size="sm" variant="muted">Connect your planner with other services</Text>
+				<Text size="sm" variant="muted">Connect planner7 with other services</Text>
 			</section>
 		</div>
 	);

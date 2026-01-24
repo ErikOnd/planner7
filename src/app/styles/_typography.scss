@@ -44,31 +44,31 @@
 }
 
 @mixin text-xl {
-	font-size: 1.3rem;
+	font-size: 1.25rem;
 	font-weight: 600;
-	line-height: 1.5;
+	line-height: 1.4;
 }
 
 @mixin text-lg {
-	font-size: 1.1rem;
+	font-size: 1.0625rem;
 	font-weight: 500;
-	line-height: 1.5;
+	line-height: 1.4;
 }
 
 @mixin text-base {
-	font-size: 1rem;
-	font-weight: 500;
-	line-height: 1.6;
-}
-
-@mixin text-sm {
-	font-size: 0.9rem;
-	font-weight: 500;
+	font-size: 0.9375rem;
+	font-weight: 400;
 	line-height: 1.5;
 }
 
+@mixin text-sm {
+	font-size: 0.875rem;
+	font-weight: 400;
+	line-height: 1.45;
+}
+
 @mixin text-xs {
-	font-size: 0.8rem;
-	font-weight: 500;
+	font-size: 0.8125rem;
+	font-weight: 400;
 	line-height: 1.4;
 }
