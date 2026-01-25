@@ -137,9 +137,11 @@ export function CalendarOverlay({ children, onDateSelect }: CalendarOverlayProps
 							onClick={handlePreviousMonth}
 							aria-label="Previous month"
 						/>
-						<h2 className={styles["calendar-title"]}>
-							{MONTHS[currentMonth]} {currentYear}
-						</h2>
+						<Dialog.Title asChild>
+							<h2 className={styles["calendar-title"]}>
+								{MONTHS[currentMonth]} {currentYear}
+							</h2>
+						</Dialog.Title>
 						<Button
 							variant="ghost"
 							icon="chevron-right"
