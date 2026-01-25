@@ -1,7 +1,10 @@
+import Calendar from "@assets/icons/calendar.svg";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import ChevronRight from "@assets/icons/chevron-right.svg";
 import Close from "@assets/icons/close.svg";
 import ClosedEye from "@assets/icons/closed-eye.svg";
+import DoubleChevronLeft from "@assets/icons/double-chevron-left.svg";
+import DoubleChevronRight from "@assets/icons/double-chevron-right.svg";
 import Eye from "@assets/icons/eye.svg";
 import Moon from "@assets/icons/moon.svg";
 import Pencil from "@assets/icons/pencil.svg";
@@ -32,6 +35,9 @@ const icons = {
 	"user": User,
 	"close": Close,
 	"trash": Trash,
+	"calendar": Calendar,
+	"double-chevron-left": DoubleChevronLeft,
+	"double-chevron-right": DoubleChevronRight,
 };
 
 export type IconName = keyof typeof icons;
@@ -44,10 +50,10 @@ type IconProps = {
 };
 
 export function Icon({ name, size = 24, className, ariaLabel }: IconProps) {
-	const Icon = icons[name];
+	const IconComponent = icons[name];
 
 	return (
-		<Icon
+		<IconComponent
 			width={size}
 			height={size}
 			className={clsx("icon", className)}

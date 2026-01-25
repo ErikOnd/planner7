@@ -130,12 +130,10 @@ export function GeneralSettings({
 						<Button
 							variant="primary"
 							onClick={actions.handlePasswordChange}
-							disabled={
-								uiState.isChangingPassword
+							disabled={uiState.isChangingPassword
 								|| !passwordForm.currentPassword
 								|| !passwordForm.newPassword
-								|| !passwordForm.confirmPassword
-							}
+								|| !passwordForm.confirmPassword}
 						>
 							{uiState.isChangingPassword ? "Changing Password..." : "Change Password"}
 						</Button>

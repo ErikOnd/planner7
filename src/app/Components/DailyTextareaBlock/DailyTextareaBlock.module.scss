@@ -14,6 +14,11 @@
 		border-color: var(--color-primary);
 	}
 
+	&.is-highlighted {
+		outline: .2rem solid var(--color-primary);
+		outline-offset: .2rem;
+	}
+
 	.date {
 		@include typography.text-base;
 		display: flex;

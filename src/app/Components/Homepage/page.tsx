@@ -20,6 +20,7 @@ export default function HomePage() {
 	const [selectedContent, setSelectedContent] = useState<"weekly" | "remember" | "profile">("weekly");
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [baseDate, setBaseDate] = useState<Date>(new Date());
+	const [highlightedDate, setHighlightedDate] = useState<Date | null>(null);
 	const { rangeLabel } = getCurrentWeek(baseDate);
 
 	const todosState = useGeneralTodos();
@@ -32,6 +33,13 @@ export default function HomePage() {
 
 		loadWeek(startDate, endDate);
 	}, [baseDate, loadWeek]);
+
+	const handleCalendarDateSelect = (date: Date) => {
+		setBaseDate(date);
+		setHighlightedDate(date);
+		// Clear highlight after 3 seconds
+		setTimeout(() => setHighlightedDate(null), 3000);
+	};
 
 	const renderMobileContent = () => {
 		if (isWeekLoading) return null;
@@ -66,7 +74,7 @@ export default function HomePage() {
 				)
 				: (
 					<div className={styles["desktop-view"]}>
-						<DesktopNavigation rangeLabel={rangeLabel} />
+						<DesktopNavigation rangeLabel={rangeLabel} onDateSelect={handleCalendarDateSelect} />
 						<div className={styles["sidebar-content-section"]}>
 							<Sidebar
 								baseDate={baseDate}
@@ -74,7 +82,7 @@ export default function HomePage() {
 								rangeLabel={rangeLabel}
 								todosState={todosState}
 							/>
-							{!isWeekLoading && <DesktopContent baseDate={baseDate} />}
+							{!isWeekLoading && <DesktopContent baseDate={baseDate} highlightedDate={highlightedDate} />}
 						</div>
 					</div>
 				)}

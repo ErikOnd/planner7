@@ -1,0 +1,136 @@
+@use "../../styles/variables" as variables;
+@use "../../styles/typography" as typography;
+
+.dialog-overlay {
+	position: fixed;
+	inset: 0;
+	background-color: var(--color-overlay);
+	animation: overlay-show variables.$transition-fast;
+	z-index: 1000;
+}
+
+.dialog-content {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: var(--color-surface-elevated);
+	border: .1rem solid var(--color-border);
+	border-radius: variables.$radius-lg;
+	box-shadow:
+		0 1rem 3rem var(--shadow-xl),
+		0 0.5rem 1.5rem var(--shadow-lg);
+	padding: var(--space-lg);
+	width: 90vw;
+	max-width: 42rem;
+	animation: content-show variables.$transition-fast;
+	z-index: 1001;
+}
+
+.calendar-header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-md);
+	margin-bottom: var(--space-lg);
+}
+
+.calendar-title {
+	@include typography.text-xl;
+	color: var(--color-text);
+	font-weight: 600;
+	min-width: 16rem;
+	text-align: center;
+}
+
+.calendar-grid {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+}
+
+.calendar-weekdays {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: var(--space-xs);
+	margin-bottom: var(--space-xs);
+}
+
+.calendar-weekday {
+	@include typography.text-sm;
+	color: var(--color-text-muted);
+	font-weight: 600;
+	text-align: center;
+	padding: var(--space-xs);
+}
+
+.calendar-days {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	grid-template-rows: repeat(6, 1fr);
+	gap: var(--space-xs);
+}
+
+.calendar-day-empty {
+	aspect-ratio: 1;
+}
+
+.calendar-day {
+	@include typography.text-base;
+	aspect-ratio: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: transparent;
+	border: .1rem solid var(--color-border-light);
+	border-radius: variables.$radius-sm;
+	cursor: pointer;
+	color: var(--color-text);
+	font-weight: 400;
+	transition: all variables.$transition-base;
+	min-height: 3.6rem;
+
+	&:hover {
+		background-color: var(--color-primary-subtle);
+		border-color: var(--color-primary);
+		color: var(--color-primary-dark);
+		transform: scale(1.05);
+	}
+
+	&--today {
+		background-color: var(--color-primary-subtle);
+		color: var(--color-primary-dark);
+		border-color: var(--color-primary);
+		font-weight: 600;
+
+		&:hover {
+			background-color: var(--color-primary-subtle);
+			border-color: var(--color-primary-dark);
+		}
+	}
+
+	&:focus-visible {
+		outline: .2rem solid var(--color-primary);
+		outline-offset: .1rem;
+	}
+}
+
+@keyframes overlay-show {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes content-show {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -48%) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}

@@ -18,10 +18,11 @@ import clsx from "clsx";
 type DailyTextareaProps = {
 	textareaDate: Date;
 	autoFocus?: boolean;
+	isHighlighted?: boolean;
 };
 
 function DailyTextareaBlockComponent(props: DailyTextareaProps) {
-	const { textareaDate } = props;
+	const { textareaDate, isHighlighted = false } = props;
 	const { weekday, date } = formatToDayLabel(textareaDate);
 	const isToday = textareaDate.toDateString() === new Date().toDateString();
 	const textareaBlock = useRef<HTMLDivElement | null>(null);
@@ -42,6 +43,17 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 			el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
 		}
 	}, [isToday]);
+
+	useEffect(() => {
+		if (!isHighlighted || !textareaBlock.current) return;
+		const el = textareaBlock.current;
+		const rect = el.getBoundingClientRect();
+		const vpH = window.innerHeight || document.documentElement.clientHeight;
+		const fullyInView = rect.top >= 0 && rect.bottom <= vpH;
+		if (!fullyInView) {
+			el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+		}
+	}, [isHighlighted]);
 
 	const handleChange = useCallback(
 		(newContent: Block[]) => {
@@ -64,7 +76,11 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 		};
 	}, []);
 
-	const DailyTextareaBlockClass = clsx(styles["daily-textarea-block"], isToday && styles["is-today"]);
+	const DailyTextareaBlockClass = clsx(
+		styles["daily-textarea-block"],
+		isToday && styles["is-today"],
+		isHighlighted && styles["is-highlighted"],
+	);
 
 	return (
 		<div ref={textareaBlock} className={DailyTextareaBlockClass}>
@@ -88,6 +104,9 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 
 // Memoize component to prevent re-renders when todos context updates
 export const DailyTextareaBlock = memo(DailyTextareaBlockComponent, (prevProps, nextProps) => {
-	// Only re-render if the date actually changes
-	return prevProps.textareaDate.getTime() === nextProps.textareaDate.getTime();
+	// Only re-render if the date or highlight state changes
+	return (
+		prevProps.textareaDate.getTime() === nextProps.textareaDate.getTime()
+		&& prevProps.isHighlighted === nextProps.isHighlighted
+	);
 });
