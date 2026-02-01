@@ -109,5 +109,27 @@ export function useAuthActions() {
 		}
 	}, [clearMessages, supabase]);
 
-	return { loading, errorMsg, infoMsg, setErrorMsg, setInfoMsg, logIn, signUp, sendResetPassword };
+	const signInWithGoogle = useCallback(async () => {
+		clearMessages();
+		setLoading(true);
+		try {
+			const { error } = await supabase.auth.signInWithOAuth({
+				provider: "google",
+				options: {
+					redirectTo: typeof window !== "undefined"
+						? `${location.origin}/auth/callback`
+						: undefined,
+				},
+			});
+			if (error) {
+				setErrorMsg(mapAuthError(error, "sign_in"));
+				setLoading(false);
+			}
+		} catch (err) {
+			setErrorMsg(mapAuthError(err, "sign_in"));
+			setLoading(false);
+		}
+	}, [clearMessages, supabase]);
+
+	return { loading, errorMsg, infoMsg, setErrorMsg, setInfoMsg, logIn, signUp, sendResetPassword, signInWithGoogle };
 }

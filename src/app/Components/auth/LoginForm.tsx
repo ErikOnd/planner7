@@ -3,6 +3,7 @@
 import styles from "./AuthForm.module.scss";
 
 import { Button } from "@atoms/Button/Button";
+import { Icon } from "@atoms/Icons/Icon";
 import { InputField } from "@atoms/InputField/InputField";
 import { Message } from "@atoms/Message/Message";
 import { Text } from "@atoms/Text/Text";
@@ -12,7 +13,7 @@ import { FormEvent, useState } from "react";
 import { PasswordField } from "./PasswordField";
 
 export function LoginForm() {
-	const { loading, logIn, sendResetPassword, errorMsg, infoMsg } = useAuthActions();
+	const { loading, logIn, sendResetPassword, signInWithGoogle, errorMsg, infoMsg } = useAuthActions();
 	const router = useRouter();
 
 	const [email, setEmail] = useState("");
@@ -65,6 +66,17 @@ export function LoginForm() {
 				</Button>
 				<Button type="button" variant="secondary" fontWeight={700} onClick={() => router.push("/signup")}>
 					Sign up
+				</Button>
+			</div>
+			<div className={styles.divider}>
+				<span>or</span>
+			</div>
+			<div className={styles.socialAuth}>
+				<Button type="button" variant="secondary" disabled={loading} onClick={signInWithGoogle} wrapText={false} className={styles.googleButton}>
+					<div className={styles.googleButtonContent}>
+						<Icon name="google" size={20} />
+						<Text size="sm" fontWeight={600}>Continue with Google</Text>
+					</div>
 				</Button>
 			</div>
 		</form>

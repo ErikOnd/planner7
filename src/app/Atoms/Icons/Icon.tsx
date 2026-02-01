@@ -6,6 +6,7 @@ import ClosedEye from "@assets/icons/closed-eye.svg";
 import DoubleChevronLeft from "@assets/icons/double-chevron-left.svg";
 import DoubleChevronRight from "@assets/icons/double-chevron-right.svg";
 import Eye from "@assets/icons/eye.svg";
+import Google from "@assets/icons/google.svg";
 import Moon from "@assets/icons/moon.svg";
 import Pencil from "@assets/icons/pencil.svg";
 import Plus from "@assets/icons/plus.svg";
@@ -38,6 +39,7 @@ const icons = {
 	"calendar": Calendar,
 	"double-chevron-left": DoubleChevronLeft,
 	"double-chevron-right": DoubleChevronRight,
+	"google": Google,
 };
 
 export type IconName = keyof typeof icons;
