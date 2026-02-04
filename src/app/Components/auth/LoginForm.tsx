@@ -72,7 +72,14 @@ export function LoginForm() {
 				<span>or</span>
 			</div>
 			<div className={styles.socialAuth}>
-				<Button type="button" variant="secondary" disabled={loading} onClick={signInWithGoogle} wrapText={false} className={styles.googleButton}>
+				<Button
+					type="button"
+					variant="secondary"
+					disabled={loading}
+					onClick={signInWithGoogle}
+					wrapText={false}
+					className={styles.googleButton}
+				>
 					<div className={styles.googleButtonContent}>
 						<Icon name="google" size={20} />
 						<Text size="sm" fontWeight={600}>Continue with Google</Text>
