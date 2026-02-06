@@ -5,20 +5,29 @@ import { ReactNode } from "react";
 
 type HeadlineProps = {
 	as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-	size?: 1 | 2 | 3 | 4 | 5 | 6;
 	children: ReactNode;
 	className?: string;
 };
 
+const headlineMap = {
+	h1: "headline1",
+	h2: "headline2",
+	h3: "headline3",
+	h4: "headline4",
+	h5: "headline5",
+	h6: "headline6",
+} as const;
+
 export function Headline({
 	as = "h2",
-	size = 1,
 	children,
 	className,
 }: HeadlineProps) {
 	const Tag = as;
+	const headlineClass = styles[headlineMap[as]];
+
 	return (
-		<Tag className={clsx(styles[`headline${size}`], className)}>
+		<Tag className={clsx(headlineClass, className)}>
 			{children}
 		</Tag>
 	);

@@ -8,20 +8,21 @@ import { InputField } from "@atoms/InputField/InputField";
 import { Message } from "@atoms/Message/Message";
 import { Text } from "@atoms/Text/Text";
 import { useAuthActions } from "@hooks/useAuthActions";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { PasswordField } from "./PasswordField";
 
 export function SignUpForm() {
 	const { loading, signUp, signInWithGoogle, errorMsg, infoMsg } = useAuthActions();
-	const router = useRouter();
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [displayName, setDisplayName] = useState("");
+	const [acceptedTerms, setAcceptedTerms] = useState(false);
 
 	async function onSubmit(e: FormEvent) {
 		e.preventDefault();
+		if (!acceptedTerms) return;
 		await signUp(email, password, displayName);
 	}
 
@@ -69,16 +70,32 @@ export function SignUpForm() {
 
 				<PasswordField value={password} onChange={setPassword} disabled={loading} />
 			</div>
+			<label className={styles["consent-row"]} htmlFor="accept-terms">
+				<input
+					id="accept-terms"
+					type="checkbox"
+					checked={acceptedTerms}
+					required
+					disabled={loading}
+					onChange={(e) => setAcceptedTerms(e.target.checked)}
+				/>
+				<Text as="span" size="sm" className={styles["consent-text"]}>
+					I agree to the <Link href="/terms" className={styles["legal-link"]}>Terms of Service</Link> and{" "}
+					<Link href="/privacy" className={styles["legal-link"]}>Privacy Policy</Link>.
+				</Text>
+			</label>
 
 			<Message variant="error">{errorMsg}</Message>
 			<Message variant="info">{infoMsg}</Message>
 			<div className={styles.actionsRow}>
-				<Button type="submit" variant="primary" disabled={loading} fontWeight={700}>
+				<Button type="submit" variant="primary" disabled={loading || !acceptedTerms} fontWeight={700}>
 					{loading ? "Creating account..." : "Sign up"}
 				</Button>
-				<Button type="button" variant="secondary" fontWeight={700} onClick={() => router.push("/login")}>
-					Already have an account? Log in
-				</Button>
+				<Link href="/login">
+					<Button type="button" variant="secondary" fontWeight={700}>
+						Already have an account? Log in
+					</Button>
+				</Link>
 			</div>
 			<div className={styles.divider}>
 				<span>or</span>
@@ -87,7 +104,7 @@ export function SignUpForm() {
 				<Button
 					type="button"
 					variant="secondary"
-					disabled={loading}
+					disabled={loading || !acceptedTerms}
 					onClick={signInWithGoogle}
 					wrapText={false}
 					className={styles.googleButton}

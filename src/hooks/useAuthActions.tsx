@@ -33,7 +33,7 @@ export function useAuthActions() {
 				return;
 			}
 			await checkUserExists();
-			router.push("/");
+			router.push("/app");
 		} catch (err) {
 			setErrorMsg(mapAuthError(err, "sign_in"));
 		} finally {
@@ -76,7 +76,7 @@ export function useAuthActions() {
 				return;
 			}
 			await checkUserExists();
-			router.push("/");
+			router.push("/app");
 		} catch (err) {
 			setErrorMsg(mapAuthError(err, "sign_up"));
 		} finally {

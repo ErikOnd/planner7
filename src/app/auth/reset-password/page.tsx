@@ -47,7 +47,7 @@ export default function ResetPasswordPage() {
 			} else {
 				setSuccessMsg("Password updated successfully! Redirecting...");
 				setTimeout(() => {
-					router.push("/");
+					router.push("/app");
 				}, 2000);
 			}
 		} catch {

@@ -35,26 +35,6 @@
 		align-items: center;
 	}
 
-	.logo-text {
-		display: flex;
-		align-items: baseline;
-		color: var(--color-text);
-		font-weight: 600;
-		letter-spacing: 0.05em;
-	}
-
-	.logo-text-main {
-		font-size: 1.5rem;
-		line-height: 1;
-	}
-
-	.logo-text-number {
-		font-size: 1rem;
-		font-weight: 500;
-		margin-left: 0.1rem;
-		opacity: 0.85;
-	}
-
 	.logo {
 		display: block;
 	}

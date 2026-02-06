@@ -8,13 +8,12 @@ import { InputField } from "@atoms/InputField/InputField";
 import { Message } from "@atoms/Message/Message";
 import { Text } from "@atoms/Text/Text";
 import { useAuthActions } from "@hooks/useAuthActions";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { PasswordField } from "./PasswordField";
 
 export function LoginForm() {
 	const { loading, logIn, sendResetPassword, signInWithGoogle, errorMsg, infoMsg } = useAuthActions();
-	const router = useRouter();
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -64,9 +63,11 @@ export function LoginForm() {
 				<Button type="submit" variant="primary" disabled={loading} fontWeight={700}>
 					{loading ? "Signing in..." : "Log in"}
 				</Button>
-				<Button type="button" variant="secondary" fontWeight={700} onClick={() => router.push("/signup")}>
-					Sign up
-				</Button>
+				<Link href="/signup">
+					<Button type="button" variant="secondary" fontWeight={700}>
+						Sign up
+					</Button>
+				</Link>
 			</div>
 			<div className={styles.divider}>
 				<span>or</span>
@@ -86,6 +87,11 @@ export function LoginForm() {
 					</div>
 				</Button>
 			</div>
+			<Text size="xs" className={styles["legal-note"]}>
+				By continuing, you agree to our <Link href="/terms" className={styles["legal-link"]}>Terms of Service</Link> and
+				{" "}
+				<Link href="/privacy" className={styles["legal-link"]}>Privacy Policy</Link>.
+			</Text>
 		</form>
 	);
 }

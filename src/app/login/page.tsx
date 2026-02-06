@@ -10,7 +10,7 @@ export default async function LoginPage() {
 	const { data, error } = await supabase.auth.getUser();
 
 	if (!error && data?.user) {
-		redirect("/");
+		redirect("/app");
 	}
 
 	return (

@@ -7,8 +7,32 @@ import React, { ReactNode } from "react";
 
 export const metadata: Metadata = {
 	title: "Planner7",
-	description: "A minimal weekly planner for scheduling, todos, and personal organization",
+	description: "A focused weekly planner that combines daily notes, tasks, and a week-at-a-glance view.",
 	applicationName: "Planner7",
+	icons: {
+		icon: [
+			{ url: "/favicon.svg", type: "image/svg+xml" },
+		],
+		apple: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+	},
+	openGraph: {
+		title: "Planner7",
+		description: "A focused weekly planner that combines daily notes, tasks, and a week-at-a-glance view.",
+		siteName: "Planner7",
+		type: "website",
+		images: [
+			{
+				url: "/favicon.svg",
+				alt: "Planner7 logo",
+			},
+		],
+	},
+	twitter: {
+		card: "summary",
+		title: "Planner7",
+		description: "A focused weekly planner that combines daily notes, tasks, and a week-at-a-glance view.",
+		images: ["/favicon.svg"],
+	},
 	appleWebApp: {
 		capable: true,
 		statusBarStyle: "default",
