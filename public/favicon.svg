@@ -1,12 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Planner7">
-  <defs>
-    <linearGradient id="tile" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#111827" />
-      <stop offset="1" stop-color="#1a1a1a" />
-    </linearGradient>
-  </defs>
-  <rect x="2" y="2" width="60" height="60" rx="10" fill="url(#tile)" stroke="#fbbf24" stroke-width="2" />
-  <text x="10" y="18" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#fbbf24">7</text>
-  <text x="32" y="40" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#fbbf24">P7</text>
-  <text x="32" y="52" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="7" letter-spacing="1" fill="#fbbf24">PLANNER</text>
+  <rect x="2" y="2" width="60" height="60" rx="10" fill="#1a1a1a" stroke="#f59e0b" stroke-width="2" />
+  <text x="10" y="18" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#f59e0b">7</text>
+  <text x="32" y="40" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#f59e0b">P</text>
+  <text x="32" y="52" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="7" letter-spacing="1" fill="#f59e0b">PLANNER</text>
 </svg>

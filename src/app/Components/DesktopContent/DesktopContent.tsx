@@ -2,6 +2,7 @@ import styles from "./DesktopContent.module.scss";
 
 import { DailyTextareaBlock } from "@components/DailyTextareaBlock/DailyTextareaBlock";
 import { getCurrentWeek } from "@utils/getCurrentWeek";
+import { motion } from "framer-motion";
 
 type DesktopContentProps = {
 	baseDate: Date;
@@ -13,20 +14,57 @@ export function DesktopContent(props: DesktopContentProps) {
 	const { days } = getCurrentWeek(baseDate);
 	const today = new Date().toDateString();
 
+	const containerVariants = {
+		hidden: { opacity: 0 },
+		visible: {
+			opacity: 1,
+			transition: {
+				staggerChildren: 0.08,
+				delayChildren: 0.2,
+			},
+		},
+	};
+
+	const cardVariants = {
+		hidden: {
+			opacity: 0,
+			y: 30,
+			scale: 0.95,
+		},
+		visible: {
+			opacity: 1,
+			y: 0,
+			scale: 1,
+			transition: {
+				duration: 0.5,
+				ease: [0.16, 1, 0.3, 1] as const,
+			},
+		},
+	};
+
 	return (
-		<div className={styles["desktop-content"]}>
+		<motion.div
+			className={styles["desktop-content"]}
+			initial="hidden"
+			animate="visible"
+			variants={containerVariants}
+		>
 			{days.map((day, index) => {
 				const isHighlighted = highlightedDate?.toDateString() === day.fullDate.toDateString();
 				return (
-					<div key={index} className={styles["textarea-wrapper"]}>
+					<motion.div
+						key={index}
+						className={styles["textarea-wrapper"]}
+						variants={cardVariants}
+					>
 						<DailyTextareaBlock
 							textareaDate={day.fullDate}
 							autoFocus={day.fullDate.toDateString() === today}
 							isHighlighted={isHighlighted}
 						/>
-					</div>
+					</motion.div>
 				);
 			})}
-		</div>
+		</motion.div>
 	);
 }

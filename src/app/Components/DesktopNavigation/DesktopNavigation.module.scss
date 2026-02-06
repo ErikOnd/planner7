@@ -10,18 +10,20 @@
 	align-items: center;
 	justify-content: space-between;
 	border-bottom: .1rem solid var(--color-border);
-	background-color: var(--color-surface);
+	background-color: var(--color-navigation-bg);
 	height: variables.$desktop-navi-height;
+	backdrop-filter: blur(10px);
+	box-shadow: 0 .1rem .3rem rgba(0, 0, 0, 0.05);
+	width: 100%;
+	color: var(--color-text);
 
 	.logo-section {
-		padding: var(--space-lg);
-		border-right: .1rem solid var(--color-border);
-		max-width: 30rem;
-		width: 30dvw;
+		padding: var(--space-lg) var(--space-lg) var(--space-lg) var(--content-spacing);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: var(--space-md);
+		flex: 1;
 	}
 
 	.logo-image {
@@ -41,21 +43,32 @@
 
 	.main-section {
 		display: flex;
-		gap: var(--space-md);
-		padding: var(--space-lg);
-		flex: 1;
+		flex-direction: column;
+		gap: 0.15rem;
+		padding: var(--space-md) 0;
+		justify-content: center;
 		align-items: center;
+		text-align: center;
+		flex: 0 0 auto;
+	}
+
+	.header-title {
+		line-height: 1.1;
+		font-size: 1.5rem;
 	}
 
 	.current-week {
 		font-weight: 300;
 		color: var(--color-text-muted);
+		font-size: 1rem;
 	}
 
 	.actions-section {
 		display: flex;
 		align-items: center;
 		gap: var(--space-md);
-		padding: var(--space-lg);
+		padding: var(--space-lg) var(--content-spacing) var(--space-lg) var(--space-lg);
+		justify-content: flex-end;
+		flex: 1;
 	}
 }

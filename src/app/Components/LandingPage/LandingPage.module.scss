@@ -30,6 +30,9 @@
 	display: block;
 	width: 6rem;
 	height: 6rem;
+	background-color: #1a1a1a;
+	border-radius: variables.$radius-md;
+	padding: 0.5rem;
 }
 
 .logo-main {
@@ -238,6 +241,9 @@
 	display: block;
 	width: 1.5rem;
 	height: 1.5rem;
+	background-color: #1a1a1a;
+	border-radius: variables.$radius-xs;
+	padding: 0.125rem;
 }
 
 .cta-button {

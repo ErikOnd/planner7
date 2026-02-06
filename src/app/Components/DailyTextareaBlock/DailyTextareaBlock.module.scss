@@ -9,9 +9,26 @@
 	border-radius: variables.$radius-lg;
 	border: .1rem solid var(--color-border);
 	overflow: hidden;
+	transition: all variables.$transition-smooth;
+	box-shadow: 0 .1rem .3rem rgba(0, 0, 0, 0.05);
+
+	&:hover {
+		box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.1);
+		transform: translateY(-0.2rem);
+	}
+
+	&:focus-within {
+		border-color: var(--color-primary);
+		box-shadow: 0 .4rem 1.6rem var(--shadow-primary-sm);
+		transform: translateY(-0.2rem);
+	}
 
 	&.is-today {
-		border-color: var(--color-primary);
+		.day-batch {
+			background-color: var(--color-primary);
+			color: var(--color-surface);
+			font-weight: 700;
+		}
 	}
 
 	&.is-highlighted {
@@ -32,7 +49,7 @@
 		color: var(--color-primary);
 		padding-inline: .5rem;
 		padding-block: .3rem;
-		border-radius: variables.$radius-md;
+		border-radius: variables.$radius-xs;
 		background-color: var(--color-primary-subtle);
 		font-weight: 600;
 	}

@@ -17,6 +17,7 @@ import Star from "@assets/icons/star.svg";
 import Sun from "@assets/icons/sun.svg";
 import Trash from "@assets/icons/trash.svg";
 import User from "@assets/icons/user.svg";
+import Megaphone from "@assets/icons/megaphone.svg";
 
 import clsx from "clsx";
 
@@ -40,6 +41,7 @@ const icons = {
 	"double-chevron-left": DoubleChevronLeft,
 	"double-chevron-right": DoubleChevronRight,
 	"google": Google,
+	"Megaphone": Megaphone
 };
 
 export type IconName = keyof typeof icons;

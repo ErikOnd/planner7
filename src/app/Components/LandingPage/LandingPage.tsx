@@ -1,3 +1,5 @@
+"use client";
+
 import styles from "./LandingPage.module.scss";
 
 import { Button } from "@atoms/Button/Button";
@@ -6,7 +8,10 @@ import { Icon } from "@atoms/Icons/Icon";
 import { Text } from "@atoms/Text/Text";
 import Link from "next/link";
 import Image from "next/image";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 import { TypingAnimation } from "./TypingAnimation";
+import { MagneticButton } from "./MagneticButton";
 
 const features = [
 	{
@@ -43,71 +48,164 @@ const steps = [
 ];
 
 export function LandingPage() {
+	const featuresRef = useRef(null);
+	const stepsRef = useRef(null);
+	const ctaRef = useRef(null);
+
+	const featuresInView = useInView(featuresRef, { once: true, margin: "-100px" });
+	const stepsInView = useInView(stepsRef, { once: true, margin: "-100px" });
+	const ctaInView = useInView(ctaRef, { once: true, margin: "-100px" });
+
+	const navVariants = {
+		hidden: { y: -20, opacity: 0 },
+		visible: {
+			y: 0,
+			opacity: 1,
+			transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
+		},
+	};
+
+	const heroVariants = {
+		hidden: { opacity: 0 },
+		visible: {
+			opacity: 1,
+			transition: {
+				staggerChildren: 0.2,
+				delayChildren: 0.3,
+			},
+		},
+	};
+
+	const heroItemVariants = {
+		hidden: { y: 30, opacity: 0 },
+		visible: {
+			y: 0,
+			opacity: 1,
+			transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
+		},
+	};
+
+	const containerVariants = {
+		hidden: { opacity: 0 },
+		visible: {
+			opacity: 1,
+			transition: {
+				staggerChildren: 0.1,
+				delayChildren: 0.2,
+			},
+		},
+	};
+
+	const cardVariants = {
+		hidden: { y: 40, opacity: 0, scale: 0.95 },
+		visible: {
+			y: 0,
+			opacity: 1,
+			scale: 1,
+			transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const },
+		},
+	};
+
 	return (
 		<div>
 			{/* Nav */}
-			<nav className={styles.nav}>
+			<motion.nav
+				className={styles.nav}
+				initial="hidden"
+				animate="visible"
+				variants={navVariants}
+			>
 				<Link href="/" className={styles.logo}>
 					<Image src="/favicon.svg" alt="Planner7 logo" width={96} height={96} className={styles["logo-icon"]} />
 				</Link>
 				<div className={styles["nav-actions"]}>
-					<Link href="/signup">
-						<Button variant="primary" fontWeight={700}>Get Started</Button>
-					</Link>
+					<MagneticButton>
+						<Link href="/signup">
+							<Button variant="primary" fontWeight={700}>Get Started</Button>
+						</Link>
+					</MagneticButton>
 				</div>
-			</nav>
+			</motion.nav>
 
-			{/* Hero */}
-			<section className={styles.hero}>
-				<Headline as="h1" className={styles["hero-headline"]}>
-					Plan your time,<br />
-					<TypingAnimation />
-				</Headline>
-				<Text size="lg" className={styles["hero-subtitle"]}>
-					A clean, distraction-free space to organize your days, manage tasks, and stay on top of what matters.
-				</Text>
-			</section>
+			<motion.section
+				className={styles.hero}
+				initial="hidden"
+				animate="visible"
+				variants={heroVariants}
+			>
+				<motion.div variants={heroItemVariants}>
+					<Headline as="h1" className={styles["hero-headline"]}>
+						Plan your time,<br />
+						<TypingAnimation />
+					</Headline>
+				</motion.div>
+				<motion.div variants={heroItemVariants}>
+					<Text size="lg" className={styles["hero-subtitle"]}>
+						A clean, distraction-free space to organize your days, manage tasks, and stay on top of what matters.
+					</Text>
+				</motion.div>
+			</motion.section>
 
-			{/* Features */}
-			<section className={styles.features}>
+			<section className={styles.features} ref={featuresRef}>
 				<Text size="sm" className={styles["section-label"]}>What you get</Text>
 				<Headline as="h2" className={styles["section-title"]}>
 					Everything you need to stay organized
 				</Headline>
-				<div className={styles["feature-cards"]}>
+				<motion.div
+					className={styles["feature-cards"]}
+					initial="hidden"
+					animate={featuresInView ? "visible" : "hidden"}
+					variants={containerVariants}
+				>
 					{features.map((feature) => (
-						<div key={feature.title} className={styles["feature-card"]}>
+						<motion.div key={feature.title} className={styles["feature-card"]} variants={cardVariants}>
 							<div className={styles["feature-icon"]}>
 								<Icon name={feature.icon} size={22} />
 							</div>
 							<Text size="base" fontWeight={600} className={styles["feature-title"]}>{feature.title}</Text>
 							<Text size="sm" className={styles["feature-description"]}>{feature.description}</Text>
-						</div>
+						</motion.div>
 					))}
-				</div>
+				</motion.div>
 			</section>
 
-			{/* How it works */}
-			<section className={styles["how-it-works"]}>
+			<section className={styles["how-it-works"]} ref={stepsRef}>
 				<Text size="sm" className={styles["section-label"]}>How it works</Text>
 				<Headline as="h2" className={styles["section-title"]}>
 					Get started in minutes
 				</Headline>
-				<div className={styles.steps}>
+				<motion.div
+					className={styles.steps}
+					initial="hidden"
+					animate={stepsInView ? "visible" : "hidden"}
+					variants={containerVariants}
+				>
 					{steps.map((step, index) => (
-						<div key={step.title} className={styles.step}>
+						<motion.div key={step.title} className={styles.step} variants={cardVariants}>
 							<div className={styles["step-number"]}>{index + 1}</div>
 							<div className={styles["step-content"]}>
 								<Text size="base" fontWeight={600} className={styles["step-title"]}>{step.title}</Text>
 								<Text size="sm" className={styles["step-description"]}>{step.description}</Text>
 							</div>
-						</div>
+						</motion.div>
 					))}
-				</div>
+				</motion.div>
 			</section>
 
-			{/* CTA Banner */}
-			<section className={styles["cta-banner"]}>
+			<motion.section
+				className={styles["cta-banner"]}
+				ref={ctaRef}
+				initial="hidden"
+				animate={ctaInView ? "visible" : "hidden"}
+				variants={{
+					hidden: { scale: 0.9, opacity: 0 },
+					visible: {
+						scale: 1,
+						opacity: 1,
+						transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
+					},
+				}}
+			>
 				<Headline as="h2" className={styles["cta-title"]}>
 					Ready to take control of your week?
 				</Headline>
@@ -115,11 +213,13 @@ export function LandingPage() {
 					Join our community of people who already use Planner7 to organize their lives.
 				</Text>
 				<div className={styles["cta-button"]}>
-					<Link href="/signup">
-						<Button variant="primary" fontWeight={700}>Get Started for Free</Button>
-					</Link>
+					<MagneticButton>
+						<Link href="/signup">
+							<Button variant="primary" fontWeight={700}>Get Started for Free</Button>
+						</Link>
+					</MagneticButton>
 				</div>
-			</section>
+			</motion.section>
 
 			<footer className={styles.footer}>
 				<div className={styles["footer-brand"]}>

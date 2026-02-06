@@ -24,7 +24,7 @@ export default function HomePage() {
 	const { rangeLabel } = getCurrentWeek(baseDate);
 
 	const todosState = useGeneralTodos();
-	const { loadWeek, isWeekLoading } = useNotes();
+	const { loadWeek } = useNotes();
 
 	useEffect(() => {
 		const { days } = getCurrentWeek(baseDate);
@@ -37,13 +37,10 @@ export default function HomePage() {
 	const handleCalendarDateSelect = (date: Date) => {
 		setBaseDate(date);
 		setHighlightedDate(date);
-		// Clear highlight after 3 seconds
 		setTimeout(() => setHighlightedDate(null), 3000);
 	};
 
 	const renderMobileContent = () => {
-		if (isWeekLoading) return null;
-
 		switch (selectedContent) {
 			case "weekly":
 				return <WeeklyContent selectedDate={selectedDate} />;
@@ -82,7 +79,7 @@ export default function HomePage() {
 								rangeLabel={rangeLabel}
 								todosState={todosState}
 							/>
-							{!isWeekLoading && <DesktopContent baseDate={baseDate} highlightedDate={highlightedDate} />}
+							<DesktopContent baseDate={baseDate} highlightedDate={highlightedDate} />
 						</div>
 					</div>
 				)}
