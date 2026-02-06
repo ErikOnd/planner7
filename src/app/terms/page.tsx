@@ -31,8 +31,8 @@ export default function TermsPage() {
 					<Headline as="h2" className={styles.sectionTitle}>2. Eligibility</Headline>
 					<Text size="base" className={styles.paragraph}>
 						You must be at least 13 years old to use Planner7. If you are under 18, you confirm that you have your
-						parent or guardian&apos;s permission to use the service. If your local law requires a higher minimum age, that
-						higher age applies. By using Planner7, you represent and warrant that you meet these eligibility
+						parent or guardian&apos;s permission to use the service. If your local law requires a higher minimum age,
+						that higher age applies. By using Planner7, you represent and warrant that you meet these eligibility
 						requirements.
 					</Text>
 				</section>
@@ -85,8 +85,8 @@ export default function TermsPage() {
 					<Headline as="h2" className={styles.sectionTitle}>5. Your Content</Headline>
 					<Text size="base" className={styles.paragraph}>
 						You retain all ownership rights to the content you create and store in Planner7, including notes, tasks, and
-						planning data (&quot;Your Content&quot;). By using our service, you grant us a limited license to host, store, and
-						display Your Content solely to provide you with the service.
+						planning data (&quot;Your Content&quot;). By using our service, you grant us a limited license to host,
+						store, and display Your Content solely to provide you with the service.
 					</Text>
 					<Text size="base" className={styles.paragraph}>
 						You are solely responsible for Your Content and the consequences of sharing it. You represent that you own
@@ -148,9 +148,9 @@ export default function TermsPage() {
 				<section className={styles.section}>
 					<Headline as="h2" className={styles.sectionTitle}>10. Disclaimers</Headline>
 					<Text size="base" className={styles.paragraph}>
-						PLANNER7 IS PROVIDED ON AN &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; BASIS WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS
-						OR IMPLIED. TO THE FULLEST EXTENT PERMITTED BY LAW, WE DISCLAIM ALL WARRANTIES, INCLUDING IMPLIED WARRANTIES
-						OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+						PLANNER7 IS PROVIDED ON AN &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; BASIS WITHOUT WARRANTIES OF ANY
+						KIND, EITHER EXPRESS OR IMPLIED. TO THE FULLEST EXTENT PERMITTED BY LAW, WE DISCLAIM ALL WARRANTIES,
+						INCLUDING IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
 					</Text>
 					<Text size="base" className={styles.paragraph}>
 						We do not warrant that the service will be error-free, secure, or uninterrupted, or that defects will be

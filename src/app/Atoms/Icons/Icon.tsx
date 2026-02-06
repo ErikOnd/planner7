@@ -7,6 +7,7 @@ import DoubleChevronLeft from "@assets/icons/double-chevron-left.svg";
 import DoubleChevronRight from "@assets/icons/double-chevron-right.svg";
 import Eye from "@assets/icons/eye.svg";
 import Google from "@assets/icons/google.svg";
+import Megaphone from "@assets/icons/megaphone.svg";
 import Moon from "@assets/icons/moon.svg";
 import Pencil from "@assets/icons/pencil.svg";
 import Plus from "@assets/icons/plus.svg";
@@ -17,7 +18,6 @@ import Star from "@assets/icons/star.svg";
 import Sun from "@assets/icons/sun.svg";
 import Trash from "@assets/icons/trash.svg";
 import User from "@assets/icons/user.svg";
-import Megaphone from "@assets/icons/megaphone.svg";
 
 import clsx from "clsx";
 
@@ -41,7 +41,7 @@ const icons = {
 	"double-chevron-left": DoubleChevronLeft,
 	"double-chevron-right": DoubleChevronRight,
 	"google": Google,
-	"Megaphone": Megaphone
+	"Megaphone": Megaphone,
 };
 
 export type IconName = keyof typeof icons;

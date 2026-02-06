@@ -6,12 +6,12 @@ import { Button } from "@atoms/Button/Button";
 import { Headline } from "@atoms/Headline/Headline";
 import { Icon } from "@atoms/Icons/Icon";
 import { Text } from "@atoms/Text/Text";
-import Link from "next/link";
-import Image from "next/image";
 import { motion, useInView } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
 import { useRef } from "react";
-import { TypingAnimation } from "./TypingAnimation";
 import { MagneticButton } from "./MagneticButton";
+import { TypingAnimation } from "./TypingAnimation";
 
 const features = [
 	{
