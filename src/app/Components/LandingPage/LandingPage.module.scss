@@ -204,11 +204,14 @@
 }
 
 // CTA Banner
+
+.cta-section {
+	padding: clamp(4rem, 8vw, 6rem) var(--space-xl);
+	margin: 0 auto;
+}
+
+
 .cta-banner {
-	margin-top: clamp(4rem, 8vw, 6rem);
-	margin-bottom: clamp(4rem, 8vw, 6rem);
-	margin-left: var(--space-xl);
-	margin-right: var(--space-xl);
 	max-width: 75rem;
 	background: var(--color-surface);
 	border: 0.06rem solid var(--color-border-light);
@@ -217,10 +220,8 @@
 	text-align: center;
 	@include mixins.shadow-card;
 
-	@include mixins.phone {
-		margin-left: auto;
-		margin-right: auto;
-	}
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .cta-title {
@@ -272,8 +273,12 @@
 }
 
 @keyframes blink {
-	0%, 100% { opacity: 1; }
-	50% { opacity: 0; }
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0;
+	}
 }
 
 // Footer
