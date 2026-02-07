@@ -19,7 +19,7 @@ export function DesktopNavigation({ rangeLabel, onDateSelect }: DesktopNavigatio
 		<nav className={styles["desktop-navigation"]}>
 			<div className={styles["logo-section"]}>
 				<div className={styles["logo-text-container"]}>
-					<Image src="/favicon.svg" alt="Planner7 logo" width={64} height={64} className={styles["logo-image"]} />
+					<Image src="/logo-mark.svg" alt="Planner7 logo" width={64} height={64} className={styles["logo-image"]} />
 				</div>
 			</div>
 			<div className={styles["main-section"]}>

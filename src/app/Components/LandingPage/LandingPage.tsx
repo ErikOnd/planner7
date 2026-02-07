@@ -116,7 +116,7 @@ export function LandingPage() {
 				variants={navVariants}
 			>
 				<Link href="/" className={styles.logo}>
-					<Image src="/favicon.svg" alt="Planner7 logo" width={96} height={96} className={styles["logo-icon"]} />
+					<Image src="/logo-mark.svg" alt="Planner7 logo" width={96} height={96} className={styles["logo-icon"]} />
 				</Link>
 				<div className={styles["nav-actions"]}>
 					<MagneticButton>
@@ -222,10 +222,6 @@ export function LandingPage() {
 			</motion.section>
 
 			<footer className={styles.footer}>
-				<div className={styles["footer-brand"]}>
-					<Image src="/favicon.svg" alt="Planner7 logo" width={24} height={24} className={styles["footer-logo"]} />
-					<Text size="sm" className={styles["footer-text"]}>Planner7</Text>
-				</div>
 				<div className={styles["footer-links"]}>
 					<Link href="/privacy" className={styles["footer-link"]}>Privacy Policy</Link>
 					<Link href="/terms" className={styles["footer-link"]}>Terms of Service</Link>
