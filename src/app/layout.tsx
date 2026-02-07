@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 	applicationName: "Planner7",
 	icons: {
 		icon: [
-			{ url: "/favicon.svg", type: "image/svg+xml" },
+			{ url: "/app-icon.svg", type: "image/svg+xml" },
 		],
-		apple: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+		apple: [{ url: "/app-icon.svg", type: "image/svg+xml" }],
 	},
 	openGraph: {
 		title: "Planner7",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 		type: "website",
 		images: [
 			{
-				url: "/favicon.svg",
+				url: "/app-icon.svg",
 				alt: "Planner7 logo",
 			},
 		],
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 		card: "summary",
 		title: "Planner7",
 		description: "A focused weekly planner that combines daily notes, tasks, and a week-at-a-glance view.",
-		images: ["/favicon.svg"],
+		images: ["/app-icon.svg"],
 	},
 	appleWebApp: {
 		capable: true,
