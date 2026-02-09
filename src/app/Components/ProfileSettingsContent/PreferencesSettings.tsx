@@ -2,6 +2,7 @@
 
 import { Badge } from "@atoms/Badge/Badge";
 import { Text } from "@atoms/Text/Text";
+import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import * as Switch from "@radix-ui/react-switch";
 import clsx from "clsx";
 
@@ -12,6 +13,9 @@ type PreferencesSettingsProps = {
 };
 
 export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSettingsProps) {
+	const { showWeekends, isLoading, isSaving, setShowWeekends } = useWeekDisplayPreference();
+	const isFiveDayWeek = !showWeekends;
+
 	return (
 		<div className={styles["tab-content"]}>
 			<section className={styles["settings-section"]}>
@@ -51,15 +55,20 @@ export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSett
 			<section className={styles["settings-section"]}>
 				<div className={styles["section-header"]}>
 					<h3 className={styles["section-heading"]}>Week Display</h3>
-					<Badge variant="coming-soon">Coming soon</Badge>
 				</div>
 				<Text size="sm" variant="muted">Choose which days to display in your weekly planner</Text>
-				<div className={clsx(styles["notification-item"], styles["notification-item--disabled"])}>
+				<div className={styles["notification-item"]}>
 					<div className={styles["notification-info"]}>
 						<span className={styles["notification-label"]}>5-day week (Mon-Fri)</span>
 						<span className={styles["notification-description"]}>Show only weekdays</span>
 					</div>
-					<Switch.Root className={styles["switch"]} disabled aria-label="5-day week">
+					<Switch.Root
+						className={styles["switch"]}
+						checked={isFiveDayWeek}
+						onCheckedChange={(checked) => setShowWeekends(!checked)}
+						disabled={isLoading || isSaving}
+						aria-label="5-day week"
+					>
 						<Switch.Thumb className={styles["switch-thumb"]} />
 					</Switch.Root>
 				</div>

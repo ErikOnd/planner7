@@ -3,6 +3,7 @@ import "./globals.scss";
 import { NotesProvider } from "@/contexts/NotesContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { TodosProvider } from "@/contexts/TodosContext";
+import { WeekDisplayProvider } from "@/contexts/WeekDisplayContext";
 import React, { ReactNode } from "react";
 
 export const metadata: Metadata = {
@@ -62,11 +63,13 @@ export default function RootLayout({ children }: Readonly<{
 					}}
 				/>
 				<ThemeProvider>
-					<TodosProvider>
-						<NotesProvider>
-							{children}
-						</NotesProvider>
-					</TodosProvider>
+					<WeekDisplayProvider>
+						<TodosProvider>
+							<NotesProvider>
+								{children}
+							</NotesProvider>
+						</TodosProvider>
+					</WeekDisplayProvider>
 				</ThemeProvider>
 			</body>
 		</html>

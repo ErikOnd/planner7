@@ -12,6 +12,7 @@ model Profile {
   id             String          @id @db.Uuid
   email          String          @unique
   displayName    String
+  showWeekends   Boolean         @default(true)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   dailyNotes     DailyNote[]
@@ -38,6 +39,8 @@ model GeneralTodo {
   userId    String   @db.Uuid
   text      String
   order     Int      @default(0)
+  completed Boolean  @default(false)
+  completedAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

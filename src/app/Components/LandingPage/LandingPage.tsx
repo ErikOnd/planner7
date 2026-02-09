@@ -2,16 +2,16 @@
 
 import styles from "./LandingPage.module.scss";
 
-import {Button} from "@atoms/Button/Button";
-import {Headline} from "@atoms/Headline/Headline";
-import {Icon} from "@atoms/Icons/Icon";
-import {Text} from "@atoms/Text/Text";
-import {motion, useInView} from "framer-motion";
+import { Button } from "@atoms/Button/Button";
+import { Headline } from "@atoms/Headline/Headline";
+import { Icon } from "@atoms/Icons/Icon";
+import { Text } from "@atoms/Text/Text";
+import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import {useRef} from "react";
-import {MagneticButton} from "./MagneticButton";
-import {TypingAnimation} from "./TypingAnimation";
+import { useRef } from "react";
+import { MagneticButton } from "./MagneticButton";
+import { TypingAnimation } from "./TypingAnimation";
 
 const features = [
 	{
@@ -52,21 +52,21 @@ export function LandingPage() {
 	const stepsRef = useRef(null);
 	const ctaRef = useRef(null);
 
-	const featuresInView = useInView(featuresRef, {once: true, margin: "-100px"});
-	const stepsInView = useInView(stepsRef, {once: true, margin: "-100px"});
-	const ctaInView = useInView(ctaRef, {once: true, margin: "-100px"});
+	const featuresInView = useInView(featuresRef, { once: true, margin: "-100px" });
+	const stepsInView = useInView(stepsRef, { once: true, margin: "-100px" });
+	const ctaInView = useInView(ctaRef, { once: true, margin: "-100px" });
 
 	const navVariants = {
-		hidden: {y: -20, opacity: 0},
+		hidden: { y: -20, opacity: 0 },
 		visible: {
 			y: 0,
 			opacity: 1,
-			transition: {duration: 0.6, ease: [0.16, 1, 0.3, 1] as const},
+			transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
 		},
 	};
 
 	const heroVariants = {
-		hidden: {opacity: 0},
+		hidden: { opacity: 0 },
 		visible: {
 			opacity: 1,
 			transition: {
@@ -77,16 +77,16 @@ export function LandingPage() {
 	};
 
 	const heroItemVariants = {
-		hidden: {y: 30, opacity: 0},
+		hidden: { y: 30, opacity: 0 },
 		visible: {
 			y: 0,
 			opacity: 1,
-			transition: {duration: 0.6, ease: [0.16, 1, 0.3, 1] as const},
+			transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
 		},
 	};
 
 	const containerVariants = {
-		hidden: {opacity: 0},
+		hidden: { opacity: 0 },
 		visible: {
 			opacity: 1,
 			transition: {
@@ -97,12 +97,12 @@ export function LandingPage() {
 	};
 
 	const cardVariants = {
-		hidden: {y: 40, opacity: 0, scale: 0.95},
+		hidden: { y: 40, opacity: 0, scale: 0.95 },
 		visible: {
 			y: 0,
 			opacity: 1,
 			scale: 1,
-			transition: {duration: 0.5, ease: [0.16, 1, 0.3, 1] as const},
+			transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const },
 		},
 	};
 
@@ -116,8 +116,7 @@ export function LandingPage() {
 				variants={navVariants}
 			>
 				<Link href="/" className={styles.logo}>
-					<Image src="/logo-mark.svg" alt="Planner7 logo" width={96} height={96}
-					       className={styles["logo-icon"]}/>
+					<Image src="/logo-mark.svg" alt="Planner7 logo" width={96} height={96} className={styles["logo-icon"]} />
 				</Link>
 				<div className={styles["nav-actions"]}>
 					<MagneticButton>
@@ -136,14 +135,13 @@ export function LandingPage() {
 			>
 				<motion.div variants={heroItemVariants}>
 					<Headline as="h1" className={styles["hero-headline"]}>
-						Plan your time,<br/>
-						<TypingAnimation/>
+						Plan your time,<br />
+						<TypingAnimation />
 					</Headline>
 				</motion.div>
 				<motion.div variants={heroItemVariants}>
 					<Text size="lg" className={styles["hero-subtitle"]}>
-						A clean, distraction-free space to organize your days, manage tasks, and stay on top of what
-						matters.
+						A clean, distraction-free space to organize your days, manage tasks, and stay on top of what matters.
 					</Text>
 				</motion.div>
 			</motion.section>
@@ -162,10 +160,9 @@ export function LandingPage() {
 					{features.map((feature) => (
 						<motion.div key={feature.title} className={styles["feature-card"]} variants={cardVariants}>
 							<div className={styles["feature-icon"]}>
-								<Icon name={feature.icon} size={22}/>
+								<Icon name={feature.icon} size={22} />
 							</div>
-							<Text size="base" fontWeight={600}
-							      className={styles["feature-title"]}>{feature.title}</Text>
+							<Text size="base" fontWeight={600} className={styles["feature-title"]}>{feature.title}</Text>
 							<Text size="sm" className={styles["feature-description"]}>{feature.description}</Text>
 						</motion.div>
 					))}
@@ -200,11 +197,11 @@ export function LandingPage() {
 					initial="hidden"
 					animate={ctaInView ? "visible" : "hidden"}
 					variants={{
-						hidden: {scale: 0.9, opacity: 0},
+						hidden: { scale: 0.9, opacity: 0 },
 						visible: {
 							scale: 1,
 							opacity: 1,
-							transition: {duration: 0.6, ease: [0.16, 1, 0.3, 1] as const},
+							transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
 						},
 					}}
 				>

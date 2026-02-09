@@ -20,7 +20,9 @@ export default function WeeklySlider(props: WeeklySlider) {
 				onClick={() => setBaseDate(new Date(baseDate.getTime() - 7 * dayInMs))}
 				aria-label="Previous week"
 			/>
-			<Text>{rangeLabel}</Text>
+			<div className={styles["range"]}>
+				<Text>{rangeLabel}</Text>
+			</div>
 			<Button
 				variant="ghost"
 				icon="chevron-right"

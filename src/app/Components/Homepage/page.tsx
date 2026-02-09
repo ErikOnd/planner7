@@ -12,6 +12,7 @@ import { Sidebar } from "@components/SideBar/Sidebar";
 import { WeeklyContent } from "@components/WeeklyContent/WeeklyContent";
 import { useGeneralTodos } from "@hooks/useGeneralTodos";
 import { useMediaQuery } from "@hooks/useMediaQuery";
+import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import { getCurrentWeek } from "@utils/getCurrentWeek";
 import { useEffect, useState } from "react";
 
@@ -22,6 +23,7 @@ export default function HomePage() {
 	const [baseDate, setBaseDate] = useState<Date>(new Date());
 	const [highlightedDate, setHighlightedDate] = useState<Date | null>(null);
 	const { rangeLabel } = getCurrentWeek(baseDate);
+	const { showWeekends } = useWeekDisplayPreference();
 
 	const todosState = useGeneralTodos();
 	const { loadWeek } = useNotes();
@@ -79,7 +81,11 @@ export default function HomePage() {
 								rangeLabel={rangeLabel}
 								todosState={todosState}
 							/>
-							<DesktopContent baseDate={baseDate} highlightedDate={highlightedDate} />
+							<DesktopContent
+								baseDate={baseDate}
+								highlightedDate={highlightedDate}
+								showWeekends={showWeekends}
+							/>
 						</div>
 					</div>
 				)}

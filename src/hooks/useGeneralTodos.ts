@@ -2,7 +2,7 @@
 
 import type { GeneralTodo } from "@prisma/client";
 import { useCallback, useEffect, useState } from "react";
-import { deleteGeneralTodo, getGeneralTodos } from "../app/actions/generalTodos";
+import { deleteGeneralTodo, getGeneralTodos, updateGeneralTodoCompletion } from "../app/actions/generalTodos";
 
 export function useGeneralTodos() {
 	const [todos, setTodos] = useState<GeneralTodo[]>([]);
@@ -58,6 +58,26 @@ export function useGeneralTodos() {
 		setTodos(prev => prev.map(todo => todo.id === todoId ? { ...todo, text } : todo));
 	}, []);
 
+	const updateTodoCompletion = useCallback(async (todoId: string, completed: boolean) => {
+		setTodos(prev =>
+			prev.map(todo => (
+				todo.id === todoId
+					? { ...todo, completed, completedAt: completed ? new Date() : null }
+					: todo
+			))
+		);
+
+		try {
+			const result = await updateGeneralTodoCompletion(todoId, completed);
+			if (!result.success) {
+				await fetchTodos();
+			}
+		} catch (fetchError) {
+			await fetchTodos();
+			console.error("Error updating todo completion:", fetchError);
+		}
+	}, [fetchTodos]);
+
 	return {
 		todos,
 		loading,
@@ -65,6 +85,7 @@ export function useGeneralTodos() {
 		deleteTodo,
 		addTodo,
 		updateTodo,
+		updateTodoCompletion,
 		refresh: fetchTodos,
 		silentRefresh,
 	};

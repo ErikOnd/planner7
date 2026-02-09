@@ -75,6 +75,15 @@ export async function getGeneralTodos() {
 			return [];
 		}
 
+		const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+		await prisma.generalTodo.deleteMany({
+			where: {
+				userId: authResult.userId,
+				completed: true,
+				completedAt: { lt: cutoff },
+			},
+		});
+
 		return await prisma.generalTodo.findMany({
 			where: { userId: authResult.userId },
 			orderBy: { order: "asc" },
@@ -82,6 +91,42 @@ export async function getGeneralTodos() {
 	} catch (error) {
 		console.error("Error fetching general todos:", error);
 		return [];
+	}
+}
+
+export async function updateGeneralTodoCompletion(todoId: string, completed: boolean): Promise<FormState> {
+	try {
+		const authResult = await getCurrentUser();
+		if (!authResult.success) {
+			return {
+				error: authResult.error,
+				success: false,
+			};
+		}
+
+		await prisma.generalTodo.updateMany({
+			where: {
+				id: todoId,
+				userId: authResult.userId,
+			},
+			data: {
+				completed,
+				completedAt: completed ? new Date() : null,
+			},
+		});
+
+		revalidatePath("/");
+
+		return {
+			message: "Task updated successfully",
+			success: true,
+		};
+	} catch (error) {
+		console.error("Error updating todo completion:", error);
+		return {
+			error: "Failed to update task",
+			success: false,
+		};
 	}
 }
 

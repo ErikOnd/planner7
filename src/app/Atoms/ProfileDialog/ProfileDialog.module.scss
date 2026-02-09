@@ -237,6 +237,19 @@
 	border: .1rem solid var(--color-border-light);
 }
 
+.notification-item--disabled {
+	opacity: 0.55;
+	filter: grayscale(0.4);
+	background: repeating-linear-gradient(
+		-45deg,
+		var(--color-surface),
+		var(--color-surface) 0.6rem,
+		var(--color-gray-light) 0.6rem,
+		var(--color-gray-light) 1.2rem
+	);
+	border-color: var(--color-border);
+}
+
 .notification-info {
 	display: flex;
 	flex-direction: column;

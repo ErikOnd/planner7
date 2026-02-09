@@ -1,0 +1,72 @@
+"use client";
+
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { getUserPreferences, updateUserPreferences } from "../app/actions/profile";
+
+type WeekDisplayContextValue = {
+	showWeekends: boolean;
+	isLoading: boolean;
+	isSaving: boolean;
+	error: string | null;
+	setShowWeekends: (value: boolean) => Promise<void>;
+};
+
+const WeekDisplayContext = createContext<WeekDisplayContextValue | undefined>(undefined);
+
+export function WeekDisplayProvider({ children }: { children: ReactNode }) {
+	const [showWeekends, setShowWeekendsState] = useState(true);
+	const [isLoading, setIsLoading] = useState(true);
+	const [isSaving, setIsSaving] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const fetchPreferences = async () => {
+			setIsLoading(true);
+			const result = await getUserPreferences();
+			if (result.success && result.data) {
+				setShowWeekendsState(result.data.showWeekends);
+			} else {
+				setError(result.error || "Failed to load preferences");
+			}
+			setIsLoading(false);
+		};
+
+		fetchPreferences();
+	}, []);
+
+	const setShowWeekends = async (value: boolean) => {
+		setShowWeekendsState(value);
+		setIsSaving(true);
+		setError(null);
+
+		const result = await updateUserPreferences({ showWeekends: value });
+		if (!result.success) {
+			setError(result.error || "Failed to update preferences");
+			setShowWeekendsState(prev => !prev);
+		}
+
+		setIsSaving(false);
+	};
+
+	return (
+		<WeekDisplayContext.Provider
+			value={{
+				showWeekends,
+				isLoading,
+				isSaving,
+				error,
+				setShowWeekends,
+			}}
+		>
+			{children}
+		</WeekDisplayContext.Provider>
+	);
+}
+
+export function useWeekDisplay() {
+	const context = useContext(WeekDisplayContext);
+	if (!context) {
+		throw new Error("useWeekDisplay must be used within a WeekDisplayProvider");
+	}
+	return context;
+}

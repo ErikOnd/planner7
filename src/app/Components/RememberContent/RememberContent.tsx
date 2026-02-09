@@ -8,7 +8,8 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { useDraggableTodos } from "@hooks/useDraggableTodos";
 import { useTodoToggle } from "@hooks/useTodoToggle";
 import type { GeneralTodo } from "@prisma/client";
-import { useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { useMemo, useState } from "react";
 import styles from "./RememberContent.module.scss";
 
 type TodosState = {
@@ -18,6 +19,7 @@ type TodosState = {
 	deleteTodo: (todoId: string) => Promise<void>;
 	addTodo: (todo: GeneralTodo) => void;
 	updateTodo: (todoId: string, text: string) => void;
+	updateTodoCompletion: (todoId: string, completed: boolean) => Promise<void>;
 	refresh: () => Promise<void>;
 	silentRefresh: () => Promise<void>;
 };
@@ -28,14 +30,25 @@ type RememberContentProps = {
 
 export function RememberContent(props: RememberContentProps) {
 	const { todosState } = props;
-	const { todos, deleteTodo, addTodo, updateTodo, silentRefresh } = todosState;
+	const { todos, addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
 
 	const [modalOpen, setModalOpen] = useState(false);
 	const [editingTodo, setEditingTodo] = useState<GeneralTodo | null>(null);
-	const { checkedTodos, handleTodoToggle } = useTodoToggle(deleteTodo);
+	const [isCompletedOpen, setIsCompletedOpen] = useState(false);
+	const activeTodos = useMemo(() => todos.filter(todo => !todo.completed), [todos]);
+	const completedTodos = useMemo(() => (
+		todos
+			.filter(todo => todo.completed)
+			.sort((a, b) => {
+				const aTime = a.completedAt ? new Date(a.completedAt).getTime() : 0;
+				const bTime = b.completedAt ? new Date(b.completedAt).getTime() : 0;
+				return bTime - aTime;
+			})
+	), [todos]);
 	const { localTodos, activeTodo, sensors, handleDragStart, handleDragEnd, handleDragCancel } = useDraggableTodos(
-		todos,
+		activeTodos,
 	);
+	const { checkedTodos, handleTodoToggle } = useTodoToggle(updateTodoCompletion);
 
 	const handleEditTodo = (todo: GeneralTodo) => {
 		setEditingTodo(todo);
@@ -89,6 +102,13 @@ export function RememberContent(props: RememberContentProps) {
 						</DndContext>
 					)}
 			</div>
+			<button
+				type="button"
+				className={styles["completed-link"]}
+				onClick={() => setIsCompletedOpen(true)}
+			>
+				Completed ({completedTodos.length})
+			</button>
 			<AddTaskModal
 				open={modalOpen}
 				onOpenAction={handleModalChange}
@@ -102,6 +122,45 @@ export function RememberContent(props: RememberContentProps) {
 				onOptimisticUpdate={updateTodo}
 				onSuccess={silentRefresh}
 			/>
+			<Dialog.Root open={isCompletedOpen} onOpenChange={setIsCompletedOpen}>
+				<Dialog.Portal>
+					<Dialog.Overlay className={styles["completed-overlay"]} />
+					<Dialog.Content className={styles["completed-dialog"]}>
+						<div className={styles["completed-header"]}>
+							<Dialog.Title className={styles["completed-title"]}>
+								Completed Todos
+							</Dialog.Title>
+							<Dialog.Close asChild>
+								<button type="button" className={styles["completed-close"]} aria-label="Close">
+									Close
+								</button>
+							</Dialog.Close>
+						</div>
+						<div className={styles["completed-table"]}>
+							{completedTodos.length === 0
+								? (
+									<div className={styles["completed-empty"]}>
+										<Text size="sm">No completed todos yet.</Text>
+									</div>
+								)
+								: completedTodos.map(todo => (
+									<div key={todo.id} className={styles["completed-row"]}>
+										<span className={styles["completed-task"]}>{todo.text}</span>
+										<span className={styles["completed-date"]}>
+											{todo.completedAt
+												? new Date(todo.completedAt).toLocaleDateString("en-US", {
+													month: "short",
+													day: "numeric",
+													year: "numeric",
+												})
+												: "—"}
+										</span>
+									</div>
+								))}
+						</div>
+					</Dialog.Content>
+				</Dialog.Portal>
+			</Dialog.Root>
 		</div>
 	);
 }

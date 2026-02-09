@@ -66,6 +66,8 @@ export function AddTaskModal(props: AddTaskModalProps) {
 					userId: "",
 					text: text.trim(),
 					order: 0,
+					completed: false,
+					completedAt: null,
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				};

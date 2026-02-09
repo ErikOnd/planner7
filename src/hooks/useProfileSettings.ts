@@ -5,6 +5,7 @@ export type ProfileData = {
 	displayName: string;
 	email: string;
 	pendingEmail?: string;
+	showWeekends?: boolean;
 };
 
 export type ProfileFormData = {

@@ -16,10 +16,10 @@
 
 	.todo-content {
 		display: flex;
-		padding-block: var(--space-sm);
+		padding: var(--space-sm) var(--space-sm);
 		border-radius: variables.$radius-md;
 		background: var(--color-surface);
-		box-shadow: 0 .1rem .1rem 0 var(--color-shadow-sm);
+		border: 0.1rem solid var(--color-border-light);
 		justify-content: space-between;
 		align-items: center;
 		gap: var(--space-sm);
@@ -28,6 +28,10 @@
 			display: flex;
 			align-items: center;
 			gap: var(--space-xs);
+			opacity: 0;
+			pointer-events: none;
+			transform: translateX(0.2rem);
+			transition: opacity variables.$transition-base, transform variables.$transition-base;
 		}
 
 		.edit-button,
@@ -59,5 +63,12 @@
 				color: var(--color-error);
 			}
 		}
+	}
+
+	&:hover .action-buttons,
+	.todo-content:focus-within .action-buttons {
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateX(0);
 	}
 }

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 const DELETE_DELAY = 5000;
 
-export function useTodoToggle(deleteTodo: (todoId: string) => Promise<void>) {
+export function useTodoToggle(updateTodoCompletion: (todoId: string, completed: boolean) => Promise<void>) {
 	const [checkedTodos, setCheckedTodos] = useState<Set<string>>(new Set());
 	const deletionTimeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
@@ -25,7 +25,7 @@ export function useTodoToggle(deleteTodo: (todoId: string) => Promise<void>) {
 
 		if (checked) {
 			const timeoutId = setTimeout(() => {
-				deleteTodo(todoId);
+				updateTodoCompletion(todoId, true);
 				deletionTimeoutsRef.current.delete(todoId);
 				setCheckedTodos(prev => {
 					const next = new Set(prev);
@@ -35,8 +35,10 @@ export function useTodoToggle(deleteTodo: (todoId: string) => Promise<void>) {
 			}, DELETE_DELAY);
 
 			deletionTimeoutsRef.current.set(todoId, timeoutId);
+		} else {
+			updateTodoCompletion(todoId, false);
 		}
-	}, [deleteTodo]);
+	}, [updateTodoCompletion]);
 
 	useEffect(() => {
 		const timeouts = deletionTimeoutsRef.current;

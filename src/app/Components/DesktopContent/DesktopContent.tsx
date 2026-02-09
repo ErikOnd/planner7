@@ -7,12 +7,19 @@ import { motion } from "framer-motion";
 type DesktopContentProps = {
 	baseDate: Date;
 	highlightedDate: Date | null;
+	showWeekends?: boolean;
 };
 
 export function DesktopContent(props: DesktopContentProps) {
-	const { baseDate, highlightedDate } = props;
+	const { baseDate, highlightedDate, showWeekends = true } = props;
 	const { days } = getCurrentWeek(baseDate);
 	const today = new Date().toDateString();
+	const visibleDays = showWeekends
+		? days
+		: days.filter((day) => {
+			const dayIndex = day.fullDate.getDay();
+			return dayIndex >= 1 && dayIndex <= 5;
+		});
 
 	const containerVariants = {
 		hidden: { opacity: 0 },
@@ -44,12 +51,13 @@ export function DesktopContent(props: DesktopContentProps) {
 
 	return (
 		<motion.div
+			key={showWeekends ? "weekends" : "weekdays"}
 			className={styles["desktop-content"]}
 			initial="hidden"
 			animate="visible"
 			variants={containerVariants}
 		>
-			{days.map((day, index) => {
+			{visibleDays.map((day, index) => {
 				const isHighlighted = highlightedDate?.toDateString() === day.fullDate.toDateString();
 				return (
 					<motion.div

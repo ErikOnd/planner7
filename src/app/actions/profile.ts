@@ -46,6 +46,7 @@ export async function getUserProfile() {
 			select: {
 				email: true,
 				displayName: true,
+				showWeekends: true,
 			},
 		});
 
@@ -66,6 +67,7 @@ export async function getUserProfile() {
 				data: {
 					email: user.email,
 					displayName: profile.displayName,
+					showWeekends: profile.showWeekends,
 					pendingEmail: user.new_email || undefined,
 				},
 			};
@@ -76,6 +78,7 @@ export async function getUserProfile() {
 			data: {
 				email: profile.email,
 				displayName: profile.displayName,
+				showWeekends: profile.showWeekends,
 				pendingEmail: user.new_email || undefined,
 			},
 		};
@@ -142,6 +145,7 @@ export async function updateUserProfile(data: { displayName?: string; email?: st
 			select: {
 				email: true,
 				displayName: true,
+				showWeekends: true,
 			},
 		});
 
@@ -150,12 +154,72 @@ export async function updateUserProfile(data: { displayName?: string; email?: st
 			data: {
 				email: updatedProfile.email,
 				displayName: updatedProfile.displayName,
+				showWeekends: updatedProfile.showWeekends,
 			},
 			emailConfirmationRequired: data.email !== undefined,
 		};
 	} catch (error) {
 		console.error("Error updating user profile:", error);
 		return { success: false, error: "Failed to update profile" };
+	}
+}
+
+export async function getUserPreferences() {
+	try {
+		const authResult = await getCurrentUser();
+		if (!authResult.success) {
+			return { success: false, error: authResult.error };
+		}
+
+		const profile = await prisma.profile.findUnique({
+			where: { id: authResult.userId },
+			select: {
+				showWeekends: true,
+			},
+		});
+
+		if (!profile) {
+			return { success: false, error: "Profile not found" };
+		}
+
+		return {
+			success: true,
+			data: {
+				showWeekends: profile.showWeekends,
+			},
+		};
+	} catch (error) {
+		console.error("Error fetching user preferences:", error);
+		return { success: false, error: "Failed to fetch preferences" };
+	}
+}
+
+export async function updateUserPreferences(data: { showWeekends?: boolean }) {
+	try {
+		const authResult = await getCurrentUser();
+		if (!authResult.success) {
+			return { success: false, error: authResult.error };
+		}
+
+		const updatedProfile = await prisma.profile.update({
+			where: { id: authResult.userId },
+			data: {
+				...(data.showWeekends !== undefined && { showWeekends: data.showWeekends }),
+			},
+			select: {
+				showWeekends: true,
+			},
+		});
+
+		return {
+			success: true,
+			data: {
+				showWeekends: updatedProfile.showWeekends,
+			},
+		};
+	} catch (error) {
+		console.error("Error updating user preferences:", error);
+		return { success: false, error: "Failed to update preferences" };
 	}
 }
 
