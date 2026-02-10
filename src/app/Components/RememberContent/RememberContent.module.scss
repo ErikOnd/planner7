@@ -86,12 +86,7 @@
 }
 
 .completed-close {
-	background: transparent;
-	border: 0.1rem solid var(--color-border-light);
-	border-radius: variables.$radius-md;
-	padding: 0.4rem 0.7rem;
-	color: var(--color-text-muted);
-	cursor: pointer;
+	min-width: auto;
 }
 
 .completed-table {

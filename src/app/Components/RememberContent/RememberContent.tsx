@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@atoms/Button/Button";
 import Checkbox from "@atoms/Checkbox/Checkbox";
 import { Text } from "@atoms/Text/Text";
 import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
@@ -132,9 +133,13 @@ export function RememberContent(props: RememberContentProps) {
 								Completed Todos
 							</Dialog.Title>
 							<Dialog.Close asChild>
-								<button type="button" className={styles["completed-close"]} aria-label="Close">
-									Close
-								</button>
+								<Button
+									type="button"
+									variant="secondary"
+									icon="close"
+									className={styles["completed-close"]}
+									aria-label="Close"
+								/>
 							</Dialog.Close>
 						</div>
 						<div className={styles["completed-table"]}>
