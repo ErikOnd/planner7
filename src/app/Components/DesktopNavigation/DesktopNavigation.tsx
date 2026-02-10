@@ -7,7 +7,6 @@ import { CalendarOverlay } from "@atoms/CalendarOverlay/CalendarOverlay";
 import { ProfileDialog } from "@atoms/ProfileDialog/ProfileDialog";
 import { Text } from "@atoms/Text/Text";
 import Image from "next/image";
-import Link from "next/link";
 
 type DesktopNavigationProps = {
 	rangeLabel: string;
@@ -30,9 +29,12 @@ export function DesktopNavigation({ rangeLabel, onDateSelect }: DesktopNavigatio
 				<CalendarOverlay onDateSelect={onDateSelect}>
 					<Button variant="secondary" icon="calendar" aria-label="Open calendar" />
 				</CalendarOverlay>
-				<Link href="/feedback">
-					<Button variant="secondary" icon="Megaphone" aria-label="Send feedback" />
-				</Link>
+				<Button
+					href="/feedback"
+					variant="secondary"
+					icon="Megaphone"
+					aria-label="Send feedback"
+				/>
 				<ProfileDialog>
 					<Button variant="secondary" icon="user" iconSize={36} aria-label="Open profile menu" />
 				</ProfileDialog>

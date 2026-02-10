@@ -14,6 +14,14 @@
 		opacity: 0;
 	}
 
+	&:focus-visible {
+		outline: none;
+	}
+
+	&:focus-visible .todo-content {
+		box-shadow: inset 0 0 0 0.13rem var(--color-primary);
+	}
+
 	.todo-content {
 		display: flex;
 		padding: var(--space-sm) var(--space-sm);

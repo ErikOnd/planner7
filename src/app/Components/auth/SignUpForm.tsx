@@ -91,11 +91,9 @@ export function SignUpForm() {
 				<Button type="submit" variant="primary" disabled={loading || !acceptedTerms} fontWeight={700}>
 					{loading ? "Creating account..." : "Sign up"}
 				</Button>
-				<Link href="/login">
-					<Button type="button" variant="secondary" fontWeight={700}>
-						Already have an account? Log in
-					</Button>
-				</Link>
+				<Button href="/login" variant="secondary" fontWeight={700}>
+					Already have an account? Log in
+				</Button>
 			</div>
 			<div className={styles.divider}>
 				<span>or</span>

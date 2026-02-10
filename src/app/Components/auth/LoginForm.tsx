@@ -63,11 +63,9 @@ export function LoginForm() {
 				<Button type="submit" variant="primary" disabled={loading} fontWeight={700}>
 					{loading ? "Signing in..." : "Log in"}
 				</Button>
-				<Link href="/signup">
-					<Button type="button" variant="secondary" fontWeight={700}>
-						Sign up
-					</Button>
-				</Link>
+				<Button href="/signup" variant="secondary" fontWeight={700}>
+					Sign up
+				</Button>
 			</div>
 			<div className={styles.divider}>
 				<span>or</span>

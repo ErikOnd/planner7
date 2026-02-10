@@ -4,7 +4,7 @@ import styles from "./DailyTextareaBlock.module.scss";
 
 import type { Block } from "@blocknote/core";
 import dynamic from "next/dynamic";
-import { memo, useCallback, useEffect, useRef } from "react";
+import React, { memo, useCallback, useEffect, useRef } from "react";
 
 const SmartEditor = dynamic(() => import("@atoms/SmartEditor/SmartEditor"), {
 	ssr: false,
@@ -26,6 +26,7 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	const { weekday, date } = formatToDayLabel(textareaDate);
 	const isToday = textareaDate.toDateString() === new Date().toDateString();
 	const textareaBlock = useRef<HTMLDivElement | null>(null);
+	const editorContainerRef = useRef<HTMLDivElement | null>(null);
 	const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const dateKey = textareaDate.toISOString().split("T")[0];
 
@@ -68,6 +69,34 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 		[dateKey, saveNote],
 	);
 
+	const handleEditorContainerClick = useCallback(() => {
+		const container = editorContainerRef.current;
+		if (!container) return;
+		const editorElement = container.querySelector<HTMLElement>(".bn-editor");
+		editorElement?.focus();
+	}, []);
+
+	const handleEditorContainerKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+		if (event.key !== "Tab" || event.metaKey || event.ctrlKey || event.altKey) return;
+
+		const container = editorContainerRef.current;
+		if (!container) return;
+
+		const containers = Array.from(document.querySelectorAll<HTMLElement>(`.${styles["editor-container"]}`));
+		const currentIndex = containers.indexOf(container);
+		if (currentIndex === -1) return;
+
+		event.preventDefault();
+
+		const direction = event.shiftKey ? -1 : 1;
+		const nextIndex = currentIndex + direction;
+		const nextContainer = containers[nextIndex];
+		if (!nextContainer) return;
+
+		const editorElement = nextContainer.querySelector<HTMLElement>(".bn-editor");
+		editorElement?.focus();
+	}, []);
+
 	useEffect(() => {
 		return () => {
 			if (saveTimeoutRef.current) {
@@ -88,7 +117,12 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 				<Text className={styles["day-batch"]}>{weekday}</Text>
 				<Text className={styles["month-and-day"]}>{date}</Text>
 			</div>
-			<div className={styles["editor-container"]}>
+			<div
+				ref={editorContainerRef}
+				className={styles["editor-container"]}
+				onClick={handleEditorContainerClick}
+				onKeyDownCapture={handleEditorContainerKeyDown}
+			>
 				{!isLoading && (
 					<SmartEditor
 						key={dateKey}

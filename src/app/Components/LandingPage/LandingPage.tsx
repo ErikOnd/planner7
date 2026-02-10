@@ -120,9 +120,7 @@ export function LandingPage() {
 				</Link>
 				<div className={styles["nav-actions"]}>
 					<MagneticButton>
-						<Link href="/signup">
-							<Button variant="primary" fontWeight={700}>Get Started</Button>
-						</Link>
+						<Button href="/signup" variant="primary" fontWeight={700}>Get Started</Button>
 					</MagneticButton>
 				</div>
 			</motion.nav>
@@ -213,9 +211,7 @@ export function LandingPage() {
 					</Text>
 					<div className={styles["cta-button"]}>
 						<MagneticButton>
-							<Link href="/signup">
-								<Button variant="primary" fontWeight={700}>Get Started for Free</Button>
-							</Link>
+							<Button href="/signup" variant="primary" fontWeight={700}>Get Started for Free</Button>
 						</MagneticButton>
 					</div>
 				</motion.section>
