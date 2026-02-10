@@ -12,6 +12,7 @@ import { useKeyboardShortcut } from "@hooks/useKeyboardShortcut";
 import { useTodoToggle } from "@hooks/useTodoToggle";
 import type { GeneralTodo } from "@prisma/client";
 import * as Dialog from "@radix-ui/react-dialog";
+import Checkbox from "@atoms/Checkbox/Checkbox";
 import { AlertDialog } from "radix-ui";
 import { useMemo, useState } from "react";
 import styles from "./Sidebar.module.scss";
@@ -195,7 +196,9 @@ export function Sidebar({ baseDate, setBaseDateAction, rangeLabel, todosState }:
 								<Button variant="secondary" fontWeight={500}>Cancel</Button>
 							</AlertDialog.Cancel>
 							<AlertDialog.Action asChild>
-								<Button className={styles["delete-button"]} onClick={handleDelete} fontWeight={700}>Delete</Button>
+								<Button className={styles["delete-button"]} onClick={handleDelete} fontWeight={700} autoFocus>
+									Delete
+								</Button>
 							</AlertDialog.Action>
 						</div>
 					</AlertDialog.Content>
@@ -222,7 +225,13 @@ export function Sidebar({ baseDate, setBaseDateAction, rangeLabel, todosState }:
 								)
 								: completedTodos.map(todo => (
 									<div key={todo.id} className={styles["completed-row"]}>
-										<span className={styles["completed-task"]}>{todo.text}</span>
+										<Checkbox
+											label={todo.text}
+											checked
+											onChange={(checked) => updateTodoCompletion(todo.id, checked)}
+											className={styles["completed-checkbox"]}
+											labelClassName={styles["completed-task"]}
+										/>
 										<span className={styles["completed-date"]}>
 											{todo.completedAt
 												? new Date(todo.completedAt).toLocaleDateString("en-US", {

@@ -1,5 +1,6 @@
 "use client";
 
+import Checkbox from "@atoms/Checkbox/Checkbox";
 import { Text } from "@atoms/Text/Text";
 import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
 import { DraggableTaskItem } from "@components/DraggableTaskItem/DraggableTaskItem";
@@ -145,7 +146,13 @@ export function RememberContent(props: RememberContentProps) {
 								)
 								: completedTodos.map(todo => (
 									<div key={todo.id} className={styles["completed-row"]}>
-										<span className={styles["completed-task"]}>{todo.text}</span>
+										<Checkbox
+											label={todo.text}
+											checked
+											onChange={(checked) => updateTodoCompletion(todo.id, checked)}
+											className={styles["completed-checkbox"]}
+											labelClassName={styles["completed-task"]}
+										/>
 										<span className={styles["completed-date"]}>
 											{todo.completedAt
 												? new Date(todo.completedAt).toLocaleDateString("en-US", {

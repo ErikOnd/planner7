@@ -225,8 +225,9 @@
 .completed-table {
 	display: flex;
 	flex-direction: column;
-	gap: 0;
+	gap: 0.25rem;
 	position: relative;
+	padding-left: 0;
 }
 
 .completed-row {
@@ -234,24 +235,15 @@
 	flex-direction: column;
 	gap: 0.25rem;
 	padding: 0.75rem 0;
-	border-bottom: 0.1rem solid var(--color-border-light);
-	position: relative;
-	padding-left: 1.1rem;
+	border-bottom: 0.1rem solid color-mix(in srgb, var(--color-border-light) 70%, transparent);
 }
 
-.completed-row::before {
-	content: "";
-	position: absolute;
-	left: 0.22rem;
-	top: 0;
-	bottom: 0;
-	width: 1px;
-	background: var(--color-border-light);
+.completed-checkbox {
 	opacity: 0.7;
 }
 
 .completed-task {
-	color: var(--color-text);
+	color: var(--color-text-muted);
 	font-weight: 600;
 	line-height: 1.4;
 }
@@ -260,18 +252,7 @@
 	color: var(--color-text-muted);
 	font-size: var(--font-size-xs);
 	letter-spacing: 0.01em;
-	position: relative;
-
-	&::before {
-		content: "";
-		position: absolute;
-		left: -1.1rem;
-		top: 0.35rem;
-		width: 0.4rem;
-		height: 0.4rem;
-		border-radius: 50%;
-		background-color: var(--color-primary);
-	}
+	margin-left: 2.5rem;
 }
 
 .completed-empty {
