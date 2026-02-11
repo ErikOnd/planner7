@@ -1,10 +1,11 @@
 "use client";
 
 import { Button } from "@atoms/Button/Button";
+import Checkbox from "@atoms/Checkbox/Checkbox";
+import { Icon } from "@atoms/Icons/Icon";
 import { Text } from "@atoms/Text/Text";
 import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
 import { DraggableTodoItem } from "@components/DraggableTodoItem/DraggableTodoItem";
-import WeeklySlider from "@components/WeeklySlider/WeeklySlider";
 import { closestCenter, DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useDraggableTodos } from "@hooks/useDraggableTodos";
@@ -12,7 +13,7 @@ import { useKeyboardShortcut } from "@hooks/useKeyboardShortcut";
 import { useTodoToggle } from "@hooks/useTodoToggle";
 import type { GeneralTodo } from "@prisma/client";
 import * as Dialog from "@radix-ui/react-dialog";
-import Checkbox from "@atoms/Checkbox/Checkbox";
+import Image from "next/image";
 import { AlertDialog } from "radix-ui";
 import { useMemo, useState } from "react";
 import styles from "./Sidebar.module.scss";
@@ -30,13 +31,10 @@ type TodosState = {
 };
 
 type SidebarProps = {
-	baseDate: Date;
-	setBaseDateAction: (date: Date) => void;
-	rangeLabel: string;
 	todosState: TodosState;
 };
 
-export function Sidebar({ baseDate, setBaseDateAction, rangeLabel, todosState }: SidebarProps) {
+export function Sidebar({ todosState }: SidebarProps) {
 	const { todos, deleteTodo, addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
 
 	const [isAddOpen, setIsAddOpen] = useState(false);
@@ -84,29 +82,32 @@ export function Sidebar({ baseDate, setBaseDateAction, rangeLabel, todosState }:
 	return (
 		<div className={styles["sidebar"]}>
 			<div className={styles["sticky-section"]}>
-				<div className={styles["section"]}>
-					<div className={styles["week-slider-section"]}>
-						<WeeklySlider baseDate={baseDate} rangeLabel={rangeLabel} setBaseDate={setBaseDateAction} />
+				<div className={styles["sidebar-header"]}>
+					<div className={styles["brand"]}>
+						<Image src="/logo-mark.svg" alt="Planner7 logo" width={36} height={36} className={styles["brand-logo"]} />
+						<span className={styles["brand-name"]}>Planner7</span>
 					</div>
 				</div>
 
-				<div className={styles["section"]}>
-					<div className={styles["remember-header-row"]}>
-						<div className={styles["remember-header"]}>General Todos</div>
-						<div className={styles["remember-actions"]}>
-							<Button
-								variant="secondary"
-								onClick={() => setIsAddOpen(true)}
-								aria-label="Add todo (Cmd+K)"
-								aria-haspopup="dialog"
-								aria-expanded={isAddOpen}
-								className={styles["add-header-button"]}
-							>
-								<span className={styles["add-label"]}>+ Add</span>
-							</Button>
-						</div>
-					</div>
+				<Button
+					type="button"
+					variant="secondary"
+					className={styles["quick-add"]}
+					onClick={() => setIsAddOpen(true)}
+					aria-label="Add todo (Cmd+K)"
+					aria-haspopup="dialog"
+					aria-expanded={isAddOpen}
+					wrapText={false}
+				>
+					<Icon name="plus" size={20} className={styles["quick-add-plus"]} />
+					<span className={styles["quick-add-text"]}>Add task</span>
+				</Button>
 
+				<div className={styles["backlog-header"]}>
+					<span className={styles["backlog-title"]}>Global Backlog</span>
+				</div>
+
+				<div className={styles["backlog-panel"]}>
 					<div className={styles["remember-items"]}>
 						{localTodos.length === 0
 							? (
@@ -153,13 +154,15 @@ export function Sidebar({ baseDate, setBaseDateAction, rangeLabel, todosState }:
 								</DndContext>
 							)}
 					</div>
-					<button
+					<Button
 						type="button"
+						variant="secondary"
 						className={styles["completed-link"]}
 						onClick={() => setIsCompletedOpen(true)}
+						fontWeight={600}
 					>
 						Completed ({completedTodos.length})
-					</button>
+					</Button>
 				</div>
 			</div>
 			<AddTaskModal

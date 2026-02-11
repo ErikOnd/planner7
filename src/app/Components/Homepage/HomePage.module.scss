@@ -12,6 +12,19 @@
 
 	.sidebar-content-section {
 		display: flex;
+		min-height: 100dvh;
+	}
+
+	.desktop-layout {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		min-height: 100dvh;
+	}
+
+	.desktop-main {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
 	}
 
 	@include mixins.tablet {

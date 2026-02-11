@@ -73,19 +73,21 @@ export default function HomePage() {
 				)
 				: (
 					<div className={styles["desktop-view"]}>
-						<DesktopNavigation rangeLabel={rangeLabel} onDateSelect={handleCalendarDateSelect} />
-						<div className={styles["sidebar-content-section"]}>
-							<Sidebar
-								baseDate={baseDate}
-								setBaseDateAction={setBaseDate}
-								rangeLabel={rangeLabel}
-								todosState={todosState}
-							/>
-							<DesktopContent
-								baseDate={baseDate}
-								highlightedDate={highlightedDate}
-								showWeekends={showWeekends}
-							/>
+						<div className={styles["desktop-layout"]}>
+							<Sidebar todosState={todosState} />
+							<div className={styles["desktop-main"]}>
+								<DesktopNavigation
+									rangeLabel={rangeLabel}
+									onDateSelect={handleCalendarDateSelect}
+									baseDate={baseDate}
+									setBaseDateAction={setBaseDate}
+								/>
+								<DesktopContent
+									baseDate={baseDate}
+									highlightedDate={highlightedDate}
+									showWeekends={showWeekends}
+								/>
+							</div>
 						</div>
 					</div>
 				)}
