@@ -112,7 +112,7 @@ export function AddTaskModal(props: AddTaskModalProps) {
 				<Dialog.Overlay className={styles["overlay"]} />
 				<Dialog.Content className={styles["content"]}>
 					<Dialog.Title className={styles["title"]}>
-						<Text>{isEditMode ? "Edit Task" : "Add New Task"}</Text>
+						<Text fontWeight={700}>{isEditMode ? "Edit Task" : "New Task"}</Text>
 					</Dialog.Title>
 					<form ref={formRef} key={formKey} onSubmit={handleFormSubmit}>
 						{isEditMode && <input type="hidden" name="todoId" value={editMode.todoId} />}
