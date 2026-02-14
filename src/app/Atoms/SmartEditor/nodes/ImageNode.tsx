@@ -16,6 +16,7 @@ import {
 	type SerializedLexicalNode,
 } from "lexical";
 import { type JSX, type MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef, useState } from "react";
+import { deleteUploadedImageByUrl } from "../../../../actions/upload-image";
 
 export type ImagePayload = {
 	src: string;
@@ -134,7 +135,7 @@ function ResizableImage({
 		draftWidthRef.current = width;
 	}, [width]);
 
-	const removeSelectedImage = useCallback(() => {
+	const removeSelectedImage = useCallback((srcToDelete?: string) => {
 		editor.update(() => {
 			const node = $getNodeByKey(nodeKey);
 			if (!$isImageNode(node)) return;
@@ -147,6 +148,16 @@ function ResizableImage({
 			}
 		});
 		setIsSelected(false);
+
+		if (srcToDelete) {
+			void deleteUploadedImageByUrl(srcToDelete).then((result) => {
+				if (!result.success) {
+					console.error("Failed to delete uploaded image:", result.error);
+				}
+			}).catch((error) => {
+				console.error("Image cleanup action crashed:", error);
+			});
+		}
 	}, [editor, nodeKey]);
 
 	useEffect(() => {
@@ -168,12 +179,12 @@ function ResizableImage({
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if (event.key !== "Backspace" && event.key !== "Delete") return;
 			event.preventDefault();
-			removeSelectedImage();
+			removeSelectedImage(src);
 		};
 
 		document.addEventListener("keydown", handleKeyDown);
 		return () => document.removeEventListener("keydown", handleKeyDown);
-	}, [isSelected, removeSelectedImage]);
+	}, [isSelected, removeSelectedImage, src]);
 
 	const onHandleMouseDown = (event: ReactMouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
@@ -238,7 +249,7 @@ function ResizableImage({
 				onClick={(event) => {
 					event.preventDefault();
 					event.stopPropagation();
-					removeSelectedImage();
+					removeSelectedImage(src);
 				}}
 				aria-label="Remove image"
 				title="Remove image"

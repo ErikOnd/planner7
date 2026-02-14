@@ -1,10 +1,10 @@
 "use server";
 
-import {getCurrentUser} from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import type {Prisma} from "@prisma/client";
-import {createClient} from "@utils/supabase/server";
-import type {NoteContent} from "types/noteContent";
+import type { Prisma } from "@prisma/client";
+import { createClient } from "@utils/supabase/server";
+import type { NoteContent } from "types/noteContent";
 
 export type DailyNoteResult = {
 	error?: string;

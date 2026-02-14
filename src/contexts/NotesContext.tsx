@@ -2,6 +2,7 @@
 
 import { createContext, ReactNode, useCallback, useContext, useRef, useState } from "react";
 import type { NoteContent } from "types/noteContent";
+import { cleanupUnusedImages } from "../actions/upload-image";
 import { getDailyNote, getWeeklyNotes, saveDailyNote } from "../app/actions/dailyNotes";
 
 type NoteCache = {
@@ -22,12 +23,15 @@ type NotesContextType = {
 };
 
 const NotesContext = createContext<NotesContextType | undefined>(undefined);
+const CLEANUP_INTERVAL_MS = 24 * 60 * 60 * 1000;
+const LAST_CLEANUP_KEY = "planner7:last-image-cleanup-at";
 
 export function NotesProvider({ children }: { children: ReactNode }) {
 	const cacheRef = useRef<NoteCache>({});
 	const [loadingStates, setLoadingStates] = useState<LoadingState>({});
 	const [isWeekLoading, setIsWeekLoading] = useState(false);
 	const [, forceUpdate] = useState({});
+	const isCleanupRunningRef = useRef(false);
 
 	const triggerUpdate = useCallback(() => {
 		forceUpdate({});
@@ -73,6 +77,27 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 			});
 
 			triggerUpdate();
+
+			if (!isCleanupRunningRef.current && typeof window !== "undefined") {
+				const lastCleanupAt = Number(window.localStorage.getItem(LAST_CLEANUP_KEY) || 0);
+				if (!Number.isFinite(lastCleanupAt) || Date.now() - lastCleanupAt >= CLEANUP_INTERVAL_MS) {
+					isCleanupRunningRef.current = true;
+					void cleanupUnusedImages()
+						.then((result) => {
+							if (!result.success) {
+								console.error("Image cleanup failed:", result.error);
+								return;
+							}
+							window.localStorage.setItem(LAST_CLEANUP_KEY, String(Date.now()));
+						})
+						.catch((error) => {
+							console.error("Image cleanup action crashed:", error);
+						})
+						.finally(() => {
+							isCleanupRunningRef.current = false;
+						});
+				}
+			}
 		} catch (error) {
 			console.error("Error loading weekly notes:", error);
 		} finally {

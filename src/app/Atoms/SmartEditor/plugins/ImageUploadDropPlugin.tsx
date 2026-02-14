@@ -12,15 +12,44 @@ import {
 	COMMAND_PRIORITY_LOW,
 	DRAGOVER_COMMAND,
 	DROP_COMMAND,
+	PASTE_COMMAND,
 } from "lexical";
 import { useEffect } from "react";
 import { uploadImage } from "../../../../actions/upload-image";
 import { $createImageNode, INSERT_IMAGE_COMMAND } from "../nodes/ImageNode";
 
-export default function ImageUploadDropPlugin() {
+type ImageUploadDropPluginProps = {
+	onUploadError?: (message: string) => void;
+	onUploadSuccess?: () => void;
+};
+
+export default function ImageUploadDropPlugin({ onUploadError, onUploadSuccess }: ImageUploadDropPluginProps) {
 	const [editor] = useLexicalComposerContext();
 
 	useEffect(() => {
+		const uploadAndInsertImages = async (files: File[]) => {
+			for (const file of files) {
+				try {
+					const formData = new FormData();
+					formData.append("file", file);
+					const result = await uploadImage(formData);
+					if (result.success) {
+						editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+							src: result.url,
+							altText: file.name,
+						});
+						onUploadSuccess?.();
+					} else {
+						console.error("Image upload failed:", result.error);
+						onUploadError?.(result.error);
+					}
+				} catch (error) {
+					console.error("Image upload action crashed:", error);
+					onUploadError?.(error instanceof Error ? error.message : "Image upload failed");
+				}
+			}
+		};
+
 		const unregisterInsert = editor.registerCommand(
 			INSERT_IMAGE_COMMAND,
 			(payload) => {
@@ -69,19 +98,28 @@ export default function ImageUploadDropPlugin() {
 				event.preventDefault();
 
 				void (async () => {
-					for (const file of imageFiles) {
-						const formData = new FormData();
-						formData.append("file", file);
-						const result = await uploadImage(formData);
-						if (result.success) {
-							editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-								src: result.url,
-								altText: file.name,
-							});
-						} else {
-							console.error("Image upload failed:", result.error);
-						}
-					}
+					await uploadAndInsertImages(imageFiles);
+				})();
+
+				return true;
+			},
+			COMMAND_PRIORITY_HIGH,
+		);
+
+		const unregisterPaste = editor.registerCommand(
+			PASTE_COMMAND,
+			(event) => {
+				if (!(event instanceof ClipboardEvent)) return false;
+				const files = event.clipboardData?.files;
+				if (!files || files.length === 0) return false;
+
+				const imageFiles = Array.from(files).filter((file) => file.type.startsWith("image/"));
+				if (imageFiles.length === 0) return false;
+
+				event.preventDefault();
+
+				void (async () => {
+					await uploadAndInsertImages(imageFiles);
 				})();
 
 				return true;
@@ -93,8 +131,9 @@ export default function ImageUploadDropPlugin() {
 			unregisterInsert();
 			unregisterDragOver();
 			unregisterDrop();
+			unregisterPaste();
 		};
-	}, [editor]);
+	}, [editor, onUploadError, onUploadSuccess]);
 
 	return null;
 }

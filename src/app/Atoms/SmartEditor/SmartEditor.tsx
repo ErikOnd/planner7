@@ -3,6 +3,7 @@
 import styles from "./SmartEditor.module.scss";
 
 import { useTheme } from "@/contexts/ThemeContext";
+import { Message } from "@atoms/Message/Message";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
@@ -43,6 +44,7 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 	const { mounted } = useTheme();
 	const { showEditorToolbar } = useWeekDisplayPreference();
 	const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
+	const [uploadError, setUploadError] = useState<string | null>(null);
 	const dragMenuRef = useRef<HTMLElement>(null);
 	const dragTargetLineRef = useRef<HTMLElement>(null);
 
@@ -164,7 +166,10 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 				<ListPlugin />
 				<CheckListPlugin />
 				<SlashCommandPlugin />
-				<ImageUploadDropPlugin />
+				<ImageUploadDropPlugin
+					onUploadError={setUploadError}
+					onUploadSuccess={() => setUploadError(null)}
+				/>
 				<SpeechToTextButtonPlugin />
 				{floatingAnchorElem && (
 					<DraggableBlockPlugin_EXPERIMENTAL
@@ -202,6 +207,7 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 					}}
 				/>
 			</LexicalComposer>
+			<Message variant="error">{uploadError}</Message>
 		</div>
 	);
 }
