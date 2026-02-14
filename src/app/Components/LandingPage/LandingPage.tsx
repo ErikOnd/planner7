@@ -207,7 +207,7 @@ export function LandingPage() {
 						Ready to take control of your week?
 					</Headline>
 					<Text size="base" className={styles["cta-subtitle"]}>
-						Join our community of people who already use Planner7 to organize their lives.
+						Join our community of people who already use Planner7 to organize their work and projects.
 					</Text>
 					<div className={styles["cta-button"]}>
 						<MagneticButton>

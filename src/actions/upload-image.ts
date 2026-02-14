@@ -99,6 +99,7 @@ async function ensureProfileExists(userId: string) {
 			id: userId,
 			email: user.email ?? fallbackEmail,
 			displayName,
+			showEditorToolbar: true,
 		},
 	});
 }

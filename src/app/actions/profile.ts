@@ -292,6 +292,7 @@ export async function createNewUser(displayName?: string) {
 				id: user.id,
 				email: user.email ?? "",
 				displayName: userDisplayName,
+				showEditorToolbar: true,
 			},
 		});
 

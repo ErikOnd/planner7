@@ -99,6 +99,7 @@ export default function HomePage() {
 									onDateSelect={handleCalendarDateSelect}
 									baseDate={baseDate}
 									setBaseDateAction={setBaseDate}
+									showWeekends={showWeekends}
 								/>
 								<DesktopContent
 									baseDate={baseDate}

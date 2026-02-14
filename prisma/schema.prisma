@@ -13,7 +13,7 @@ model Profile {
   email          String          @unique
   displayName    String
   showWeekends   Boolean         @default(true)
-  showEditorToolbar Boolean      @default(false)
+  showEditorToolbar Boolean      @default(true)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   dailyNotes     DailyNote[]

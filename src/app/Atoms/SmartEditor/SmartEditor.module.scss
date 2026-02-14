@@ -495,6 +495,30 @@
 	}
 }
 
+.smart-editor__mic-note {
+	position: absolute;
+	right: 4.5rem;
+	bottom: max(1.3rem, calc(env(safe-area-inset-bottom) + 0.3rem));
+	max-width: min(18rem, calc(100% - 6rem));
+	margin: 0;
+	padding: 0.45rem 0.65rem;
+	border: 0.1rem solid var(--color-border);
+	border-radius: variables.$radius-md;
+	background: var(--color-surface-elevated);
+	color: var(--color-text-muted);
+	font-size: 0.78rem;
+	line-height: 1.25;
+	box-shadow: 0 0.35rem 1.1rem rgba(0, 0, 0, 0.12);
+	z-index: 4;
+
+	@media (max-width: 639px) {
+		right: 4.2rem;
+		bottom: max(1rem, calc(env(safe-area-inset-bottom) + 0.25rem));
+		max-width: min(15rem, calc(100% - 5.5rem));
+		font-size: 0.74rem;
+	}
+}
+
 @keyframes mic-pulse {
 	0% {
 		transform: scale(1);

@@ -14,8 +14,10 @@
 }
 
 .badge--coming-soon {
-	background-color: var(--color-gray-medium);
+	background-color: color-mix(in srgb, var(--color-primary-subtle) 45%, var(--color-surface-elevated));
 	color: var(--color-text-muted);
+	border: .1rem solid var(--color-border);
+	padding: calc(var(--space-xs) + 0.05rem) calc(var(--space-md) + 0.05rem);
 }
 
 .badge--info {

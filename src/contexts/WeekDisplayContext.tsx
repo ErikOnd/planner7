@@ -17,7 +17,7 @@ const WeekDisplayContext = createContext<WeekDisplayContextValue | undefined>(un
 
 export function WeekDisplayProvider({ children }: { children: ReactNode }) {
 	const [showWeekends, setShowWeekendsState] = useState(true);
-	const [showEditorToolbar, setShowEditorToolbarState] = useState(false);
+	const [showEditorToolbar, setShowEditorToolbarState] = useState(true);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);

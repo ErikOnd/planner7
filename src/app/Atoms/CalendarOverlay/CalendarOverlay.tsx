@@ -9,6 +9,7 @@ import styles from "./CalendarOverlay.module.scss";
 type CalendarOverlayProps = {
 	children: React.ReactNode;
 	onDateSelect: (date: Date) => void;
+	showWeekends?: boolean;
 };
 
 const MONTHS = [
@@ -28,7 +29,7 @@ const MONTHS = [
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-export function CalendarOverlay({ children, onDateSelect }: CalendarOverlayProps) {
+export function CalendarOverlay({ children, onDateSelect, showWeekends = true }: CalendarOverlayProps) {
 	const [open, setOpen] = useState(false);
 	const now = new Date();
 	const [currentMonth, setCurrentMonth] = useState(now.getMonth());
@@ -88,6 +89,10 @@ export function CalendarOverlay({ children, onDateSelect }: CalendarOverlayProps
 
 		// Days of the month
 		for (let day = 1; day <= daysInMonth; day++) {
+			const currentDate = new Date(currentYear, currentMonth, day);
+			const dayOfWeek = currentDate.getDay();
+			const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+			const isDisabled = !showWeekends && isWeekend;
 			const isToday = day === now.getDate()
 				&& currentMonth === now.getMonth()
 				&& currentYear === now.getFullYear();
@@ -97,8 +102,15 @@ export function CalendarOverlay({ children, onDateSelect }: CalendarOverlayProps
 					key={`${currentYear}-${currentMonth}-${day}`}
 					className={clsx(styles["calendar-day"], {
 						[styles["calendar-day--today"]]: isToday,
+						[styles["calendar-day--disabled"]]: isDisabled,
 					})}
-					onClick={() => handleDateClick(day)}
+					onClick={() => {
+						if (!isDisabled) {
+							handleDateClick(day);
+						}
+					}}
+					disabled={isDisabled}
+					aria-disabled={isDisabled}
 					type="button"
 				>
 					{day}

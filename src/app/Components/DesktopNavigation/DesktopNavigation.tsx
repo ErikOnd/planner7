@@ -12,9 +12,16 @@ type DesktopNavigationProps = {
 	onDateSelect: (date: Date) => void;
 	baseDate: Date;
 	setBaseDateAction: (date: Date) => void;
+	showWeekends: boolean;
 };
 
-export function DesktopNavigation({ rangeLabel, onDateSelect, baseDate, setBaseDateAction }: DesktopNavigationProps) {
+export function DesktopNavigation({
+	rangeLabel,
+	onDateSelect,
+	baseDate,
+	setBaseDateAction,
+	showWeekends,
+}: DesktopNavigationProps) {
 	const handleWeekChange = (direction: -1 | 1) => {
 		const next = new Date(baseDate);
 		next.setDate(baseDate.getDate() + direction * 7);
@@ -43,7 +50,7 @@ export function DesktopNavigation({ rangeLabel, onDateSelect, baseDate, setBaseD
 				/>
 			</div>
 			<div className={styles["actions-section"]}>
-				<CalendarOverlay onDateSelect={onDateSelect}>
+				<CalendarOverlay onDateSelect={onDateSelect} showWeekends={showWeekends}>
 					<Button variant="secondary" icon="calendar" aria-label="Open calendar" />
 				</CalendarOverlay>
 				<Button

@@ -4,7 +4,7 @@ CREATE TABLE "Profile" (
     "email" TEXT NOT NULL,
     "displayName" TEXT NOT NULL,
     "showWeekends" BOOLEAN NOT NULL DEFAULT true,
-    "showEditorToolbar" BOOLEAN NOT NULL DEFAULT false,
+    "showEditorToolbar" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

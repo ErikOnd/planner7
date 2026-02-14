@@ -29,7 +29,9 @@ export default function SpeechToTextButtonPlugin() {
 	const [editor] = useLexicalComposerContext();
 	const [isSpeechAvailable, setIsSpeechAvailable] = useState(false);
 	const [isListening, setIsListening] = useState(false);
+	const [showLanguageHint, setShowLanguageHint] = useState(false);
 	const speechRecognitionRef = useRef<BrowserSpeechRecognition | null>(null);
+	const hintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	useEffect(() => {
 		const SpeechRecognitionCtor = typeof window !== "undefined"
@@ -80,12 +82,24 @@ export default function SpeechToTextButtonPlugin() {
 			speechRecognitionRef.current = null;
 			setIsSpeechAvailable(false);
 			setIsListening(false);
+			if (hintTimeoutRef.current) {
+				clearTimeout(hintTimeoutRef.current);
+				hintTimeoutRef.current = null;
+			}
 		};
 	}, [editor]);
 
 	const toggleSpeechToText = () => {
 		const recognition = speechRecognitionRef.current;
 		if (!recognition) return;
+		setShowLanguageHint(true);
+		if (hintTimeoutRef.current) {
+			clearTimeout(hintTimeoutRef.current);
+		}
+		hintTimeoutRef.current = setTimeout(() => {
+			setShowLanguageHint(false);
+			hintTimeoutRef.current = null;
+		}, 3000);
 
 		if (isListening) {
 			recognition.stop();
@@ -104,15 +118,22 @@ export default function SpeechToTextButtonPlugin() {
 	if (!isSpeechAvailable) return null;
 
 	return (
-		<button
-			type="button"
-			className={styles["smart-editor__mic-button"]}
-			data-recording={isListening}
-			onClick={toggleSpeechToText}
-			aria-label={isListening ? "Stop dictation" : "Start dictation"}
-			title={isListening ? "Recording..." : "Start voice input"}
-		>
-			<Icon name="Microphone" size={24} />
-		</button>
+		<>
+			<button
+				type="button"
+				className={styles["smart-editor__mic-button"]}
+				data-recording={isListening}
+				onClick={toggleSpeechToText}
+				aria-label={isListening ? "Stop dictation" : "Start dictation"}
+				title={isListening ? "Recording..." : "Start voice input"}
+			>
+				<Icon name="Microphone" size={24} />
+			</button>
+			{showLanguageHint && (
+				<p className={styles["smart-editor__mic-note"]} role="status" aria-live="polite">
+					Speech input currently supports English only.
+				</p>
+			)}
+		</>
 	);
 }
