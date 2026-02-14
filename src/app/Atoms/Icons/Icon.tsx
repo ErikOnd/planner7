@@ -18,6 +18,8 @@ import Star from "@assets/icons/star.svg";
 import Sun from "@assets/icons/sun.svg";
 import Trash from "@assets/icons/trash.svg";
 import User from "@assets/icons/user.svg";
+import Microphone from "@assets/icons/microphone.svg";
+import ArrowDownRight from "@assets/icons/arrow-down-right.svg";
 
 import clsx from "clsx";
 
@@ -42,6 +44,8 @@ const icons = {
 	"double-chevron-right": DoubleChevronRight,
 	"google": Google,
 	"Megaphone": Megaphone,
+	"Microphone": Microphone,
+	"arrow-down-right": ArrowDownRight,
 };
 
 export type IconName = keyof typeof icons;

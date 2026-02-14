@@ -5,16 +5,19 @@ import { getUserPreferences, updateUserPreferences } from "../app/actions/profil
 
 type WeekDisplayContextValue = {
 	showWeekends: boolean;
+	showEditorToolbar: boolean;
 	isLoading: boolean;
 	isSaving: boolean;
 	error: string | null;
 	setShowWeekends: (value: boolean) => Promise<void>;
+	setShowEditorToolbar: (value: boolean) => Promise<void>;
 };
 
 const WeekDisplayContext = createContext<WeekDisplayContextValue | undefined>(undefined);
 
 export function WeekDisplayProvider({ children }: { children: ReactNode }) {
 	const [showWeekends, setShowWeekendsState] = useState(true);
+	const [showEditorToolbar, setShowEditorToolbarState] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -25,6 +28,7 @@ export function WeekDisplayProvider({ children }: { children: ReactNode }) {
 			const result = await getUserPreferences();
 			if (result.success && result.data) {
 				setShowWeekendsState(result.data.showWeekends);
+				setShowEditorToolbarState(Boolean(result.data.showEditorToolbar));
 			} else {
 				setError(result.error || "Failed to load preferences");
 			}
@@ -48,14 +52,30 @@ export function WeekDisplayProvider({ children }: { children: ReactNode }) {
 		setIsSaving(false);
 	};
 
+	const setShowEditorToolbar = async (value: boolean) => {
+		setShowEditorToolbarState(value);
+		setIsSaving(true);
+		setError(null);
+
+		const result = await updateUserPreferences({ showEditorToolbar: value });
+		if (!result.success) {
+			setError(result.error || "Failed to update preferences");
+			setShowEditorToolbarState(prev => !prev);
+		}
+
+		setIsSaving(false);
+	};
+
 	return (
 		<WeekDisplayContext.Provider
 			value={{
 				showWeekends,
+				showEditorToolbar,
 				isLoading,
 				isSaving,
 				error,
 				setShowWeekends,
+				setShowEditorToolbar,
 			}}
 		>
 			{children}

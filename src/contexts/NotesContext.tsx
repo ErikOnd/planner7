@@ -1,11 +1,11 @@
 "use client";
 
-import type { Block } from "@blocknote/core";
 import { createContext, ReactNode, useCallback, useContext, useRef, useState } from "react";
+import type { NoteContent } from "types/noteContent";
 import { getDailyNote, getWeeklyNotes, saveDailyNote } from "../app/actions/dailyNotes";
 
 type NoteCache = {
-	[dateString: string]: Block[] | undefined;
+	[dateString: string]: NoteContent | undefined;
 };
 
 type LoadingState = {
@@ -13,11 +13,11 @@ type LoadingState = {
 };
 
 type NotesContextType = {
-	getNote: (dateString: string) => Block[] | undefined;
+	getNote: (dateString: string) => NoteContent | undefined;
 	hasNote: (dateString: string) => boolean;
 	isLoading: (dateString: string) => boolean;
 	loadWeek: (startDate: Date, endDate: Date) => Promise<void>;
-	saveNote: (dateString: string, content: Block[]) => Promise<void>;
+	saveNote: (dateString: string, content: NoteContent) => Promise<void>;
 	isWeekLoading: boolean;
 };
 
@@ -33,7 +33,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 		forceUpdate({});
 	}, []);
 
-	const getNote = useCallback((dateString: string): Block[] | undefined => {
+	const getNote = useCallback((dateString: string): NoteContent | undefined => {
 		return cacheRef.current[dateString];
 	}, []);
 
@@ -69,7 +69,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 			// Update cache with actual content
 			notes.forEach(note => {
 				const dateString = note.date.toISOString().split("T")[0];
-				cacheRef.current[dateString] = note.content as Block[] | undefined;
+				cacheRef.current[dateString] = note.content as NoteContent | undefined;
 			});
 
 			triggerUpdate();
@@ -80,7 +80,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 		}
 	}, [triggerUpdate]);
 
-	const saveNote = useCallback(async (dateString: string, content: Block[]) => {
+	const saveNote = useCallback(async (dateString: string, content: NoteContent) => {
 		// Optimistic update
 		cacheRef.current[dateString] = content;
 		triggerUpdate();
@@ -95,7 +95,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 			// Rollback on error by refetching
 			try {
 				const note = await getDailyNote(dateString);
-				cacheRef.current[dateString] = note?.content as Block[] | undefined;
+				cacheRef.current[dateString] = note?.content as NoteContent | undefined;
 				triggerUpdate();
 			} catch (fetchError) {
 				console.error("Error fetching note after save failure:", fetchError);

@@ -47,6 +47,7 @@ export async function getUserProfile() {
 				email: true,
 				displayName: true,
 				showWeekends: true,
+				showEditorToolbar: true,
 			},
 		});
 
@@ -68,6 +69,7 @@ export async function getUserProfile() {
 					email: user.email,
 					displayName: profile.displayName,
 					showWeekends: profile.showWeekends,
+					showEditorToolbar: profile.showEditorToolbar,
 					pendingEmail: user.new_email || undefined,
 				},
 			};
@@ -79,6 +81,7 @@ export async function getUserProfile() {
 				email: profile.email,
 				displayName: profile.displayName,
 				showWeekends: profile.showWeekends,
+				showEditorToolbar: profile.showEditorToolbar,
 				pendingEmail: user.new_email || undefined,
 			},
 		};
@@ -146,6 +149,7 @@ export async function updateUserProfile(data: { displayName?: string; email?: st
 				email: true,
 				displayName: true,
 				showWeekends: true,
+				showEditorToolbar: true,
 			},
 		});
 
@@ -155,6 +159,7 @@ export async function updateUserProfile(data: { displayName?: string; email?: st
 				email: updatedProfile.email,
 				displayName: updatedProfile.displayName,
 				showWeekends: updatedProfile.showWeekends,
+				showEditorToolbar: updatedProfile.showEditorToolbar,
 			},
 			emailConfirmationRequired: data.email !== undefined,
 		};
@@ -175,6 +180,7 @@ export async function getUserPreferences() {
 			where: { id: authResult.userId },
 			select: {
 				showWeekends: true,
+				showEditorToolbar: true,
 			},
 		});
 
@@ -186,6 +192,7 @@ export async function getUserPreferences() {
 			success: true,
 			data: {
 				showWeekends: profile.showWeekends,
+				showEditorToolbar: profile.showEditorToolbar,
 			},
 		};
 	} catch (error) {
@@ -194,7 +201,7 @@ export async function getUserPreferences() {
 	}
 }
 
-export async function updateUserPreferences(data: { showWeekends?: boolean }) {
+export async function updateUserPreferences(data: { showWeekends?: boolean; showEditorToolbar?: boolean }) {
 	try {
 		const authResult = await getCurrentUser();
 		if (!authResult.success) {
@@ -205,9 +212,11 @@ export async function updateUserPreferences(data: { showWeekends?: boolean }) {
 			where: { id: authResult.userId },
 			data: {
 				...(data.showWeekends !== undefined && { showWeekends: data.showWeekends }),
+				...(data.showEditorToolbar !== undefined && { showEditorToolbar: data.showEditorToolbar }),
 			},
 			select: {
 				showWeekends: true,
+				showEditorToolbar: true,
 			},
 		});
 
@@ -215,6 +224,7 @@ export async function updateUserPreferences(data: { showWeekends?: boolean }) {
 			success: true,
 			data: {
 				showWeekends: updatedProfile.showWeekends,
+				showEditorToolbar: updatedProfile.showEditorToolbar,
 			},
 		};
 	} catch (error) {

@@ -2,9 +2,9 @@
 
 import styles from "./DailyTextareaBlock.module.scss";
 
-import type { Block } from "@blocknote/core";
 import dynamic from "next/dynamic";
 import React, { memo, useCallback, useEffect, useRef } from "react";
+import type { NoteContent } from "types/noteContent";
 
 const SmartEditor = dynamic(() => import("@atoms/SmartEditor/SmartEditor"), {
 	ssr: false,
@@ -27,7 +27,7 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	const isToday = textareaDate.toDateString() === new Date().toDateString();
 	const textareaBlock = useRef<HTMLDivElement | null>(null);
 	const editorContainerRef = useRef<HTMLDivElement | null>(null);
-	const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const dateKey = textareaDate.toISOString().split("T")[0];
 
 	const { getNote, hasNote, saveNote } = useNotes();
@@ -57,7 +57,7 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	}, [isHighlighted]);
 
 	const handleChange = useCallback(
-		(newContent: Block[]) => {
+		(newContent: NoteContent) => {
 			if (saveTimeoutRef.current) {
 				clearTimeout(saveTimeoutRef.current);
 			}
@@ -72,28 +72,7 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	const handleEditorContainerClick = useCallback(() => {
 		const container = editorContainerRef.current;
 		if (!container) return;
-		const editorElement = container.querySelector<HTMLElement>(".bn-editor");
-		editorElement?.focus();
-	}, []);
-
-	const handleEditorContainerKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-		if (event.key !== "Tab" || event.metaKey || event.ctrlKey || event.altKey) return;
-
-		const container = editorContainerRef.current;
-		if (!container) return;
-
-		const containers = Array.from(document.querySelectorAll<HTMLElement>(`.${styles["editor-container"]}`));
-		const currentIndex = containers.indexOf(container);
-		if (currentIndex === -1) return;
-
-		event.preventDefault();
-
-		const direction = event.shiftKey ? -1 : 1;
-		const nextIndex = currentIndex + direction;
-		const nextContainer = containers[nextIndex];
-		if (!nextContainer) return;
-
-		const editorElement = nextContainer.querySelector<HTMLElement>(".bn-editor");
+		const editorElement = container.querySelector<HTMLElement>('[contenteditable="true"]');
 		editorElement?.focus();
 	}, []);
 
@@ -121,7 +100,6 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 				ref={editorContainerRef}
 				className={styles["editor-container"]}
 				onClick={handleEditorContainerClick}
-				onKeyDownCapture={handleEditorContainerKeyDown}
 			>
 				{!isLoading && (
 					<SmartEditor

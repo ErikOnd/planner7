@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@atoms/Badge/Badge";
 import { Text } from "@atoms/Text/Text";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import * as Switch from "@radix-ui/react-switch";
@@ -13,7 +12,14 @@ type PreferencesSettingsProps = {
 };
 
 export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSettingsProps) {
-	const { showWeekends, isLoading, isSaving, setShowWeekends } = useWeekDisplayPreference();
+	const {
+		showWeekends,
+		showEditorToolbar,
+		isLoading,
+		isSaving,
+		setShowWeekends,
+		setShowEditorToolbar,
+	} = useWeekDisplayPreference();
 	const isFiveDayWeek = !showWeekends;
 
 	return (
@@ -77,15 +83,20 @@ export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSett
 			<section className={styles["settings-section"]}>
 				<div className={styles["section-header"]}>
 					<h3 className={styles["section-heading"]}>Rich Text Editor</h3>
-					<Badge variant="coming-soon">Coming soon</Badge>
 				</div>
 				<Text size="sm" variant="muted">Customize your text editor experience</Text>
-				<div className={clsx(styles["notification-item"], styles["notification-item--disabled"])}>
+				<div className={styles["notification-item"]}>
 					<div className={styles["notification-info"]}>
 						<span className={styles["notification-label"]}>Show toolbar</span>
-						<span className={styles["notification-description"]}>Display formatting options in the editor</span>
+						<span className={styles["notification-description"]}>Display formatting controls above notes</span>
 					</div>
-					<Switch.Root className={styles["switch"]} disabled aria-label="Show toolbar">
+					<Switch.Root
+						className={styles["switch"]}
+						checked={showEditorToolbar}
+						onCheckedChange={setShowEditorToolbar}
+						disabled={isLoading || isSaving}
+						aria-label="Show rich text toolbar"
+					>
 						<Switch.Thumb className={styles["switch-thumb"]} />
 					</Switch.Root>
 				</div>

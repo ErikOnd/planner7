@@ -36,6 +36,23 @@ export default function HomePage() {
 		loadWeek(startDate, endDate);
 	}, [baseDate, loadWeek]);
 
+	useEffect(() => {
+		if (showWeekends) return;
+
+		const dayIndex = selectedDate.getDay();
+		if (dayIndex >= 1 && dayIndex <= 5) return;
+
+		const { days } = getCurrentWeek(baseDate);
+		const firstWeekday = days.find((day) => {
+			const dayOfWeek = day.fullDate.getDay();
+			return dayOfWeek >= 1 && dayOfWeek <= 5;
+		});
+
+		if (firstWeekday) {
+			setSelectedDate(firstWeekday.fullDate);
+		}
+	}, [showWeekends, selectedDate, baseDate]);
+
 	const handleCalendarDateSelect = (date: Date) => {
 		setBaseDate(date);
 		setHighlightedDate(date);
@@ -67,6 +84,7 @@ export default function HomePage() {
 							onSelectDateAction={setSelectedDate}
 							baseDate={baseDate}
 							setBaseDateAction={setBaseDate}
+							showWeekends={showWeekends}
 						/>
 						{renderMobileContent()}
 					</div>

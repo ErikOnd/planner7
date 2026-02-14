@@ -84,7 +84,7 @@ export function Sidebar({ todosState }: SidebarProps) {
 			<div className={styles["sticky-section"]}>
 				<div className={styles["sidebar-header"]}>
 					<div className={styles["brand"]}>
-						<Image src="/logo-mark.svg" alt="Planner7 logo" width={36} height={36} className={styles["brand-logo"]} />
+						<Image src="/logo-mark.svg" alt="Planner7 logo" width={48} height={48} className={styles["brand-logo"]} />
 						<span className={styles["brand-name"]}>Planner7</span>
 					</div>
 				</div>

@@ -14,6 +14,7 @@ type MobileNavigationProps = {
 	selectedDate: Date;
 	baseDate: Date;
 	setBaseDateAction: (date: Date) => void;
+	showWeekends?: boolean;
 };
 
 const navItems: { value: "weekly" | "remember" | "profile"; label: string }[] = [
@@ -23,21 +24,39 @@ const navItems: { value: "weekly" | "remember" | "profile"; label: string }[] = 
 ];
 
 export function MobileNavigation(props: MobileNavigationProps) {
-	const { content, onChangeAction, onSelectDateAction, selectedDate, baseDate, setBaseDateAction } = props;
+	const {
+		content,
+		onChangeAction,
+		onSelectDateAction,
+		selectedDate,
+		baseDate,
+		setBaseDateAction,
+		showWeekends = true,
+	} = props;
 	const { days, rangeLabel } = getCurrentWeek(baseDate);
+	const visibleDays = showWeekends
+		? days
+		: days.filter(({ fullDate }) => {
+			const dayIndex = fullDate.getDay();
+			return dayIndex >= 1 && dayIndex <= 5;
+		});
 	const dayRefs = useRef<(HTMLButtonElement | null)[]>([]);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
 
 	useEffect(() => {
-		const index = days.findIndex(({ fullDate }) => fullDate.toDateString() === selectedDate.toDateString());
+		dayRefs.current = [];
+	}, [showWeekends, baseDate]);
+
+	useEffect(() => {
+		const index = visibleDays.findIndex(({ fullDate }) => fullDate.toDateString() === selectedDate.toDateString());
 
 		const selectedButton = dayRefs.current[index];
 		selectedButton?.scrollIntoView({
 			behavior: "smooth",
 			inline: "center",
 		});
-	}, [selectedDate, days]);
+	}, [selectedDate, visibleDays]);
 
 	useEffect(() => {
 		const updateUnderline = () => {
@@ -79,7 +98,7 @@ export function MobileNavigation(props: MobileNavigationProps) {
 							<WeeklySlider baseDate={baseDate} rangeLabel={rangeLabel} setBaseDate={setBaseDateAction} />
 						</div>
 						<div className={styles["calendar-section"]}>
-							{days.map(({ label, date, fullDate }, index) => (
+							{visibleDays.map(({ label, date, fullDate }, index) => (
 								<button
 									key={index}
 									ref={(el) => {

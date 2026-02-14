@@ -2,14 +2,15 @@
 
 import { getCurrentUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import type { Block } from "@blocknote/core";
+import type { Prisma } from "@prisma/client";
+import type { NoteContent } from "types/noteContent";
 
 export type DailyNoteResult = {
 	error?: string;
 	success?: boolean;
 };
 
-export async function saveDailyNote(date: string, content: Block[]): Promise<DailyNoteResult> {
+export async function saveDailyNote(date: string, content: NoteContent): Promise<DailyNoteResult> {
 	try {
 		const authResult = await getCurrentUser();
 		if (!authResult.success) {
@@ -29,12 +30,12 @@ export async function saveDailyNote(date: string, content: Block[]): Promise<Dai
 				},
 			},
 			update: {
-				content: content,
+				content: content as Prisma.InputJsonValue,
 			},
 			create: {
 				userId: authResult.userId,
 				date: noteDate,
-				content: content,
+				content: content as Prisma.InputJsonValue,
 			},
 		});
 

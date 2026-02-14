@@ -61,6 +61,13 @@
 	.editor-container {
 		cursor: text;
 		min-height: 12.5rem;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.editor-container > * {
+		flex: 1 1 auto;
+		min-height: 0;
 	}
 
 	.textarea {
@@ -88,6 +95,25 @@
 
 		.textarea {
 			min-height: 25rem;
+		}
+	}
+
+	@media (max-width: 639px) {
+		&:hover {
+			box-shadow: 0 .1rem .3rem rgba(0, 0, 0, 0.05);
+			transform: none;
+		}
+
+		&:focus-within {
+			transform: none;
+		}
+
+		.date {
+			padding: var(--space-sm);
+		}
+
+		.editor-container {
+			min-height: 16rem;
 		}
 	}
 }
