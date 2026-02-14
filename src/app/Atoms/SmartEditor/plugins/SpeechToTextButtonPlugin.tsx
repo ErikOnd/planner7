@@ -18,7 +18,7 @@ type BrowserSpeechRecognition = {
 	lang: string;
 };
 
-type BrowserSpeechRecognitionCtor = new () => BrowserSpeechRecognition;
+type BrowserSpeechRecognitionCtor = new() => BrowserSpeechRecognition;
 
 type SpeechWindow = Window & {
 	SpeechRecognition?: BrowserSpeechRecognitionCtor;
@@ -45,7 +45,10 @@ export default function SpeechToTextButtonPlugin() {
 		recognition.lang = "en-US";
 
 		recognition.onresult = (event) => {
-			const speechEvent = event as { resultIndex: number; results: ArrayLike<{ isFinal: boolean; 0: { transcript: string } }> };
+			const speechEvent = event as {
+				resultIndex: number;
+				results: ArrayLike<{ isFinal: boolean; 0: { transcript: string } }>;
+			};
 			let transcript = "";
 			for (let i = speechEvent.resultIndex; i < speechEvent.results.length; i++) {
 				const result = speechEvent.results[i];

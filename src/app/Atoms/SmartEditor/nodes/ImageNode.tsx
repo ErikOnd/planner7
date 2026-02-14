@@ -15,7 +15,7 @@ import {
 	type NodeKey,
 	type SerializedLexicalNode,
 } from "lexical";
-import { useCallback, useEffect, useRef, useState, type JSX, type MouseEvent as ReactMouseEvent } from "react";
+import { type JSX, type MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef, useState } from "react";
 
 export type ImagePayload = {
 	src: string;

@@ -1,14 +1,45 @@
 "use server";
 
-import { getCurrentUser } from "@/lib/auth";
+import {getCurrentUser} from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
-import type { NoteContent } from "types/noteContent";
+import type {Prisma} from "@prisma/client";
+import {createClient} from "@utils/supabase/server";
+import type {NoteContent} from "types/noteContent";
 
 export type DailyNoteResult = {
 	error?: string;
 	success?: boolean;
 };
+
+async function ensureProfileExists(userId: string) {
+	const existingProfile = await prisma.profile.findUnique({
+		where: { id: userId },
+		select: { id: true },
+	});
+
+	if (existingProfile) {
+		return;
+	}
+
+	const supabase = await createClient();
+	const { data: { user }, error } = await supabase.auth.getUser();
+	if (error || !user || user.id !== userId) {
+		throw new Error("Failed to resolve authenticated user for profile bootstrap");
+	}
+
+	const fallbackEmail = `${userId}@placeholder.local`;
+	const displayName = (user.user_metadata?.displayName as string | undefined) ?? "";
+
+	await prisma.profile.upsert({
+		where: { id: userId },
+		update: {},
+		create: {
+			id: userId,
+			email: user.email ?? fallbackEmail,
+			displayName,
+		},
+	});
+}
 
 export async function saveDailyNote(date: string, content: NoteContent): Promise<DailyNoteResult> {
 	try {
@@ -19,6 +50,8 @@ export async function saveDailyNote(date: string, content: NoteContent): Promise
 				success: false,
 			};
 		}
+
+		await ensureProfileExists(authResult.userId);
 
 		const noteDate = new Date(date);
 
@@ -58,6 +91,8 @@ export async function getDailyNote(date: string) {
 			return null;
 		}
 
+		await ensureProfileExists(authResult.userId);
+
 		const noteDate = new Date(date);
 
 		return await prisma.dailyNote.findUnique({
@@ -81,7 +116,9 @@ export async function getWeeklyNotes(startDate: Date, endDate: Date) {
 			return [];
 		}
 
-		const notes = await prisma.dailyNote.findMany({
+		await ensureProfileExists(authResult.userId);
+
+		return await prisma.dailyNote.findMany({
 			where: {
 				userId: authResult.userId,
 				date: {
@@ -90,8 +127,6 @@ export async function getWeeklyNotes(startDate: Date, endDate: Date) {
 				},
 			},
 		});
-
-		return notes;
 	} catch (error) {
 		console.error("Error fetching weekly notes:", error);
 		return [];

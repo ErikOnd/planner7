@@ -32,7 +32,7 @@ model DailyNote {
   profile Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, date])
-  @@index([userId, date])
+  @@index([userId, updatedAt(sort: Desc)])
 }
 
 model GeneralTodo {
@@ -47,7 +47,8 @@ model GeneralTodo {
 
   profile Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  @@index([userId, completed, order])
+  @@index([userId, updatedAt(sort: Desc)])
 }
 
 model UploadedImage {
@@ -62,5 +63,6 @@ model UploadedImage {
 
   profile Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@unique([userId, key])
 }

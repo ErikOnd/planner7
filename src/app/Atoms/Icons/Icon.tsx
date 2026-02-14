@@ -1,3 +1,4 @@
+import ArrowDownRight from "@assets/icons/arrow-down-right.svg";
 import Calendar from "@assets/icons/calendar.svg";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import ChevronRight from "@assets/icons/chevron-right.svg";
@@ -8,6 +9,7 @@ import DoubleChevronRight from "@assets/icons/double-chevron-right.svg";
 import Eye from "@assets/icons/eye.svg";
 import Google from "@assets/icons/google.svg";
 import Megaphone from "@assets/icons/megaphone.svg";
+import Microphone from "@assets/icons/microphone.svg";
 import Moon from "@assets/icons/moon.svg";
 import Pencil from "@assets/icons/pencil.svg";
 import Plus from "@assets/icons/plus.svg";
@@ -18,8 +20,6 @@ import Star from "@assets/icons/star.svg";
 import Sun from "@assets/icons/sun.svg";
 import Trash from "@assets/icons/trash.svg";
 import User from "@assets/icons/user.svg";
-import Microphone from "@assets/icons/microphone.svg";
-import ArrowDownRight from "@assets/icons/arrow-down-right.svg";
 
 import clsx from "clsx";
 

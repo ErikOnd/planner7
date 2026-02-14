@@ -3,26 +3,16 @@
 import styles from "../SmartEditor.module.scss";
 
 import { $createCodeNode } from "@lexical/code";
+import { INSERT_CHECK_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND } from "@lexical/list";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
 	LexicalTypeaheadMenuPlugin,
 	MenuOption,
 	useBasicTypeaheadTriggerMatch,
 } from "@lexical/react/LexicalTypeaheadMenuPlugin";
-import {
-	INSERT_CHECK_LIST_COMMAND,
-	INSERT_ORDERED_LIST_COMMAND,
-	INSERT_UNORDERED_LIST_COMMAND,
-} from "@lexical/list";
-import { $setBlocksType } from "@lexical/selection";
 import { $createHeadingNode, $createQuoteNode } from "@lexical/rich-text";
-import {
-	$createParagraphNode,
-	$getSelection,
-	$isRangeSelection,
-	type ElementNode,
-	type LexicalEditor,
-} from "lexical";
+import { $setBlocksType } from "@lexical/selection";
+import { $createParagraphNode, $getSelection, $isRangeSelection, type ElementNode, type LexicalEditor } from "lexical";
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 

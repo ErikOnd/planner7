@@ -2,15 +2,11 @@
 
 import styles from "../SmartEditor.module.scss";
 
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import {
-	INSERT_CHECK_LIST_COMMAND,
-	INSERT_ORDERED_LIST_COMMAND,
-	INSERT_UNORDERED_LIST_COMMAND,
-} from "@lexical/list";
 import { TOGGLE_LINK_COMMAND } from "@lexical/link";
-import { $setBlocksType } from "@lexical/selection";
+import { INSERT_CHECK_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND } from "@lexical/list";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createHeadingNode } from "@lexical/rich-text";
+import { $setBlocksType } from "@lexical/selection";
 import {
 	$createParagraphNode,
 	$getSelection,
@@ -18,12 +14,12 @@ import {
 	CAN_REDO_COMMAND,
 	CAN_UNDO_COMMAND,
 	COMMAND_PRIORITY_LOW,
+	type ElementNode,
 	FORMAT_TEXT_COMMAND,
+	type LexicalEditor,
 	REDO_COMMAND,
 	SELECTION_CHANGE_COMMAND,
 	UNDO_COMMAND,
-	type ElementNode,
-	type LexicalEditor,
 } from "lexical";
 import { useEffect, useState } from "react";
 

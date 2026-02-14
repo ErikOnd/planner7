@@ -1,7 +1,5 @@
 "use client";
 
-import { uploadImage } from "../../../../actions/upload-image";
-import { $createImageNode, INSERT_IMAGE_COMMAND } from "../nodes/ImageNode";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
 	$createParagraphNode,
@@ -16,6 +14,8 @@ import {
 	DROP_COMMAND,
 } from "lexical";
 import { useEffect } from "react";
+import { uploadImage } from "../../../../actions/upload-image";
+import { $createImageNode, INSERT_IMAGE_COMMAND } from "../nodes/ImageNode";
 
 export default function ImageUploadDropPlugin() {
 	const [editor] = useLexicalComposerContext();

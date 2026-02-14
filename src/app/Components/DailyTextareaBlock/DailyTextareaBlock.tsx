@@ -72,7 +72,7 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	const handleEditorContainerClick = useCallback(() => {
 		const container = editorContainerRef.current;
 		if (!container) return;
-		const editorElement = container.querySelector<HTMLElement>('[contenteditable="true"]');
+		const editorElement = container.querySelector<HTMLElement>("[contenteditable=\"true\"]");
 		editorElement?.focus();
 	}, []);
 

@@ -57,19 +57,19 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 				current.setDate(current.getDate() + 1);
 			}
 
-			// Pre-populate cache with undefined for all dates to prevent individual fetches
-			weekDates.forEach(dateString => {
-				cacheRef.current[dateString] = undefined;
-			});
-			triggerUpdate();
-
 			// Batch fetch all notes for the week
 			const notes = await getWeeklyNotes(startDate, endDate);
 
-			// Update cache with actual content
+			// Build content map from persisted rows first.
+			const noteMap: Record<string, NoteContent | undefined> = {};
 			notes.forEach(note => {
 				const dateString = note.date.toISOString().split("T")[0];
-				cacheRef.current[dateString] = note.content as NoteContent | undefined;
+				noteMap[dateString] = note.content as NoteContent | undefined;
+			});
+
+			// Mark every day as loaded after fetch completes to avoid mounting editors with stale empty state.
+			weekDates.forEach(dateString => {
+				cacheRef.current[dateString] = noteMap[dateString];
 			});
 
 			triggerUpdate();
@@ -89,7 +89,10 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 		setLoadingStates(prev => ({ ...prev, [dateString]: true }));
 
 		try {
-			await saveDailyNote(dateString, content);
+			const result = await saveDailyNote(dateString, content);
+			if (!result.success) {
+				throw new Error(result.error ?? "Failed to save note");
+			}
 		} catch (error) {
 			console.error("Error saving note:", error);
 			// Rollback on error by refetching
