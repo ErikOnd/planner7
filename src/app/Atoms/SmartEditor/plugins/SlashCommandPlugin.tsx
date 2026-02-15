@@ -2,9 +2,9 @@
 
 import styles from "../SmartEditor.module.scss";
 
-import { $createCodeNode } from "@lexical/code";
 import { INSERT_CHECK_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND } from "@lexical/list";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
 import {
 	LexicalTypeaheadMenuPlugin,
 	MenuOption,
@@ -67,11 +67,6 @@ export default function SlashCommandPlugin() {
 				run: (activeEditor) => setBlockType(activeEditor, () => $createHeadingNode("h2")),
 			},
 			{
-				title: "Heading 3",
-				keywords: ["h3"],
-				run: (activeEditor) => setBlockType(activeEditor, () => $createHeadingNode("h3")),
-			},
-			{
 				title: "Bulleted List",
 				keywords: ["list", "ul", "bullet"],
 				run: (activeEditor) => activeEditor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined),
@@ -92,9 +87,9 @@ export default function SlashCommandPlugin() {
 				run: (activeEditor) => setBlockType(activeEditor, () => $createQuoteNode()),
 			},
 			{
-				title: "Code Block",
-				keywords: ["code", "snippet", "pre"],
-				run: (activeEditor) => setBlockType(activeEditor, () => $createCodeNode()),
+				title: "Horizontal Rule",
+				keywords: ["hr", "line", "divider", "separator"],
+				run: (activeEditor) => activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined),
 			},
 		];
 

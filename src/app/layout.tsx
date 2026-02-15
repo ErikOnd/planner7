@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { TodosProvider } from "@/contexts/TodosContext";
 import { WeekDisplayProvider } from "@/contexts/WeekDisplayContext";
 import React, { ReactNode } from "react";
+import ToastProvider from "./Providers/ToastProvider";
 
 export const metadata: Metadata = {
 	title: "Planner7",
@@ -63,6 +64,7 @@ export default function RootLayout({ children }: Readonly<{
 					}}
 				/>
 				<ThemeProvider>
+					<ToastProvider />
 					<WeekDisplayProvider>
 						<TodosProvider>
 							<NotesProvider>

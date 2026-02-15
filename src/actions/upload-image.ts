@@ -20,7 +20,8 @@ const s3Client = new S3Client({
 	},
 });
 
-const MAX_TOTAL_STORAGE = 5 * 1024 * 1024;
+const MAX_TOTAL_STORAGE = 100 * 1024 * 1024;
+const MAX_IMAGE_UPLOAD_SIZE = 5 * 1024 * 1024;
 const MAX_IMAGE_WIDTH = 1920;
 const COMPRESSION_QUALITY = 85;
 
@@ -125,6 +126,10 @@ export async function uploadImage(
 			return { success: false, error: "File must be an image" };
 		}
 
+		if (file.size > MAX_IMAGE_UPLOAD_SIZE) {
+			return { success: false, error: "Image too large. Maximum upload size is 5MB per image." };
+		}
+
 		await ensureProfileExists(user.id);
 
 		const currentStorageUsed = await getUserStorageUsed(user.id);
@@ -140,7 +145,10 @@ export async function uploadImage(
 
 		if (currentStorageUsed + compressedSize > MAX_TOTAL_STORAGE) {
 			const remainingMB = ((MAX_TOTAL_STORAGE - currentStorageUsed) / 1024 / 1024).toFixed(2);
-			return { success: false, error: `Storage limit exceeded. You have ${remainingMB}MB remaining out of 5MB total.` };
+			return {
+				success: false,
+				error: `Storage limit exceeded. You have ${remainingMB}MB remaining out of 100MB total.`,
+			};
 		}
 
 		if (!DO_ENDPOINT || !DO_REGION || !DO_KEY || !DO_SECRET || !BUCKET_NAME || !CDN_URL) {

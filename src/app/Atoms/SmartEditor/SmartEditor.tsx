@@ -3,7 +3,6 @@
 import styles from "./SmartEditor.module.scss";
 
 import { useTheme } from "@/contexts/ThemeContext";
-import { Message } from "@atoms/Message/Message";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
@@ -16,14 +15,17 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { DraggableBlockPlugin_EXPERIMENTAL } from "@lexical/react/LexicalDraggableBlockPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { $createParagraphNode, $createTextNode, $getRoot } from "lexical";
-import { type RefObject, useMemo, useRef, useState } from "react";
+import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import type { NoteContent } from "types/noteContent";
 import { ImageNode } from "./nodes/ImageNode";
 import CodeHighlightingPlugin from "./plugins/CodeHighlightingPlugin";
@@ -44,9 +46,35 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 	const { mounted } = useTheme();
 	const { showEditorToolbar } = useWeekDisplayPreference();
 	const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
-	const [uploadError, setUploadError] = useState<string | null>(null);
+	const [toolbarOffset, setToolbarOffset] = useState(0);
 	const dragMenuRef = useRef<HTMLElement>(null);
 	const dragTargetLineRef = useRef<HTMLElement>(null);
+	const toolbarContainerRef = useRef<HTMLDivElement | null>(null);
+
+	useEffect(() => {
+		if (!showEditorToolbar) {
+			setToolbarOffset(0);
+			return;
+		}
+
+		const toolbarElement = toolbarContainerRef.current;
+		if (!toolbarElement) return;
+
+		const updateToolbarOffset = () => {
+			setToolbarOffset(toolbarElement.getBoundingClientRect().height);
+		};
+
+		updateToolbarOffset();
+
+		if (typeof ResizeObserver !== "undefined") {
+			const observer = new ResizeObserver(updateToolbarOffset);
+			observer.observe(toolbarElement);
+			return () => observer.disconnect();
+		}
+
+		window.addEventListener("resize", updateToolbarOffset);
+		return () => window.removeEventListener("resize", updateToolbarOffset);
+	}, [showEditorToolbar]);
 
 	const editorState = useMemo(() => {
 		if (isLexicalEditorState(initialContent)) {
@@ -122,6 +150,7 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 				QuoteNode,
 				ListNode,
 				ListItemNode,
+				HorizontalRuleNode,
 				CodeNode,
 				CodeHighlightNode,
 				LinkNode,
@@ -140,7 +169,9 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 	return (
 		<div className={styles["smart-editor"]} ref={setFloatingAnchorElem}>
 			<LexicalComposer initialConfig={initialConfig}>
-				{showEditorToolbar && <ToolbarPlugin />}
+				<div ref={toolbarContainerRef}>
+					{showEditorToolbar && <ToolbarPlugin />}
+				</div>
 				<RichTextPlugin
 					contentEditable={
 						<ContentEditable
@@ -154,7 +185,14 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 							data-enable-grammarly="true"
 						/>
 					}
-					placeholder={<div className={styles["smart-editor__placeholder"]}>Write your notes...</div>}
+					placeholder={
+						<div
+							className={styles["smart-editor__placeholder"]}
+							style={{ top: `${toolbarOffset}px` }}
+						>
+							Start note taking, or type / for commands.
+						</div>
+					}
 					ErrorBoundary={LexicalErrorBoundary}
 				/>
 				<HistoryPlugin />
@@ -165,10 +203,12 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 				<AutoLinkPlugin matchers={LINK_MATCHERS} />
 				<ListPlugin />
 				<CheckListPlugin />
+				<MarkdownShortcutPlugin />
 				<SlashCommandPlugin />
 				<ImageUploadDropPlugin
-					onUploadError={setUploadError}
-					onUploadSuccess={() => setUploadError(null)}
+					onUploadError={(message) => {
+						toast.error(message, { toastId: `image-upload-error:${message}` });
+					}}
 				/>
 				<SpeechToTextButtonPlugin />
 				{floatingAnchorElem && (
@@ -207,7 +247,6 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 					}}
 				/>
 			</LexicalComposer>
-			<Message variant="error">{uploadError}</Message>
 		</div>
 	);
 }

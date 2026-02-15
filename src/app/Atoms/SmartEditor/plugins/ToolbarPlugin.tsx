@@ -5,6 +5,7 @@ import styles from "../SmartEditor.module.scss";
 import { TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { INSERT_CHECK_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND } from "@lexical/list";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
 import { $createHeadingNode } from "@lexical/rich-text";
 import { $setBlocksType } from "@lexical/selection";
 import {
@@ -199,6 +200,14 @@ export default function ToolbarPlugin() {
 				aria-label="Checklist"
 			>
 				Check
+			</button>
+			<button
+				type="button"
+				className={styles["smart-editor__toolbar-btn"]}
+				onClick={() => editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined)}
+				aria-label="Horizontal rule"
+			>
+				HR
 			</button>
 			<button
 				type="button"

@@ -20,10 +20,9 @@ import { $createImageNode, INSERT_IMAGE_COMMAND } from "../nodes/ImageNode";
 
 type ImageUploadDropPluginProps = {
 	onUploadError?: (message: string) => void;
-	onUploadSuccess?: () => void;
 };
 
-export default function ImageUploadDropPlugin({ onUploadError, onUploadSuccess }: ImageUploadDropPluginProps) {
+export default function ImageUploadDropPlugin({ onUploadError }: ImageUploadDropPluginProps) {
 	const [editor] = useLexicalComposerContext();
 
 	useEffect(() => {
@@ -38,7 +37,6 @@ export default function ImageUploadDropPlugin({ onUploadError, onUploadSuccess }
 							src: result.url,
 							altText: file.name,
 						});
-						onUploadSuccess?.();
 					} else {
 						console.error("Image upload failed:", result.error);
 						onUploadError?.(result.error);
@@ -133,7 +131,7 @@ export default function ImageUploadDropPlugin({ onUploadError, onUploadSuccess }
 			unregisterDrop();
 			unregisterPaste();
 		};
-	}, [editor, onUploadError, onUploadSuccess]);
+	}, [editor, onUploadError]);
 
 	return null;
 }

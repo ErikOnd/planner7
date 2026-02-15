@@ -3,6 +3,7 @@
 import styles from "@components/Homepage/HomePage.module.scss";
 
 import { useNotes } from "@/contexts/NotesContext";
+import { Spinner } from "@atoms/Spinner/Spinner";
 import { DesktopContent } from "@components/DesktopContent/DesktopContent";
 import { DesktopNavigation } from "@components/DesktopNavigation/DesktopNavigation";
 import { MobileNavigation } from "@components/MobileNavigation/MobileNavigation";
@@ -23,7 +24,7 @@ export default function HomePage() {
 	const [baseDate, setBaseDate] = useState<Date>(new Date());
 	const [highlightedDate, setHighlightedDate] = useState<Date | null>(null);
 	const { rangeLabel } = getCurrentWeek(baseDate);
-	const { showWeekends } = useWeekDisplayPreference();
+	const { showWeekends, isLoading: isPreferencesLoading } = useWeekDisplayPreference();
 
 	const todosState = useGeneralTodos();
 	const { loadWeek } = useNotes();
@@ -71,6 +72,16 @@ export default function HomePage() {
 				return null;
 		}
 	};
+
+	if (isPreferencesLoading) {
+		return (
+			<main className={styles["home-page"]}>
+				<div style={{ display: "flex", justifyContent: "center", paddingTop: "5rem", paddingBottom: "2rem" }}>
+					<Spinner />
+				</div>
+			</main>
+		);
+	}
 
 	return (
 		<main className={styles["home-page"]}>

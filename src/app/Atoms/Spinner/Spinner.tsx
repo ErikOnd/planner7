@@ -1,10 +1,14 @@
 import styles from "./Spinner.module.scss";
 
 type SpinnerProps = {
-	size?: "sm" | "md" | "lg";
 	className?: string;
 };
 
-export function Spinner({ size = "md", className }: SpinnerProps) {
-	return <div className={`${styles.spinner} ${styles[size]} ${className || ""}`} role="status" aria-label="Loading" />;
+export function Spinner({ className }: SpinnerProps) {
+	return (
+		<div className={`${styles.spinner} ${className || ""}`} role="status" aria-live="polite">
+			<span className={styles["pac-man"]} aria-hidden="true" />
+			<span className={styles.visuallyHidden}>Loading</span>
+		</div>
+	);
 }

@@ -101,6 +101,17 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 				className={styles["editor-container"]}
 				onClick={handleEditorContainerClick}
 			>
+				{isLoading && (
+					<div className={styles["editor-loading"]} aria-hidden="true">
+						<div className={styles["editor-skeleton"]}>
+							<span className={styles["editor-skeleton-line"]} />
+							<span className={styles["editor-skeleton-line"]} />
+							<span className={styles["editor-skeleton-line"]} />
+							<span className={styles["editor-skeleton-line"]} />
+							<span className={styles["editor-skeleton-line"]} />
+						</div>
+					</div>
+				)}
 				{!isLoading && (
 					<SmartEditor
 						key={dateKey}

@@ -102,15 +102,25 @@
 
 .smart-editor__placeholder {
 	position: absolute;
-	left: 2.3rem;
-	top: 1rem;
+	left: 0;
+	right: 0;
+	top: 0;
+	padding: 1rem 2.3rem;
+	line-height: 1.6;
 	color: var(--color-text-placeholder);
 	pointer-events: none;
 	user-select: none;
 
 	@media (max-width: 639px) {
-		top: 0.9rem;
-		left: 1rem;
+		padding: 0.9rem 1rem 4.25rem;
+	}
+}
+
+.smart-editor__placeholder--with-toolbar {
+	top: 2.95rem;
+
+	@media (max-width: 639px) {
+		top: 3.15rem;
 	}
 }
 

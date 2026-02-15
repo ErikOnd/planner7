@@ -1,29 +1,55 @@
 @use "../../styles/variables" as variables;
 
 .spinner {
-	display: inline-block;
+	--pacman-color: var(--color-primary);
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 310px;
+	min-height: 70px;
+}
+
+.pac-man {
+	position: relative;
+	display: block;
+	width: 70px;
+	height: 35px;
+	margin: 0 auto;
+	border-radius: 100em 100em 0 0;
+	background: var(--pacman-color);
+	transform-origin: bottom;
+	animation: eating-top 0.5s infinite;
+}
+
+.pac-man::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 35px;
+	display: block;
+	width: 70px;
+	height: 35px;
+	border-radius: 0 0 100em 100em;
+	background: var(--pacman-color);
+	transform-origin: top;
+	transform: rotate(80deg);
+	animation: eating-bottom 0.5s infinite;
+}
+
+.pac-man::after {
+	content: "";
+	position: absolute;
+	left: 25px;
+	top: 25px;
+	display: block;
+	width: 20px;
+	height: 20px;
 	border-radius: variables.$radius-rounded;
-	border: 0.2rem solid var(--color-border);
-	border-top-color: var(--color-primary);
-	animation: spin 0.8s linear infinite;
-}
-
-.sm {
-	width: 1rem;
-	height: 1rem;
-	border-width: 0.13rem;
-}
-
-.md {
-	width: 1.5rem;
-	height: 1.5rem;
-	border-width: 0.19rem;
-}
-
-.lg {
-	width: 2rem;
-	height: 2rem;
-	border-width: 0.25rem;
+	transform-origin: center;
+	animation:
+		center 0.5s infinite,
+		ball 0.5s -0.33s infinite linear;
 }
 
 .visuallyHidden {
@@ -38,8 +64,56 @@
 	border-width: 0;
 }
 
-@keyframes spin {
-	to {
-		transform: rotate(360deg);
+@keyframes eating-top {
+	0% {
+		transform: rotate(-40deg);
+	}
+	50% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(-40deg);
+	}
+}
+
+@keyframes eating-bottom {
+	0% {
+		transform: rotate(80deg);
+	}
+	50% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(80deg);
+	}
+}
+
+@keyframes center {
+	0% {
+		transform: rotate(40deg);
+	}
+	50% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(40deg);
+	}
+}
+
+@keyframes ball {
+	0% {
+		opacity: 0.7;
+		box-shadow:
+			70px 0 0 0 var(--pacman-color),
+			120px 0 0 0 var(--pacman-color),
+			170px 0 0 0 var(--pacman-color),
+			220px 0 0 0 var(--pacman-color);
+	}
+	100% {
+		box-shadow:
+			20px 0 0 0 var(--pacman-color),
+			70px 0 0 0 var(--pacman-color),
+			120px 0 0 0 var(--pacman-color),
+			170px 0 0 0 var(--pacman-color);
 	}
 }
