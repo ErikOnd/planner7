@@ -16,9 +16,9 @@ import { TypingAnimation } from "./TypingAnimation";
 const features = [
 	{
 		icon: "pencil" as const,
-		title: "Daily Notes",
+		title: "Daily Rich Planning",
 		description:
-			"Capture your thoughts and plans for each day in one place. Stay focused and organized with a clean writing space.",
+			"Each day includes a rich text planning space, so you can write structured plans, not just short task items.",
 	},
 	{
 		icon: "star" as const,
@@ -43,7 +43,7 @@ const steps = [
 	},
 	{
 		title: "Plan every day",
-		description: "Write notes, add tasks, and stay on track. Make every day count.",
+		description: "Write your day plan in rich text, add tasks, and stay on track in one view.",
 	},
 ];
 
@@ -107,121 +107,125 @@ export function LandingPage() {
 	};
 
 	return (
-		<div>
-			{/* Nav */}
-			<motion.nav
-				className={styles.nav}
-				initial="hidden"
-				animate="visible"
-				variants={navVariants}
-			>
-				<Link href="/" className={styles.logo}>
-					<Image src="/logo-mark.svg" alt="Planner7 logo" width={96} height={96} className={styles["logo-icon"]} />
-				</Link>
-				<div className={styles["nav-actions"]}>
-					<MagneticButton>
-						<Button href="/signup" variant="primary" fontWeight={700}>Get Started</Button>
-					</MagneticButton>
-				</div>
-			</motion.nav>
-
-			<motion.section
-				className={styles.hero}
-				initial="hidden"
-				animate="visible"
-				variants={heroVariants}
-			>
-				<motion.div variants={heroItemVariants}>
-					<Headline as="h1" className={styles["hero-headline"]}>
-						Plan your time,<br />
-						<TypingAnimation />
-					</Headline>
-				</motion.div>
-				<motion.div variants={heroItemVariants}>
-					<Text size="lg" className={styles["hero-subtitle"]}>
-						A clean, distraction-free space to organize your days, manage tasks, and stay on top of what matters.
-					</Text>
-				</motion.div>
-			</motion.section>
-
-			<section className={styles.features} ref={featuresRef}>
-				<Text size="sm" className={styles["section-label"]}>What you get</Text>
-				<Headline as="h2" className={styles["section-title"]}>
-					Everything you need to stay organized
-				</Headline>
-				<motion.div
-					className={styles["feature-cards"]}
+		<>
+			<header>
+				<motion.nav
+					className={styles.nav}
 					initial="hidden"
-					animate={featuresInView ? "visible" : "hidden"}
-					variants={containerVariants}
+					animate="visible"
+					variants={navVariants}
 				>
-					{features.map((feature) => (
-						<motion.div key={feature.title} className={styles["feature-card"]} variants={cardVariants}>
-							<div className={styles["feature-icon"]}>
-								<Icon name={feature.icon} size={22} />
-							</div>
-							<Text size="base" fontWeight={600} className={styles["feature-title"]}>{feature.title}</Text>
-							<Text size="sm" className={styles["feature-description"]}>{feature.description}</Text>
-						</motion.div>
-					))}
-				</motion.div>
-			</section>
-
-			<section className={styles["how-it-works"]} ref={stepsRef}>
-				<Text size="sm" className={styles["section-label"]}>How it works</Text>
-				<Headline as="h2" className={styles["section-title"]}>
-					Get started in minutes
-				</Headline>
-				<motion.div
-					className={styles.steps}
-					initial="hidden"
-					animate={stepsInView ? "visible" : "hidden"}
-					variants={containerVariants}
-				>
-					{steps.map((step, index) => (
-						<motion.div key={step.title} className={styles.step} variants={cardVariants}>
-							<div className={styles["step-number"]}>{index + 1}</div>
-							<div className={styles["step-content"]}>
-								<Text size="base" fontWeight={600} className={styles["step-title"]}>{step.title}</Text>
-								<Text size="sm" className={styles["step-description"]}>{step.description}</Text>
-							</div>
-						</motion.div>
-					))}
-				</motion.div>
-			</section>
-			<section className={styles["cta-section"]} ref={ctaRef}>
-				<motion.section
-					className={styles["cta-banner"]}
-					initial="hidden"
-					animate={ctaInView ? "visible" : "hidden"}
-					variants={{
-						hidden: { scale: 0.9, opacity: 0 },
-						visible: {
-							scale: 1,
-							opacity: 1,
-							transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
-						},
-					}}
-				>
-					<Headline as="h2" className={styles["cta-title"]}>
-						Ready to take control of your week?
-					</Headline>
-					<Text size="base" className={styles["cta-subtitle"]}>
-						Join our community of people who already use Planner7 to organize their work and projects.
-					</Text>
-					<div className={styles["cta-button"]}>
+					<Link href="/" className={styles.logo}>
+						<Image src="/logo-mark.svg" alt="Planner7 logo" width={96} height={96} className={styles["logo-icon"]} />
+					</Link>
+					<div className={styles["nav-actions"]}>
 						<MagneticButton>
-							<Button href="/signup" variant="primary" fontWeight={700}>Get Started for Free</Button>
+							<Button href="/signup" variant="primary" fontWeight={700}>Get Started</Button>
 						</MagneticButton>
 					</div>
+				</motion.nav>
+			</header>
+
+			<main>
+				<motion.section
+					className={styles.hero}
+					initial="hidden"
+					animate="visible"
+					variants={heroVariants}
+				>
+					<motion.div variants={heroItemVariants}>
+						<Headline as="h1" className={styles["hero-headline"]}>
+							Plan your time,<br />
+							<TypingAnimation />
+						</Headline>
+					</motion.div>
+					<motion.div variants={heroItemVariants}>
+						<Text size="lg" className={styles["hero-subtitle"]}>
+							Most todo apps only track checkboxes. Planner7 gives every day a rich planning area plus tasks. Plan your
+							work, not just check boxes.
+						</Text>
+					</motion.div>
 				</motion.section>
-			</section>
+
+				<section className={styles.features} ref={featuresRef}>
+					<Text size="sm" className={styles["section-label"]}>What you get</Text>
+					<Headline as="h2" className={styles["section-title"]}>
+						Everything you need to stay organized
+					</Headline>
+					<motion.div
+						className={styles["feature-cards"]}
+						initial="hidden"
+						animate={featuresInView ? "visible" : "hidden"}
+						variants={containerVariants}
+					>
+						{features.map((feature) => (
+							<motion.div key={feature.title} className={styles["feature-card"]} variants={cardVariants}>
+								<div className={styles["feature-icon"]}>
+									<Icon name={feature.icon} size={22} />
+								</div>
+								<Text size="base" fontWeight={600} className={styles["feature-title"]}>{feature.title}</Text>
+								<Text size="sm" className={styles["feature-description"]}>{feature.description}</Text>
+							</motion.div>
+						))}
+					</motion.div>
+				</section>
+
+				<section className={styles["how-it-works"]} ref={stepsRef}>
+					<Text size="sm" className={styles["section-label"]}>How it works</Text>
+					<Headline as="h2" className={styles["section-title"]}>
+						Get started in minutes
+					</Headline>
+					<motion.div
+						className={styles.steps}
+						initial="hidden"
+						animate={stepsInView ? "visible" : "hidden"}
+						variants={containerVariants}
+					>
+						{steps.map((step, index) => (
+							<motion.div key={step.title} className={styles.step} variants={cardVariants}>
+								<div className={styles["step-number"]}>{index + 1}</div>
+								<div className={styles["step-content"]}>
+									<Text size="base" fontWeight={600} className={styles["step-title"]}>{step.title}</Text>
+									<Text size="sm" className={styles["step-description"]}>{step.description}</Text>
+								</div>
+							</motion.div>
+						))}
+					</motion.div>
+				</section>
+				<section className={styles["cta-section"]} ref={ctaRef}>
+					<motion.section
+						className={styles["cta-banner"]}
+						initial="hidden"
+						animate={ctaInView ? "visible" : "hidden"}
+						variants={{
+							hidden: { scale: 0.9, opacity: 0 },
+							visible: {
+								scale: 1,
+								opacity: 1,
+								transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
+							},
+						}}
+					>
+						<Headline as="h2" className={styles["cta-title"]}>
+							Ready to take control of your week?
+						</Headline>
+						<Text size="base" className={styles["cta-subtitle"]}>
+							Join people who plan each day with rich notes and tasks in one focused weekly workflow.
+						</Text>
+						<div className={styles["cta-button"]}>
+							<MagneticButton>
+								<Button href="/signup" variant="primary" fontWeight={700}>Get Started for Free</Button>
+							</MagneticButton>
+						</div>
+					</motion.section>
+				</section>
+			</main>
 			<footer className={styles.footer}>
 				<div className={styles["footer-links"]}>
 					<Link href="/privacy" className={styles["footer-link"]}>Privacy Policy</Link>
 					<Link href="/terms" className={styles["footer-link"]}>Terms of Service</Link>
 				</div>
 			</footer>
-		</div>
+		</>
 	);
 }

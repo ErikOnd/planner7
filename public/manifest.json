@@ -1,7 +1,7 @@
 {
 	"name": "Planner7",
 	"short_name": "Planner7",
-	"description": "A focused weekly planner that combines daily notes, tasks, and a week-at-a-glance view.",
+	"description": "Planner7 is a weekly planner with a rich text planning area for each day plus tasks. Plan your work, not just check boxes.",
 	"start_url": "/",
 	"display": "standalone",
 	"background_color": "#f9f8f4",
@@ -9,10 +9,20 @@
 	"orientation": "portrait-primary",
 	"icons": [
 		{
-			"src": "/app-icon.svg",
-			"sizes": "any",
-			"type": "image/svg+xml",
-			"purpose": "any maskable"
+			"src": "/icon-192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		},
+		{
+			"src": "/icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
 		}
 	],
 	"categories": ["productivity", "utilities"]

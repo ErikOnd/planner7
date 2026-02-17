@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
 	title: "Planner7 – Weekly Overview",
-	description: "Plan your week with daily notes, tasks, and a clear weekly overview.",
+	description:
+		"Plan your week with a rich text planning area for each day plus task tracking in one clear weekly overview.",
 };
 
 export default async function ProtectedPage() {

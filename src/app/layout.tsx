@@ -9,22 +9,27 @@ import ToastProvider from "./Providers/ToastProvider";
 
 export const metadata: Metadata = {
 	title: "Planner7",
-	description: "A focused weekly planner that combines daily notes, tasks, and a week-at-a-glance view.",
+	description:
+		"Planner7 is a weekly planner with a rich text planning area for each day plus tasks. Plan your work, not just check boxes.",
 	applicationName: "Planner7",
 	icons: {
 		icon: [
-			{ url: "/app-icon.svg", type: "image/svg+xml" },
+			{ url: "/favicon.ico", sizes: "any" },
+			{ url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+			{ url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
 		],
-		apple: [{ url: "/app-icon.svg", type: "image/svg+xml" }],
+		shortcut: ["/favicon.ico"],
+		apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
 	},
 	openGraph: {
 		title: "Planner7",
-		description: "A focused weekly planner that combines daily notes, tasks, and a week-at-a-glance view.",
+		description:
+			"Planner7 is a weekly planner with a rich text planning area for each day plus tasks. Plan your work, not just check boxes.",
 		siteName: "Planner7",
 		type: "website",
 		images: [
 			{
-				url: "/app-icon.svg",
+				url: "/icon-512.png",
 				alt: "Planner7 logo",
 			},
 		],
@@ -32,8 +37,9 @@ export const metadata: Metadata = {
 	twitter: {
 		card: "summary",
 		title: "Planner7",
-		description: "A focused weekly planner that combines daily notes, tasks, and a week-at-a-glance view.",
-		images: ["/app-icon.svg"],
+		description:
+			"Planner7 is a weekly planner with a rich text planning area for each day plus tasks. Plan your work, not just check boxes.",
+		images: ["/icon-512.png"],
 	},
 	appleWebApp: {
 		capable: true,

@@ -16,6 +16,7 @@ import { DraggableBlockPlugin_EXPERIMENTAL } from "@lexical/react/LexicalDraggab
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
+import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
@@ -203,6 +204,7 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 				<AutoLinkPlugin matchers={LINK_MATCHERS} />
 				<ListPlugin />
 				<CheckListPlugin />
+				<HorizontalRulePlugin />
 				<MarkdownShortcutPlugin />
 				<SlashCommandPlugin />
 				<ImageUploadDropPlugin
