@@ -265,7 +265,7 @@ export async function cleanupUnusedImages(): Promise<
 		const candidates = await prisma.$queryRaw<Array<{ id: string; key: string }>>`
 			SELECT ui.id, ui.key
 			FROM "UploadedImage" ui
-			WHERE ui."userId" = ${user.id}
+			WHERE ui."userId" = CAST(${user.id} AS uuid)
 				AND ui."createdAt" < (NOW() - INTERVAL '24 hours')
 				AND NOT EXISTS (
 					SELECT 1
