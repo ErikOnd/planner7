@@ -8,6 +8,7 @@ import React, { ReactNode } from "react";
 import ToastProvider from "./Providers/ToastProvider";
 
 export const metadata: Metadata = {
+	metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
 	title: "Planner7",
 	description:
 		"Planner7 is a weekly planner with a rich text planning area for each day plus tasks. Plan your work, not just check boxes.",
