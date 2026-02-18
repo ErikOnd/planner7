@@ -63,6 +63,8 @@
 	--color-primary-dark: #{variables.$color-primary-dark};
 	--color-primary-light: #{variables.$color-primary-light};
 	--color-primary-subtle: #{variables.$color-primary-subtle};
+	--color-primary-ink: #{variables.$color-primary-ink};
+	--color-on-primary: #{variables.$color-on-primary};
 
 	--color-gray-light: #{variables.$color-gray-light};
 	--color-gray-medium: #{variables.$color-gray-medium};
@@ -123,6 +125,8 @@
 	--color-primary-dark: #{variables.$color-primary-dark-dark-theme};
 	--color-primary-light: #{variables.$color-primary-light-dark-theme};
 	--color-primary-subtle: #{variables.$color-primary-subtle-dark-theme};
+	--color-primary-ink: #{variables.$color-primary-ink-dark-theme};
+	--color-on-primary: #{variables.$color-on-primary-dark-theme};
 
 	--color-gray-light: #{variables.$color-gray-light-dark};
 	--color-gray-medium: #{variables.$color-gray-medium-dark};

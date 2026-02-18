@@ -56,7 +56,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 		const metaThemeColor = document.querySelector("meta[name=\"theme-color\"]");
 		if (metaThemeColor) {
-			const color = effectiveTheme === "dark" ? "#1a1a1a" : "#f9f8f4";
+			const color = effectiveTheme === "dark" ? "#1a1a1a" : "#f5f1e8";
 			metaThemeColor.setAttribute("content", color);
 		}
 	}, [effectiveTheme, theme, mounted]);

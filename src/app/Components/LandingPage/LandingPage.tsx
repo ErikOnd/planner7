@@ -148,7 +148,7 @@ export function LandingPage() {
 				</motion.section>
 
 				<section className={styles.features} ref={featuresRef}>
-					<Text size="sm" className={styles["section-label"]}>What you get</Text>
+					<Text size="sm" fontWeight={700} className={styles["section-label"]}>What you get</Text>
 					<Headline as="h2" className={styles["section-title"]}>
 						Everything you need to stay organized
 					</Headline>
@@ -171,7 +171,7 @@ export function LandingPage() {
 				</section>
 
 				<section className={styles["how-it-works"]} ref={stepsRef}>
-					<Text size="sm" className={styles["section-label"]}>How it works</Text>
+					<Text size="sm" fontWeight={700} className={styles["section-label"]}>How it works</Text>
 					<Headline as="h2" className={styles["section-title"]}>
 						Get started in minutes
 					</Headline>

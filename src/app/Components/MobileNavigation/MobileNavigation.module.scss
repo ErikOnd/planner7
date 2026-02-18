@@ -99,10 +99,10 @@
 
 		&.active-day {
 			background-color: var(--color-primary);
-			color: var(--color-surface);
+			color: var(--color-on-primary);
 
 			.day-date {
-				color: var(--color-surface);
+				color: var(--color-on-primary);
 			}
 		}
 	}

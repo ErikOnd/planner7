@@ -101,7 +101,7 @@
 
 .section-label {
 	text-align: center;
-	color: var(--color-primary);
+	color: var(--color-primary-ink);
 	font-weight: 600;
 	margin-bottom: var(--space-md);
 	text-transform: uppercase;
@@ -146,7 +146,7 @@
 	align-items: center;
 	justify-content: center;
 	margin-bottom: var(--space-lg);
-	color: var(--color-surface);
+	color: var(--color-on-primary);
 }
 
 .feature-title {
@@ -186,7 +186,7 @@
 	height: 3rem;
 	border-radius: variables.$radius-rounded;
 	background: var(--color-primary);
-	color: var(--color-surface);
+	color: var(--color-on-primary);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -264,14 +264,14 @@
 }
 
 .typing-word {
-	color: var(--color-primary);
+	color: var(--color-primary-ink);
 }
 
 .typing-cursor {
 	display: inline-block;
 	width: 0.04em;
 	height: 0.82em;
-	background: var(--color-primary);
+	background: var(--color-primary-ink);
 	margin-left: 0.04em;
 	vertical-align: baseline;
 	animation: blink 1s step-end infinite;
@@ -331,6 +331,6 @@
 	text-underline-offset: 0.14rem;
 
 	&:hover {
-		color: var(--color-primary);
+		color: var(--color-primary-ink);
 	}
 }

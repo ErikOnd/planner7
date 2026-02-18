@@ -26,7 +26,7 @@
 	&.is-today {
 		.day-batch {
 			background-color: var(--color-primary);
-			color: var(--color-surface);
+			color: var(--color-on-primary);
 			font-weight: 700;
 		}
 	}
@@ -46,7 +46,7 @@
 	}
 
 	.day-batch {
-		color: var(--color-primary);
+		color: var(--color-text-secondary);
 		padding-inline: .5rem;
 		padding-block: .3rem;
 		border-radius: variables.$radius-xs;
