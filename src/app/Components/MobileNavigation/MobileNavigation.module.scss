@@ -7,10 +7,22 @@
 	flex-direction: column;
 	background-color: var(--color-surface);
 
+	.workspace-section {
+		padding: var(--space-sm) var(--content-spacing);
+		border-bottom: .1rem solid var(--color-border);
+		background:
+			linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--color-surface) 94%, transparent) 0%,
+				color-mix(in srgb, var(--color-surface-elevated) 86%, transparent) 100%
+			);
+	}
+
 	.slider-section {
 		position: relative;
 		display: flex;
-		justify-content: space-between;
+		align-items: center;
+		gap: var(--space-sm);
 		border-bottom: .1rem solid var(--color-border);
 		padding-block: var(--space-md);
 		padding-inline: var(--content-spacing);
@@ -22,9 +34,21 @@
 			);
 	}
 
+	.slider-tabs {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		align-items: center;
+		flex: 1 1 auto;
+		min-width: 0;
+		column-gap: var(--space-xs);
+	}
+
 	.slider-button {
 		@include typography.text-base;
 		color: var(--color-text-muted);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		background-color: transparent;
 		border: none;
 		padding: 0;
@@ -32,6 +56,7 @@
 		transition:
 			color variables.$transition-base,
 			transform variables.$transition-fast;
+		min-width: 0;
 
 		&:hover {
 			color: var(--color-primary);

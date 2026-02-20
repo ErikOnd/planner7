@@ -1,5 +1,6 @@
 "use client";
 
+import { getRandomTodoGreeting } from "@/lib/greetings";
 import { Button } from "@atoms/Button/Button";
 import Checkbox from "@atoms/Checkbox/Checkbox";
 import { Icon } from "@atoms/Icons/Icon";
@@ -7,11 +8,12 @@ import { Text } from "@atoms/Text/Text";
 import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
 import { DeleteTodoDialog } from "@components/DeleteTodoDialog/DeleteTodoDialog";
 import { DraggableTodoItem } from "@components/DraggableTodoItem/DraggableTodoItem";
+import { WorkspaceSwitcher } from "@components/WorkspaceSwitcher/WorkspaceSwitcher";
 import { closestCenter, DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { useDraggableTodos } from "@hooks/useDraggableTodos";
+import { useDisplayName } from "@hooks/useDisplayName";
 import { useKeyboardShortcut } from "@hooks/useKeyboardShortcut";
-import { useTodoToggle } from "@hooks/useTodoToggle";
+import { useTodoCollections } from "@hooks/useTodoCollections";
 import type { GeneralTodo } from "@prisma/client";
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
@@ -41,20 +43,19 @@ export function Sidebar({ todosState }: SidebarProps) {
 	const [editingTodo, setEditingTodo] = useState<GeneralTodo | null>(null);
 	const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 	const [isCompletedOpen, setIsCompletedOpen] = useState(false);
-	const activeTodos = useMemo(() => todos.filter(todo => !todo.completed), [todos]);
-	const completedTodos = useMemo(() => (
-		todos
-			.filter(todo => todo.completed)
-			.sort((a, b) => {
-				const aTime = a.completedAt ? new Date(a.completedAt).getTime() : 0;
-				const bTime = b.completedAt ? new Date(b.completedAt).getTime() : 0;
-				return bTime - aTime;
-			})
-	), [todos]);
-	const { localTodos, activeTodo, sensors, handleDragStart, handleDragEnd, handleDragCancel } = useDraggableTodos(
-		activeTodos,
-	);
-	const { checkedTodos, handleTodoToggle } = useTodoToggle(updateTodoCompletion);
+	const displayName = useDisplayName("Planner");
+	const {
+		localTodos,
+		activeTodo,
+		sensors,
+		handleDragStart,
+		handleDragEnd,
+		handleDragCancel,
+		checkedTodos,
+		handleTodoToggle,
+		completedTodos,
+	} = useTodoCollections(todos, updateTodoCompletion);
+	const greeting = useMemo(() => getRandomTodoGreeting(), []);
 
 	const handleEditTodo = (todo: GeneralTodo) => {
 		setEditingTodo(todo);
@@ -85,8 +86,15 @@ export function Sidebar({ todosState }: SidebarProps) {
 				<div className={styles["sidebar-header"]}>
 					<div className={styles["brand"]}>
 						<Image src="/logo-mark.svg" alt="Planner7 logo" width={48} height={48} className={styles["brand-logo"]} />
-						<span className={styles["brand-name"]}>Planner7</span>
+						<div className={styles["brand-greeting"]}>
+							<span className={styles["brand-greeting-title"]}>{greeting.headline}, {displayName}</span>
+							<span className={styles["brand-greeting-subtitle"]}>{greeting.subline}</span>
+						</div>
 					</div>
+				</div>
+
+				<div className={styles["workspace-section"]}>
+					<WorkspaceSwitcher variant="sidebar" />
 				</div>
 
 				<Button

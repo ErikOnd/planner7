@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.scss";
 import { NotesProvider } from "@/contexts/NotesContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { TodosProvider } from "@/contexts/TodosContext";
 import { WeekDisplayProvider } from "@/contexts/WeekDisplayContext";
+import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
 import React, { ReactNode } from "react";
 import ToastProvider from "./Providers/ToastProvider";
 
@@ -72,13 +72,13 @@ export default function RootLayout({ children }: Readonly<{
 				/>
 				<ThemeProvider>
 					<ToastProvider />
-					<WeekDisplayProvider>
-						<TodosProvider>
+					<WorkspaceProvider>
+						<WeekDisplayProvider>
 							<NotesProvider>
 								{children}
 							</NotesProvider>
-						</TodosProvider>
-					</WeekDisplayProvider>
+						</WeekDisplayProvider>
+					</WorkspaceProvider>
 				</ThemeProvider>
 			</body>
 		</html>

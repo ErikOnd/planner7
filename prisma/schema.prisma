@@ -9,46 +9,69 @@ datasource db {
 }
 
 model Profile {
-  id             String          @id @db.Uuid
-  email          String          @unique
-  displayName    String
-  showWeekends   Boolean         @default(true)
-  showEditorToolbar Boolean      @default(true)
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  dailyNotes     DailyNote[]
-  generalTodos   GeneralTodo[]
-  uploadedImages UploadedImage[]
+  id               String          @id @db.Uuid
+  email            String          @unique
+  displayName      String
+  showWeekends     Boolean         @default(true)
+  showEditorToolbar Boolean        @default(true)
+  activeWorkspaceId String?        @db.Uuid
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  workspaces       Workspace[]
+  dailyNotes       DailyNote[]
+  generalTodos     GeneralTodo[]
+  uploadedImages   UploadedImage[]
+}
+
+model Workspace {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  name      String
+  gradientPreset String @default("violet")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile      Profile       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyNotes   DailyNote[]
+  generalTodos GeneralTodo[]
+
+  @@unique([userId, name])
+  @@index([userId, updatedAt(sort: Desc)])
 }
 
 model DailyNote {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @db.Uuid
-  date      DateTime @db.Date
-  content   Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  workspaceId String   @db.Uuid
+  date        DateTime @db.Date
+  content     Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  profile Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile   Profile   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, date])
-  @@index([userId, updatedAt(sort: Desc)])
+  @@unique([userId, workspaceId, date])
+  @@index([userId, workspaceId, updatedAt(sort: Desc)])
+  @@index([userId, workspaceId, date])
 }
 
 model GeneralTodo {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @db.Uuid
-  text      String
-  order     Int      @default(0)
-  completed Boolean  @default(false)
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  workspaceId String   @db.Uuid
+  text        String
+  order       Int      @default(0)
+  completed   Boolean  @default(false)
   completedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  profile Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile   Profile   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  @@index([userId, completed, order])
-  @@index([userId, updatedAt(sort: Desc)])
+  @@index([userId, workspaceId, completed, order])
+  @@index([userId, workspaceId, updatedAt(sort: Desc)])
 }
 
 model UploadedImage {

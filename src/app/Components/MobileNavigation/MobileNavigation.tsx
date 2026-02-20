@@ -2,6 +2,7 @@
 
 import { Text } from "@atoms/Text/Text";
 import WeeklySlider from "@components/WeeklySlider/WeeklySlider";
+import { WorkspaceSwitcher } from "@components/WorkspaceSwitcher/WorkspaceSwitcher";
 import { getCurrentWeek } from "@utils/getCurrentWeek";
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
@@ -65,9 +66,11 @@ export function MobileNavigation(props: MobileNavigationProps) {
 
 			const active = container.querySelector(`.${styles.active}`) as HTMLElement;
 			if (active) {
+				const containerRect = container.getBoundingClientRect();
+				const activeRect = active.getBoundingClientRect();
 				setUnderlineStyle({
-					left: active.offsetLeft,
-					width: active.offsetWidth,
+					left: activeRect.left - containerRect.left,
+					width: activeRect.width,
 				});
 			}
 		};
@@ -80,15 +83,18 @@ export function MobileNavigation(props: MobileNavigationProps) {
 	return (
 		<nav className={styles["mobile-navigation"]}>
 			<div className={styles["slider-section"]} ref={containerRef}>
-				{navItems.map(({ value, label }) => (
-					<button
-						key={value}
-						onClick={() => onChangeAction(value)}
-						className={clsx(styles["slider-button"], value === content && styles.active)}
-					>
-						<div className={styles["slider-button-label"]}>{label}</div>
-					</button>
-				))}
+				<div className={styles["slider-tabs"]}>
+					{navItems.map(({ value, label }) => (
+						<button
+							key={value}
+							onClick={() => onChangeAction(value)}
+							className={clsx(styles["slider-button"], value === content && styles.active)}
+						>
+							<div className={styles["slider-button-label"]}>{label}</div>
+						</button>
+					))}
+					<WorkspaceSwitcher variant="tab" />
+				</div>
 				<div className={styles["slider-underline"]} style={underlineStyle} />
 			</div>
 			{content === "weekly"

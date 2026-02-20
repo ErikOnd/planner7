@@ -2,6 +2,7 @@
 
 import { getCurrentUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { ensureWorkspaceSession } from "@/lib/workspaces";
 import { revalidatePath } from "next/cache";
 
 export type FormState = {
@@ -29,6 +30,7 @@ export async function createGeneralTodo(_prevState: FormState, formData: FormDat
 				success: false,
 			};
 		}
+		const session = await ensureWorkspaceSession(authResult.userId);
 
 		const text = formData.get("text") as string;
 
@@ -40,14 +42,18 @@ export async function createGeneralTodo(_prevState: FormState, formData: FormDat
 		}
 
 		const maxOrder = await prisma.generalTodo.findFirst({
-			where: { userId: authResult.userId },
+			where: {
+				userId: session.userId,
+				workspaceId: session.activeWorkspaceId,
+			},
 			orderBy: { order: "desc" },
 			select: { order: true },
 		});
 
 		await prisma.generalTodo.create({
 			data: {
-				userId: authResult.userId,
+				userId: session.userId,
+				workspaceId: session.activeWorkspaceId,
 				text: text.trim(),
 				order: (maxOrder?.order ?? -1) + 1,
 			},
@@ -74,18 +80,23 @@ export async function getGeneralTodos() {
 		if (!authResult.success) {
 			return [];
 		}
+		const session = await ensureWorkspaceSession(authResult.userId);
 
 		const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 		await prisma.generalTodo.deleteMany({
 			where: {
-				userId: authResult.userId,
+				userId: session.userId,
+				workspaceId: session.activeWorkspaceId,
 				completed: true,
 				completedAt: { lt: cutoff },
 			},
 		});
 
 		return await prisma.generalTodo.findMany({
-			where: { userId: authResult.userId },
+			where: {
+				userId: session.userId,
+				workspaceId: session.activeWorkspaceId,
+			},
 			orderBy: { order: "asc" },
 		});
 	} catch (error) {
@@ -103,11 +114,13 @@ export async function updateGeneralTodoCompletion(todoId: string, completed: boo
 				success: false,
 			};
 		}
+		const session = await ensureWorkspaceSession(authResult.userId);
 
 		await prisma.generalTodo.updateMany({
 			where: {
 				id: todoId,
-				userId: authResult.userId,
+				userId: session.userId,
+				workspaceId: session.activeWorkspaceId,
 			},
 			data: {
 				completed,
@@ -139,11 +152,13 @@ export async function deleteGeneralTodo(todoId: string): Promise<FormState> {
 				success: false,
 			};
 		}
+		const session = await ensureWorkspaceSession(authResult.userId);
 
 		await prisma.generalTodo.deleteMany({
 			where: {
 				id: todoId,
-				userId: authResult.userId,
+				userId: session.userId,
+				workspaceId: session.activeWorkspaceId,
 			},
 		});
 
@@ -171,6 +186,7 @@ export async function updateGeneralTodo(_prevState: FormState, formData: FormDat
 				success: false,
 			};
 		}
+		const session = await ensureWorkspaceSession(authResult.userId);
 
 		const todoId = formData.get("todoId") as string;
 		const text = formData.get("text") as string;
@@ -192,7 +208,8 @@ export async function updateGeneralTodo(_prevState: FormState, formData: FormDat
 		await prisma.generalTodo.updateMany({
 			where: {
 				id: todoId,
-				userId: authResult.userId,
+				userId: session.userId,
+				workspaceId: session.activeWorkspaceId,
 			},
 			data: {
 				text: text.trim(),
@@ -223,13 +240,15 @@ export async function reorderGeneralTodos(todoIds: string[]): Promise<FormState>
 				success: false,
 			};
 		}
+		const session = await ensureWorkspaceSession(authResult.userId);
 
 		await prisma.$transaction(
 			todoIds.map((id, index) =>
 				prisma.generalTodo.updateMany({
 					where: {
 						id,
-						userId: authResult.userId,
+						userId: session.userId,
+						workspaceId: session.activeWorkspaceId,
 					},
 					data: {
 						order: index,

@@ -61,16 +61,17 @@ export function AddTaskModal(props: AddTaskModalProps) {
 			}
 		} else {
 			if (onOptimisticAdd) {
-				const tempTodo: GeneralTodo = {
+				const tempTodo = {
 					id: tempId,
 					userId: "",
+					workspaceId: "",
 					text: text.trim(),
 					order: 0,
 					completed: false,
 					completedAt: null,
 					createdAt: new Date(),
 					updatedAt: new Date(),
-				};
+				} as GeneralTodo;
 				onOptimisticAdd(tempTodo);
 			}
 		}

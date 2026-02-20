@@ -8,11 +8,10 @@ import { DeleteTodoDialog } from "@components/DeleteTodoDialog/DeleteTodoDialog"
 import { DraggableTaskItem } from "@components/DraggableTaskItem/DraggableTaskItem";
 import { closestCenter, DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { useDraggableTodos } from "@hooks/useDraggableTodos";
-import { useTodoToggle } from "@hooks/useTodoToggle";
+import { useTodoCollections } from "@hooks/useTodoCollections";
 import type { GeneralTodo } from "@prisma/client";
 import * as Dialog from "@radix-ui/react-dialog";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import styles from "./RememberContent.module.scss";
 
 type TodosState = {
@@ -39,20 +38,17 @@ export function RememberContent(props: RememberContentProps) {
 	const [editingTodo, setEditingTodo] = useState<GeneralTodo | null>(null);
 	const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 	const [isCompletedOpen, setIsCompletedOpen] = useState(false);
-	const activeTodos = useMemo(() => todos.filter(todo => !todo.completed), [todos]);
-	const completedTodos = useMemo(() => (
-		todos
-			.filter(todo => todo.completed)
-			.sort((a, b) => {
-				const aTime = a.completedAt ? new Date(a.completedAt).getTime() : 0;
-				const bTime = b.completedAt ? new Date(b.completedAt).getTime() : 0;
-				return bTime - aTime;
-			})
-	), [todos]);
-	const { localTodos, activeTodo, sensors, handleDragStart, handleDragEnd, handleDragCancel } = useDraggableTodos(
-		activeTodos,
-	);
-	const { checkedTodos, handleTodoToggle } = useTodoToggle(updateTodoCompletion);
+	const {
+		localTodos,
+		activeTodo,
+		sensors,
+		handleDragStart,
+		handleDragEnd,
+		handleDragCancel,
+		checkedTodos,
+		handleTodoToggle,
+		completedTodos,
+	} = useTodoCollections(todos, updateTodoCompletion);
 
 	const handleEditTodo = (todo: GeneralTodo) => {
 		setEditingTodo(todo);

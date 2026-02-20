@@ -1,9 +1,10 @@
 "use client";
 
-import { createContext, ReactNode, useCallback, useContext, useRef, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import type { NoteContent } from "types/noteContent";
 import { cleanupUnusedImages } from "../actions/upload-image";
 import { getDailyNote, getWeeklyNotes, saveDailyNote } from "../app/actions/dailyNotes";
+import { useWorkspace } from "./WorkspaceContext";
 
 type NoteCache = {
 	[dateString: string]: NoteContent | undefined;
@@ -27,6 +28,7 @@ const CLEANUP_INTERVAL_MS = 24 * 60 * 60 * 1000;
 const LAST_CLEANUP_KEY = "planner7:last-image-cleanup-at";
 
 export function NotesProvider({ children }: { children: ReactNode }) {
+	const { activeWorkspaceId } = useWorkspace();
 	const cacheRef = useRef<NoteCache>({});
 	const [loadingStates, setLoadingStates] = useState<LoadingState>({});
 	const [isWeekLoading, setIsWeekLoading] = useState(false);
@@ -36,6 +38,12 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 	const triggerUpdate = useCallback(() => {
 		forceUpdate({});
 	}, []);
+
+	useEffect(() => {
+		if (!activeWorkspaceId) return;
+		cacheRef.current = {};
+		triggerUpdate();
+	}, [activeWorkspaceId, triggerUpdate]);
 
 	const getNote = useCallback((dateString: string): NoteContent | undefined => {
 		return cacheRef.current[dateString];
@@ -50,6 +58,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 	}, [loadingStates]);
 
 	const loadWeek = useCallback(async (startDate: Date, endDate: Date) => {
+		if (!activeWorkspaceId) return;
 		setIsWeekLoading(true);
 
 		try {
@@ -103,7 +112,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 		} finally {
 			setIsWeekLoading(false);
 		}
-	}, [triggerUpdate]);
+	}, [activeWorkspaceId, triggerUpdate]);
 
 	const saveNote = useCallback(async (dateString: string, content: NoteContent) => {
 		// Optimistic update

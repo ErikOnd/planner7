@@ -3,6 +3,7 @@
 import styles from "@components/Homepage/HomePage.module.scss";
 
 import { useNotes } from "@/contexts/NotesContext";
+import { Button } from "@atoms/Button/Button";
 import { Spinner } from "@atoms/Spinner/Spinner";
 import { DesktopContent } from "@components/DesktopContent/DesktopContent";
 import { DesktopNavigation } from "@components/DesktopNavigation/DesktopNavigation";
@@ -14,8 +15,10 @@ import { WeeklyContent } from "@components/WeeklyContent/WeeklyContent";
 import { useGeneralTodos } from "@hooks/useGeneralTodos";
 import { useMediaQuery } from "@hooks/useMediaQuery";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
+import * as Dialog from "@radix-ui/react-dialog";
 import { getCurrentWeek } from "@utils/getCurrentWeek";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { getUserProfile, updateUserProfile } from "../../actions/profile";
 
 export default function HomePage() {
 	const isMobile = useMediaQuery("(max-width: 1023px)");
@@ -23,6 +26,10 @@ export default function HomePage() {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [baseDate, setBaseDate] = useState<Date>(new Date());
 	const [highlightedDate, setHighlightedDate] = useState<Date | null>(null);
+	const [isNamePromptOpen, setIsNamePromptOpen] = useState(false);
+	const [nameInput, setNameInput] = useState("");
+	const [isSavingName, setIsSavingName] = useState(false);
+	const [namePromptError, setNamePromptError] = useState<string | null>(null);
 	const { rangeLabel } = getCurrentWeek(baseDate);
 	const { showWeekends, isLoading: isPreferencesLoading } = useWeekDisplayPreference();
 
@@ -54,10 +61,49 @@ export default function HomePage() {
 		}
 	}, [showWeekends, selectedDate, baseDate]);
 
+	useEffect(() => {
+		let mounted = true;
+		const fetchProfile = async () => {
+			const result = await getUserProfile();
+			if (!mounted || !result.success || !result.data) return;
+
+			const currentName = result.data.displayName?.trim() ?? "";
+			setNameInput(currentName);
+			setIsNamePromptOpen(currentName.length === 0);
+		};
+
+		void fetchProfile();
+		return () => {
+			mounted = false;
+		};
+	}, []);
+
 	const handleCalendarDateSelect = (date: Date) => {
 		setBaseDate(date);
 		setHighlightedDate(date);
 		setTimeout(() => setHighlightedDate(null), 3000);
+	};
+
+	const handleSaveName = async (event: FormEvent) => {
+		event.preventDefault();
+		const normalized = nameInput.trim();
+		if (!normalized) {
+			setNamePromptError("Please enter your name.");
+			return;
+		}
+
+		setIsSavingName(true);
+		setNamePromptError(null);
+		const result = await updateUserProfile({ displayName: normalized });
+		if (!result.success) {
+			setNamePromptError(result.error ?? "Failed to save your name.");
+			setIsSavingName(false);
+			return;
+		}
+
+		window.dispatchEvent(new CustomEvent("profile:display-name-updated", { detail: { displayName: normalized } }));
+		setIsNamePromptOpen(false);
+		setIsSavingName(false);
 	};
 
 	const renderMobileContent = () => {
@@ -121,6 +167,36 @@ export default function HomePage() {
 						</div>
 					</div>
 				)}
+			<Dialog.Root open={isNamePromptOpen}>
+				<Dialog.Portal>
+					<Dialog.Overlay className={styles["name-prompt-overlay"]} />
+					<Dialog.Content
+						className={styles["name-prompt-dialog"]}
+						onEscapeKeyDown={(event) => event.preventDefault()}
+						onInteractOutside={(event) => event.preventDefault()}
+					>
+						<Dialog.Title className={styles["name-prompt-title"]}>Welcome to Planner7</Dialog.Title>
+						<Dialog.Description className={styles["name-prompt-description"]}>
+							Before you start planning tasks, tell us your name.
+						</Dialog.Description>
+						<form className={styles["name-prompt-form"]} onSubmit={handleSaveName}>
+							<input
+								type="text"
+								value={nameInput}
+								onChange={(event) => setNameInput(event.target.value)}
+								className={styles["name-prompt-input"]}
+								placeholder="Your name"
+								maxLength={60}
+								autoFocus
+							/>
+							{namePromptError && <p className={styles["name-prompt-error"]}>{namePromptError}</p>}
+							<Button type="submit" variant="primary" fontWeight={700} disabled={isSavingName}>
+								Continue
+							</Button>
+						</form>
+					</Dialog.Content>
+				</Dialog.Portal>
+			</Dialog.Root>
 		</main>
 	);
 }

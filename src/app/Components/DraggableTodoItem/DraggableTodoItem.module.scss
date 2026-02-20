@@ -44,30 +44,33 @@
 
 		.edit-button,
 		.delete-button {
-			height: fit-content;
-			background-color: var(--color-surface);
-			color: var(--color-text-light);
+			width: 2.45rem;
+			height: 2.45rem;
+			background-color: transparent;
+			color: var(--color-text);
 			cursor: pointer;
 			border: none;
-			padding: 0.25rem;
+			padding: 0;
+			border-radius: 0.7rem;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			transition: color var(--transition-fast);
+			transition: background-color variables.$transition-fast, color variables.$transition-fast;
 
 			&:hover, &:focus-visible {
+				background: color-mix(in srgb, var(--color-text) 10%, transparent);
 				color: var(--color-primary);
 			}
 
 			&:focus-visible {
-				outline: .1rem solid var(--color-primary);
-				outline-offset: .2rem;
-				border-radius: variables.$radius-sm;
+				outline: none;
 			}
 		}
 
 		.delete-button {
-			&:hover {
+			&:hover,
+			&:focus-visible {
+				background: color-mix(in srgb, var(--color-error) 16%, transparent);
 				color: var(--color-error);
 			}
 		}

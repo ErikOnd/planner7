@@ -1,0 +1,195 @@
+@use "../../styles/variables" as variables;
+@use "../../styles/typography" as typography;
+
+.workspace-switcher {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+
+	&[data-compact="true"] {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	&[data-variant="sidebar"] {
+		flex-direction: column;
+		align-items: stretch;
+		gap: var(--space-sm);
+	}
+
+	&[data-variant="tab"] {
+		display: block;
+		width: 100%;
+	}
+}
+
+.workspace-label {
+	@include typography.text-sm;
+	color: var(--color-text-muted);
+	font-weight: 600;
+}
+
+.workspace-select {
+	min-height: 2.25rem;
+	border: 0.1rem solid var(--color-border);
+	border-radius: variables.$radius-sm;
+	background-color: var(--color-surface);
+	color: var(--color-text);
+	padding: 0.35rem 0.6rem;
+	min-width: 9rem;
+}
+
+.manage-button {
+	min-height: 2.25rem;
+
+	.workspace-switcher[data-variant="sidebar"] & {
+		width: 100%;
+	}
+}
+
+.workspace-chip {
+	border: 0.1rem solid color-mix(in srgb, var(--color-border-light) 74%, transparent);
+	border-radius: variables.$radius-sm;
+	background: color-mix(in srgb, var(--color-surface-elevated) 90%, transparent);
+	color: var(--color-text);
+	min-height: 2.25rem;
+	padding: 0.35rem 0.7rem;
+	max-width: 8.5rem;
+	cursor: pointer;
+	transition: border-color variables.$transition-base, color variables.$transition-base, background-color variables.$transition-base;
+
+	&:hover,
+	&:focus-visible {
+		border-color: var(--color-primary);
+		color: var(--color-primary);
+		background: color-mix(in srgb, var(--color-primary-subtle) 82%, transparent);
+		outline: none;
+	}
+}
+
+.workspace-chip-label {
+	@include typography.text-sm;
+	font-weight: 700;
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	background: linear-gradient(120deg, var(--workspace-grad-from), var(--workspace-grad-to));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+.workspace-tab-trigger {
+	@include typography.text-base;
+	border: 0;
+	background: transparent;
+	padding: 0;
+	cursor: pointer;
+	width: 100%;
+	min-width: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.workspace-tab-label {
+	font-weight: 700;
+	background: linear-gradient(120deg, var(--workspace-grad-from), var(--workspace-grad-to));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+.workspace-card {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	padding: 0.95rem 1rem;
+	border: 0.1rem solid color-mix(in srgb, var(--color-border-light) 78%, transparent);
+	border-radius: variables.$radius-lg;
+	background:
+		linear-gradient(
+			120deg,
+			color-mix(in srgb, var(--workspace-grad-from) 22%, var(--color-surface-elevated)) 0%,
+			color-mix(in srgb, var(--workspace-grad-to) 18%, var(--color-surface)) 100%
+		);
+	box-shadow: 0 .35rem 1rem var(--shadow-sm);
+	transition:
+		transform variables.$transition-base,
+		box-shadow variables.$transition-base,
+		border-color variables.$transition-base,
+		background-position variables.$transition-base;
+	background-size: 115% 115%;
+	background-position: 0% 50%;
+}
+
+.workspace-card-button {
+	border: 0;
+	padding: 0;
+	background: transparent;
+	cursor: pointer;
+	width: 100%;
+	text-align: left;
+	border-radius: variables.$radius-lg;
+	outline: none;
+
+	&:hover .workspace-card,
+	&:focus-visible .workspace-card {
+		transform: translateY(-0.18rem);
+		box-shadow: 0 .7rem 1.4rem var(--shadow-md);
+		border-color: color-mix(in srgb, var(--workspace-grad-to) 40%, var(--color-border-light));
+		background-position: 100% 50%;
+	}
+
+	&:focus-visible {
+		box-shadow: 0 0 0 0.14rem color-mix(in srgb, var(--workspace-grad-to) 70%, transparent);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.workspace-card {
+		transition: none;
+	}
+}
+
+.workspace-avatar {
+	width: 3.15rem;
+	height: 3.15rem;
+	border-radius: variables.$radius-md;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 800;
+	font-size: 1.15rem;
+	color: #f3edff;
+	background: linear-gradient(145deg, var(--workspace-grad-from), var(--workspace-grad-to));
+	flex: 0 0 auto;
+}
+
+.workspace-card-content {
+	display: flex;
+	flex-direction: column;
+	gap: 0.12rem;
+	min-width: 0;
+	flex: 1 1 auto;
+}
+
+.workspace-card-label {
+	@include typography.text-xs;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-weight: 700;
+	color: var(--color-text-muted);
+}
+
+.workspace-card-name {
+	@include typography.text-lg;
+	font-weight: 700;
+	color: var(--color-text);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

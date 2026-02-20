@@ -296,6 +296,18 @@ export async function createNewUser(displayName?: string) {
 			},
 		});
 
+		const workspace = await prisma.workspace.create({
+			data: {
+				userId: user.id,
+				name: "Personal",
+			},
+		});
+
+		await prisma.profile.update({
+			where: { id: user.id },
+			data: { activeWorkspaceId: workspace.id },
+		});
+
 		return { success: true };
 	} catch (error) {
 		console.error("Error creating new user:", error);

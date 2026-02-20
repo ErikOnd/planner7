@@ -1,10 +1,12 @@
 "use client";
 
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import type { GeneralTodo } from "@prisma/client";
 import { useCallback, useEffect, useState } from "react";
 import { deleteGeneralTodo, getGeneralTodos, updateGeneralTodoCompletion } from "../app/actions/generalTodos";
 
 export function useGeneralTodos() {
+	const { activeWorkspaceId } = useWorkspace();
 	const [todos, setTodos] = useState<GeneralTodo[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -21,7 +23,7 @@ export function useGeneralTodos() {
 		} finally {
 			setLoading(false);
 		}
-	}, []);
+	}, [activeWorkspaceId]);
 
 	useEffect(() => {
 		fetchTodos();

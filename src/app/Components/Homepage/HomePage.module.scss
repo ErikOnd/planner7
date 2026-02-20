@@ -36,3 +36,59 @@
 		}
 	}
 }
+
+.name-prompt-overlay {
+	position: fixed;
+	inset: 0;
+	background: var(--color-overlay);
+	z-index: 1200;
+}
+
+.name-prompt-dialog {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: min(31rem, 92vw);
+	background: var(--color-surface-elevated);
+	border: 0.1rem solid var(--color-border);
+	border-radius: variables.$radius-lg;
+	padding: var(--space-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	box-shadow: 0 1rem 3rem var(--shadow-xl);
+	z-index: 1201;
+}
+
+.name-prompt-title {
+	font-size: 1.4rem;
+	font-weight: 800;
+	color: var(--color-text);
+}
+
+.name-prompt-description {
+	color: var(--color-text-muted);
+}
+
+.name-prompt-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+}
+
+.name-prompt-input {
+	min-height: 3rem;
+	border: 0.1rem solid var(--color-border);
+	border-radius: variables.$radius-sm;
+	background: var(--color-surface);
+	color: var(--color-text);
+	padding: 0.55rem 0.8rem;
+	font-size: 1.1rem;
+	font-weight: 600;
+}
+
+.name-prompt-error {
+	color: var(--color-error);
+	font-size: 0.9rem;
+}
