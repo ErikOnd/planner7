@@ -4,6 +4,7 @@ import { NotesProvider } from "@/contexts/NotesContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { WeekDisplayProvider } from "@/contexts/WeekDisplayContext";
 import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import React, { ReactNode } from "react";
 import ToastProvider from "./Providers/ToastProvider";
 
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: Readonly<{
 						</WeekDisplayProvider>
 					</WorkspaceProvider>
 				</ThemeProvider>
+				<SpeedInsights />
 			</body>
 		</html>
 	);
