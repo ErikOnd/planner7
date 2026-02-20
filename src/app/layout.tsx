@@ -6,6 +6,7 @@ import { TodosProvider } from "@/contexts/TodosContext";
 import { WeekDisplayProvider } from "@/contexts/WeekDisplayContext";
 import React, { ReactNode } from "react";
 import ToastProvider from "./Providers/ToastProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
 	metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: Readonly<{
 						</TodosProvider>
 					</WeekDisplayProvider>
 				</ThemeProvider>
+				<SpeedInsights />
 			</body>
 		</html>
 	);
