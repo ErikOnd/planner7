@@ -31,6 +31,44 @@
 	flex-direction: column;
 }
 
+.delete-account-description {
+	@include typography.text-sm;
+	color: var(--color-text-muted);
+	margin: 0;
+}
+
+.delete-account-input {
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+}
+
+.delete-account-actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-sm);
+	margin-top: var(--space-xs);
+	flex-wrap: wrap;
+
+	:global(.button) {
+		min-width: 12rem;
+	}
+}
+
+.delete-account-confirm {
+	background: var(--color-error);
+	border-color: var(--color-error);
+	color: var(--color-surface-elevated);
+	font-weight: 700;
+
+	&:hover:not(:disabled),
+	&:focus-visible:not(:disabled) {
+		background: color-mix(in srgb, var(--color-error) 88%, #000);
+		border-color: color-mix(in srgb, var(--color-error) 88%, #000);
+	}
+}
+
 .dialog-header {
 	display: flex;
 	align-items: center;

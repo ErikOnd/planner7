@@ -25,6 +25,7 @@ type ProfileSettingsContentProps = {
 	messages: Messages;
 	actions: ProfileActions;
 	handleLogout?: () => Promise<void>;
+	handleAccountDeleted?: () => Promise<void>;
 	styles: Record<string, string>;
 };
 
@@ -36,6 +37,7 @@ export function ProfileSettingsContent({
 	messages,
 	actions,
 	handleLogout,
+	handleAccountDeleted,
 	styles,
 }: ProfileSettingsContentProps) {
 	const [selectedTab, setSelectedTab] = useState<TabType>("general");
@@ -53,6 +55,7 @@ export function ProfileSettingsContent({
 						messages={messages}
 						actions={actions}
 						handleLogout={handleLogout}
+						handleAccountDeleted={handleAccountDeleted}
 						styles={styles}
 					/>
 				);

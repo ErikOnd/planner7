@@ -16,6 +16,11 @@ export function ProfileContent() {
 		router.push("/login");
 	};
 
+	const handleAccountDeleted = async () => {
+		await supabase.auth.signOut();
+		router.push("/signup");
+	};
+
 	return (
 		<div className={styles["profile-container"]}>
 			<ProfileSettingsContent
@@ -26,6 +31,7 @@ export function ProfileContent() {
 				messages={messages}
 				actions={actions}
 				handleLogout={handleLogout}
+				handleAccountDeleted={handleAccountDeleted}
 				styles={styles}
 			/>
 		</div>

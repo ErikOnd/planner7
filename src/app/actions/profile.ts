@@ -2,6 +2,40 @@
 
 import { getCurrentUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+
+const DO_ENDPOINT = process.env.DIGITALOCEAN_SPACES_ENDPOINT || "";
+const DO_REGION = process.env.DIGITALOCEAN_SPACES_REGION || "";
+const DO_KEY = process.env.DIGITALOCEAN_SPACES_KEY || "";
+const DO_SECRET = process.env.DIGITALOCEAN_SPACES_SECRET || "";
+const BUCKET_NAME = process.env.DIGITALOCEAN_SPACES_BUCKET || "";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+
+const s3Client = DO_ENDPOINT && DO_REGION && DO_KEY && DO_SECRET
+	? new S3Client({
+		endpoint: DO_ENDPOINT,
+		region: DO_REGION,
+		credentials: {
+			accessKeyId: DO_KEY,
+			secretAccessKey: DO_SECRET,
+		},
+	})
+	: null;
+
+function createSupabaseAdminClient() {
+	if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+		return null;
+	}
+
+	return createSupabaseClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+		auth: {
+			persistSession: false,
+			autoRefreshToken: false,
+		},
+	});
+}
 
 export async function checkUserExists() {
 	try {
@@ -369,5 +403,90 @@ export async function updateUserPassword(data: {
 	} catch (error) {
 		console.error("Error updating password:", error);
 		return { success: false, error: "Failed to update password" };
+	}
+}
+
+export async function deleteUserAccount() {
+	try {
+		const authResult = await getCurrentUser();
+		if (!authResult.success) {
+			return { success: false, error: authResult.error };
+		}
+		const supabaseAdmin = createSupabaseAdminClient();
+		if (!supabaseAdmin) {
+			return {
+				success: false,
+				error: "Account deletion is not configured. Missing SUPABASE_SERVICE_ROLE_KEY.",
+			};
+		}
+
+		const userId = authResult.userId;
+		const uploads = await prisma.uploadedImage.findMany({
+			where: { userId },
+			select: { key: true },
+		});
+
+		if (s3Client && BUCKET_NAME && uploads.length > 0) {
+			const deletions = uploads.map((upload) =>
+				s3Client.send(
+					new DeleteObjectCommand({
+						Bucket: BUCKET_NAME,
+						Key: upload.key,
+					}),
+				)
+			);
+			const results = await Promise.allSettled(deletions);
+			const failed = results.filter((result) => result.status === "rejected");
+			if (failed.length > 0) {
+				console.error(`Failed to delete ${failed.length} uploaded file(s) for user ${userId}`);
+			}
+		}
+
+		await prisma.$transaction(async (tx) => {
+			// Break potential FK cycles in databases that still have an activeWorkspaceId FK.
+			await tx.profile.updateMany({
+				where: { id: userId },
+				data: { activeWorkspaceId: null },
+			});
+
+			await tx.dailyNote.deleteMany({
+				where: { userId },
+			});
+
+			await tx.generalTodo.deleteMany({
+				where: { userId },
+			});
+
+			await tx.workspace.deleteMany({
+				where: { userId },
+			});
+
+			await tx.uploadedImage.deleteMany({
+				where: { userId },
+			});
+
+			const deleted = await tx.profile.deleteMany({
+				where: { id: userId },
+			});
+
+			if (deleted.count === 0) {
+				throw new Error("Profile not found.");
+			}
+		});
+
+		const { error: authDeleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
+		if (authDeleteError) {
+			console.error("Error deleting auth user:", authDeleteError);
+			return {
+				success: false,
+				error: `Profile data deleted, but failed to delete auth user: ${authDeleteError.message}`,
+			};
+		}
+
+		return { success: true };
+	} catch (error) {
+		console.error("Error deleting user account:", error);
+		const message = error instanceof Error ? error.message : "Failed to delete account";
+		return { success: false, error: message };
 	}
 }

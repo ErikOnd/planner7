@@ -23,6 +23,11 @@ export function ProfileDialog({ children }: ProfileDialogProps) {
 		router.push("/login");
 	};
 
+	const handleAccountDeleted = async () => {
+		await supabase.auth.signOut();
+		router.push("/signup");
+	};
+
 	return (
 		<Dialog.Root>
 			<Dialog.Trigger asChild>
@@ -46,6 +51,7 @@ export function ProfileDialog({ children }: ProfileDialogProps) {
 							messages={messages}
 							actions={actions}
 							handleLogout={handleLogout}
+							handleAccountDeleted={handleAccountDeleted}
 							styles={styles}
 						/>
 					</div>

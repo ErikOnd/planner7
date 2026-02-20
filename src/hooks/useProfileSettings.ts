@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUserProfile, updateUserPassword, updateUserProfile } from "../app/actions/profile";
+import { deleteUserAccount, getUserProfile, updateUserPassword, updateUserProfile } from "../app/actions/profile";
 
 export type ProfileData = {
 	displayName: string;
@@ -28,6 +28,7 @@ export type UIState = {
 	isLoading: boolean;
 	isSaving: boolean;
 	isChangingPassword: boolean;
+	isDeletingAccount: boolean;
 };
 
 export type Messages = {
@@ -41,6 +42,7 @@ export type ProfileActions = {
 	hasChanges: boolean;
 	handleSave: () => Promise<void>;
 	handlePasswordChange: () => Promise<void>;
+	handleDeleteAccount: () => Promise<{ success: boolean; error?: string }>;
 };
 
 export function useProfileSettings() {
@@ -53,6 +55,7 @@ export function useProfileSettings() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
 	const [isChangingPassword, setIsChangingPassword] = useState(false);
+	const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 	const [passwordError, setPasswordError] = useState<string | null>(null);
@@ -149,6 +152,22 @@ export function useProfileSettings() {
 		setIsChangingPassword(false);
 	};
 
+	const handleDeleteAccount = async () => {
+		setIsDeletingAccount(true);
+		setError(null);
+		setSuccessMessage(null);
+		try {
+			const result = await deleteUserAccount();
+			if (!result.success) {
+				setError(result.error || "Failed to delete account");
+				return { success: false, error: result.error || "Failed to delete account" };
+			}
+			return { success: true };
+		} finally {
+			setIsDeletingAccount(false);
+		}
+	};
+
 	const profileForm: ProfileFormData = {
 		displayName,
 		setDisplayName,
@@ -169,6 +188,7 @@ export function useProfileSettings() {
 		isLoading,
 		isSaving,
 		isChangingPassword,
+		isDeletingAccount,
 	};
 
 	const messages: Messages = {
@@ -182,6 +202,7 @@ export function useProfileSettings() {
 		hasChanges,
 		handleSave,
 		handlePasswordChange,
+		handleDeleteAccount,
 	};
 
 	return {

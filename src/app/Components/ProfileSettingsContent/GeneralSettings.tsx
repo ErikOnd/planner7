@@ -12,6 +12,9 @@ import {
 	UIState,
 } from "@hooks/useProfileSettings";
 import * as Switch from "@radix-ui/react-switch";
+import { useState } from "react";
+
+const DELETE_CONFIRMATION_TEXT = "DELETE MY ACCOUNT";
 
 type GeneralSettingsProps = {
 	originalProfile: ProfileData | null;
@@ -21,6 +24,7 @@ type GeneralSettingsProps = {
 	messages: Messages;
 	actions: ProfileActions;
 	handleLogout?: () => Promise<void>;
+	handleAccountDeleted?: () => Promise<void>;
 	styles: Record<string, string>;
 };
 
@@ -32,8 +36,31 @@ export function GeneralSettings({
 	messages,
 	actions,
 	handleLogout,
+	handleAccountDeleted,
 	styles,
 }: GeneralSettingsProps) {
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+	const [deleteConfirmationInput, setDeleteConfirmationInput] = useState("");
+	const [deleteError, setDeleteError] = useState<string | null>(null);
+
+	const handleConfirmDelete = async () => {
+		if (deleteConfirmationInput.trim().toUpperCase() !== DELETE_CONFIRMATION_TEXT) {
+			setDeleteError(`Type "${DELETE_CONFIRMATION_TEXT}" to confirm.`);
+			return;
+		}
+
+		setDeleteError(null);
+		const result = await actions.handleDeleteAccount();
+		if (result.success) {
+			if (handleAccountDeleted) {
+				await handleAccountDeleted();
+			}
+			setIsDeleteDialogOpen(false);
+			return;
+		}
+		setDeleteError(result.error || "Failed to delete account.");
+	};
+
 	return (
 		<div className={styles["tab-content"]}>
 			<section className={styles["settings-section"]}>
@@ -168,6 +195,66 @@ export function GeneralSettings({
 					</div>
 				</section>
 			)}
+
+			<section className={styles["settings-section"]}>
+				<h3 className={styles["section-heading"]}>Delete Account</h3>
+				<Text size="sm" variant="muted">
+					Permanently delete your profile, workspaces, notes, and todos. This cannot be recovered.
+				</Text>
+				<div>
+					<Button
+						variant="secondary"
+						onClick={() => {
+							setDeleteConfirmationInput("");
+							setDeleteError(null);
+							setIsDeleteDialogOpen((prev) => !prev);
+						}}
+						disabled={uiState.isDeletingAccount}
+					>
+						{uiState.isDeletingAccount ? "Deleting..." : "Delete account"}
+					</Button>
+				</div>
+				{isDeleteDialogOpen && (
+					<>
+						<p className={styles["delete-account-description"]}>
+							Type {DELETE_CONFIRMATION_TEXT} to confirm permanent deletion.
+						</p>
+						<div className={styles["form-group"]}>
+							<input
+								id="delete-account-confirmation-input"
+								type="text"
+								className={`${styles["form-input"]} ${styles["delete-account-input"]}`}
+								placeholder={DELETE_CONFIRMATION_TEXT}
+								value={deleteConfirmationInput}
+								onChange={(event) => setDeleteConfirmationInput(event.target.value)}
+								disabled={uiState.isDeletingAccount}
+								autoFocus
+							/>
+						</div>
+						{deleteError && <div className={styles["error-message"]}>{deleteError}</div>}
+						<div className={styles["delete-account-actions"]}>
+							<Button
+								variant="secondary"
+								disabled={uiState.isDeletingAccount}
+								onClick={() => setIsDeleteDialogOpen(false)}
+							>
+								Cancel
+							</Button>
+							<Button
+								variant="primary"
+								onClick={() => {
+									void handleConfirmDelete();
+								}}
+								disabled={uiState.isDeletingAccount
+									|| deleteConfirmationInput.trim().toUpperCase() !== DELETE_CONFIRMATION_TEXT}
+								className={styles["delete-account-confirm"]}
+							>
+								{uiState.isDeletingAccount ? "Deleting..." : "Delete account"}
+							</Button>
+						</div>
+					</>
+				)}
+			</section>
 		</div>
 	);
 }
