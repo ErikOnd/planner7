@@ -34,6 +34,7 @@ export function DesktopNavigation({
 				<Button
 					variant="secondary"
 					icon="chevron-left"
+					className={styles["nav-control"]}
 					aria-label="Previous week"
 					onClick={() => handleWeekChange(-1)}
 				/>
@@ -45,22 +46,30 @@ export function DesktopNavigation({
 				<Button
 					variant="secondary"
 					icon="chevron-right"
+					className={styles["nav-control"]}
 					aria-label="Next week"
 					onClick={() => handleWeekChange(1)}
 				/>
 			</div>
 			<div className={styles["actions-section"]}>
 				<CalendarOverlay onDateSelect={onDateSelect} showWeekends={showWeekends}>
-					<Button variant="secondary" icon="calendar" aria-label="Open calendar" />
+					<Button variant="secondary" icon="calendar" className={styles["nav-control"]} aria-label="Open calendar" />
 				</CalendarOverlay>
 				<Button
 					href="/feedback"
 					variant="secondary"
 					icon="Megaphone"
+					className={styles["nav-control"]}
 					aria-label="Send feedback"
 				/>
 				<ProfileDialog>
-					<Button variant="secondary" icon="user" iconSize={36} aria-label="Open profile menu" />
+					<Button
+						variant="secondary"
+						icon="user"
+						iconSize={36}
+						className={styles["nav-control"]}
+						aria-label="Open profile menu"
+					/>
 				</ProfileDialog>
 			</div>
 		</nav>

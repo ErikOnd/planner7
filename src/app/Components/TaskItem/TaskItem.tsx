@@ -8,23 +8,36 @@ type TaskItemProps = {
 	checked?: boolean;
 	onChange?: (checked: boolean) => void;
 	onEdit?: () => void;
+	onDelete?: () => void;
 };
 
 export function TaskItem(props: TaskItemProps) {
-	const { taskName, checked, onChange, onEdit } = props;
+	const { taskName, checked, onChange, onEdit, onDelete } = props;
 	return (
 		<div className={styles["task-item"]}>
 			<Checkbox label={taskName} checked={checked} onChange={onChange} />
-			{onEdit && (
-				<button
-					className={styles["edit-button"]}
-					onClick={onEdit}
-					aria-label="Edit task"
-					type="button"
-				>
-					<Icon name="pencil" />
-				</button>
-			)}
+			<div className={styles["action-buttons"]}>
+				{onEdit && (
+					<button
+						className={styles["edit-button"]}
+						onClick={onEdit}
+						aria-label="Edit task"
+						type="button"
+					>
+						<Icon name="pencil" />
+					</button>
+				)}
+				{onDelete && (
+					<button
+						className={styles["delete-button"]}
+						onClick={onDelete}
+						aria-label="Delete task"
+						type="button"
+					>
+						<Icon name="trash" />
+					</button>
+				)}
+			</div>
 		</div>
 	);
 }

@@ -19,7 +19,7 @@ type MobileNavigationProps = {
 
 const navItems: { value: "weekly" | "remember" | "profile"; label: string }[] = [
 	{ value: "weekly", label: "Weekly" },
-	{ value: "remember", label: "To Remember" },
+	{ value: "remember", label: "Backlog" },
 	{ value: "profile", label: "Profile" },
 ];
 

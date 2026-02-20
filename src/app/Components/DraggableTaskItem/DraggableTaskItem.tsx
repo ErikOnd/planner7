@@ -12,9 +12,10 @@ type DraggableTaskItemProps = {
 	checked: boolean;
 	onToggleAction: (checked: boolean) => void;
 	onEdit?: () => void;
+	onDelete?: () => void;
 };
 
-export function DraggableTaskItem({ id, taskName, checked, onToggleAction, onEdit }: DraggableTaskItemProps) {
+export function DraggableTaskItem({ id, taskName, checked, onToggleAction, onEdit, onDelete }: DraggableTaskItemProps) {
 	const {
 		attributes,
 		listeners,
@@ -39,7 +40,7 @@ export function DraggableTaskItem({ id, taskName, checked, onToggleAction, onEdi
 				[styles["dragging"]]: isDragging,
 			})}
 		>
-			<TaskItem taskName={taskName} checked={checked} onChange={onToggleAction} onEdit={onEdit} />
+			<TaskItem taskName={taskName} checked={checked} onChange={onToggleAction} onEdit={onEdit} onDelete={onDelete} />
 		</div>
 	);
 }

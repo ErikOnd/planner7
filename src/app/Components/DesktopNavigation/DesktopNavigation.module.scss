@@ -13,7 +13,9 @@
 	background-color: var(--color-surface);
 	height: variables.$desktop-navi-height;
 	backdrop-filter: blur(10px);
-	box-shadow: 0 .1rem .3rem rgba(0, 0, 0, 0.05);
+	box-shadow:
+		0 .1rem .3rem rgba(0, 0, 0, 0.05),
+		0 0 0 .06rem color-mix(in srgb, var(--color-border-light) 68%, transparent) inset;
 	width: 100%;
 	color: var(--color-text);
 
@@ -35,6 +37,13 @@
 		align-items: center;
 		text-align: center;
 		gap: 0.25rem;
+		justify-content: center;
+		height: 3.2rem;
+		padding: 0 0.9rem;
+		border-radius: variables.$radius-sm;
+		background: color-mix(in srgb, var(--color-surface-elevated) 84%, transparent);
+		border: 0.06rem solid color-mix(in srgb, var(--color-border-light) 70%, transparent);
+		box-shadow: 0 0.2rem 0.75rem var(--shadow-sm);
 	}
 
 	.date-range {
@@ -57,5 +66,28 @@
 		justify-content: flex-end;
 		grid-column: 3;
 		align-self: center;
+	}
+}
+
+.nav-control {
+	position: relative;
+	border-radius: variables.$radius-md;
+	box-shadow: 0 0.1rem 0.45rem var(--shadow-sm);
+	transition:
+		transform variables.$transition-fast,
+		box-shadow variables.$transition-base,
+		background-color variables.$transition-base,
+		border-color variables.$transition-base;
+
+	&:hover:not(:disabled) {
+		transform: translateY(-1px);
+		box-shadow:
+			0 0.55rem 1rem var(--shadow-md),
+			0 0 0 0.06rem color-mix(in srgb, var(--color-border-light) 68%, transparent) inset;
+	}
+
+	&:active:not(:disabled) {
+		transform: translateY(0);
+		box-shadow: 0 0.2rem 0.6rem var(--shadow-sm);
 	}
 }

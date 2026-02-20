@@ -4,6 +4,7 @@ import { Button } from "@atoms/Button/Button";
 import Checkbox from "@atoms/Checkbox/Checkbox";
 import { Text } from "@atoms/Text/Text";
 import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
+import { DeleteTodoDialog } from "@components/DeleteTodoDialog/DeleteTodoDialog";
 import { DraggableTaskItem } from "@components/DraggableTaskItem/DraggableTaskItem";
 import { closestCenter, DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -32,10 +33,11 @@ type RememberContentProps = {
 
 export function RememberContent(props: RememberContentProps) {
 	const { todosState } = props;
-	const { todos, addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
+	const { todos, deleteTodo, addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
 
 	const [modalOpen, setModalOpen] = useState(false);
 	const [editingTodo, setEditingTodo] = useState<GeneralTodo | null>(null);
+	const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 	const [isCompletedOpen, setIsCompletedOpen] = useState(false);
 	const activeTodos = useMemo(() => todos.filter(todo => !todo.completed), [todos]);
 	const completedTodos = useMemo(() => (
@@ -64,6 +66,12 @@ export function RememberContent(props: RememberContentProps) {
 		}
 	};
 
+	const handleDelete = async () => {
+		if (!deleteTargetId) return;
+		await deleteTodo(deleteTargetId);
+		setDeleteTargetId(null);
+	};
+
 	return (
 		<div className={styles["remember-content"]}>
 			<div className={styles["task-items"]}>
@@ -89,6 +97,7 @@ export function RememberContent(props: RememberContentProps) {
 										checked={checkedTodos.has(todo.id)}
 										onToggleAction={checked => handleTodoToggle(todo.id, checked)}
 										onEdit={() => handleEditTodo(todo)}
+										onDelete={() => setDeleteTargetId(todo.id)}
 									/>
 								))}
 							</SortableContext>
@@ -173,6 +182,13 @@ export function RememberContent(props: RememberContentProps) {
 					</Dialog.Content>
 				</Dialog.Portal>
 			</Dialog.Root>
+			<DeleteTodoDialog
+				open={Boolean(deleteTargetId)}
+				onOpenChange={(open) => {
+					if (!open) setDeleteTargetId(null);
+				}}
+				onConfirm={handleDelete}
+			/>
 		</div>
 	);
 }

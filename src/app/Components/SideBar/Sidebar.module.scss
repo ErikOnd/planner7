@@ -20,6 +20,11 @@
 	--sidebar-pad: var(--space-lg);
 	--sidebar-radius: #{variables.$radius-lg};
 	--sidebar-border: 0.1rem solid var(--color-border-light);
+	background-image: linear-gradient(
+		180deg,
+		color-mix(in srgb, var(--color-surface) 94%, transparent) 0%,
+		color-mix(in srgb, var(--color-gray-light) 76%, transparent) 100%
+	);
 
 	.sticky-section {
 		position: sticky;
@@ -68,16 +73,26 @@
 		gap: 0.8rem;
 		padding: 0.75rem 1rem;
 		border-radius: variables.$radius-md;
-		background: var(--color-surface-elevated);
+		background:
+			linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--color-surface-elevated) 94%, transparent) 0%,
+				color-mix(in srgb, var(--color-gray-light) 80%, transparent) 100%
+			);
 		border: 0.1rem solid var(--color-border-light);
 		color: var(--color-text);
 		font-weight: 600;
 		cursor: pointer;
-		transition: border-color variables.$transition-base, color variables.$transition-base, background-color variables.$transition-base, box-shadow variables.$transition-base;
+		transition: border-color variables.$transition-base, color variables.$transition-base, background-color variables.$transition-base, box-shadow variables.$transition-base, transform variables.$transition-fast;
+		box-shadow: 0 .2rem .8rem var(--shadow-sm);
 
 		&:hover {
 			border-color: var(--color-primary);
 			background-color: var(--color-gray-light);
+			box-shadow:
+				0 .6rem 1.4rem var(--shadow-md),
+				0 0 0 .06rem color-mix(in srgb, var(--color-primary-light) 35%, transparent) inset;
+			transform: translateY(-1px);
 		}
 
 		&:focus-visible {
@@ -87,6 +102,8 @@
 
 		&:active {
 			background-color: var(--color-gray-medium);
+			transform: translateY(0);
+			box-shadow: 0 .25rem .8rem var(--shadow-sm);
 		}
 	}
 
@@ -200,6 +217,20 @@
 
 	.completed-link {
 		width: 100%;
+		box-shadow: 0 .2rem .8rem var(--shadow-sm);
+		transition:
+			transform variables.$transition-fast,
+			box-shadow variables.$transition-base;
+
+		&:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 .6rem 1.35rem var(--shadow-md);
+		}
+
+		&:active {
+			transform: translateY(0);
+			box-shadow: 0 .25rem .8rem var(--shadow-sm);
+		}
 	}
 
 	.remember-loading {
@@ -329,60 +360,5 @@
 @include mixins.phone {
 	.completed-date {
 		margin-top: 0.2rem;
-	}
-}
-
-.delete-overlay {
-	position: fixed;
-	inset: 0;
-	background-color: var(--color-overlay);
-	z-index: 1000;
-}
-
-.delete-dialog {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	background-color: var(--color-surface-elevated);
-	border: 0.1rem solid var(--color-border);
-	border-radius: variables.$radius-lg;
-	padding: var(--space-lg);
-	width: min(26rem, 92vw);
-	box-shadow:
-		0 1rem 3rem var(--shadow-xl),
-		0 0.5rem 1.5rem var(--shadow-lg);
-	z-index: 1001;
-}
-
-.delete-title {
-	@include typography.text-lg;
-	margin-bottom: var(--space-xs);
-	color: var(--color-text);
-}
-
-.delete-description {
-	@include typography.text-sm;
-	color: var(--color-text-muted);
-	margin-bottom: var(--space-md);
-}
-
-.delete-actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: var(--space-sm);
-}
-
-.delete-button {
-	background-color: var(--color-error);
-	color: var(--color-surface);
-
-	&:hover:not(:disabled) {
-		background-color: #b91c1c;
-	}
-
-	&:focus-visible {
-		outline: 0.13rem solid var(--color-error-border);
-		outline-offset: 0.13rem;
 	}
 }

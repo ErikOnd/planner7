@@ -1,0 +1,57 @@
+@use "../../styles/variables" as variables;
+@use "../../styles/typography" as typography;
+
+.delete-overlay {
+	position: fixed;
+	inset: 0;
+	background-color: var(--color-overlay);
+	z-index: 1000;
+}
+
+.delete-dialog {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: var(--color-surface-elevated);
+	border: 0.1rem solid var(--color-border);
+	border-radius: variables.$radius-lg;
+	padding: var(--space-lg);
+	width: min(26rem, 92vw);
+	box-shadow:
+		0 1rem 3rem var(--shadow-xl),
+		0 0.5rem 1.5rem var(--shadow-lg);
+	z-index: 1001;
+}
+
+.delete-title {
+	@include typography.text-lg;
+	margin-bottom: var(--space-xs);
+	color: var(--color-text);
+}
+
+.delete-description {
+	@include typography.text-sm;
+	color: var(--color-text-muted);
+	margin-bottom: var(--space-md);
+}
+
+.delete-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--space-sm);
+}
+
+.delete-button {
+	background-color: var(--color-error);
+	color: var(--color-surface);
+
+	&:hover:not(:disabled) {
+		background-color: #b91c1c;
+	}
+
+	&:focus-visible {
+		outline: 0.13rem solid var(--color-error-border);
+		outline-offset: 0.13rem;
+	}
+}

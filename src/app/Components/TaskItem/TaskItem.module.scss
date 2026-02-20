@@ -12,7 +12,14 @@
 	justify-content: space-between;
 	gap: var(--space-xl);
 
-	.edit-button {
+	.action-buttons {
+		display: flex;
+		align-items: center;
+		gap: var(--space-sm);
+	}
+
+	.edit-button,
+	.delete-button {
 		height: fit-content;
 		background-color: var(--color-surface);
 		color: var(--color-text-light);
@@ -27,6 +34,13 @@
 					outline: .1rem solid var(--color-primary);
 		outline-offset: .2rem;
 			border-radius: variables.$radius-sm;
+		}
+	}
+
+	.delete-button {
+		&:hover,
+		&:focus-visible {
+			color: var(--color-error);
 		}
 	}
 }

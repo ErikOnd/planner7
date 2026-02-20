@@ -5,6 +5,7 @@ import Checkbox from "@atoms/Checkbox/Checkbox";
 import { Icon } from "@atoms/Icons/Icon";
 import { Text } from "@atoms/Text/Text";
 import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
+import { DeleteTodoDialog } from "@components/DeleteTodoDialog/DeleteTodoDialog";
 import { DraggableTodoItem } from "@components/DraggableTodoItem/DraggableTodoItem";
 import { closestCenter, DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -14,7 +15,6 @@ import { useTodoToggle } from "@hooks/useTodoToggle";
 import type { GeneralTodo } from "@prisma/client";
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
-import { AlertDialog } from "radix-ui";
 import { useMemo, useState } from "react";
 import styles from "./Sidebar.module.scss";
 
@@ -104,7 +104,7 @@ export function Sidebar({ todosState }: SidebarProps) {
 				</Button>
 
 				<div className={styles["backlog-header"]}>
-					<span className={styles["backlog-title"]}>Global Backlog</span>
+					<span className={styles["backlog-title"]}>Backlog</span>
 				</div>
 
 				<div className={styles["backlog-panel"]}>
@@ -179,34 +179,13 @@ export function Sidebar({ todosState }: SidebarProps) {
 				onOptimisticUpdate={updateTodo}
 				onSuccess={silentRefresh}
 			/>
-			<AlertDialog.Root
+			<DeleteTodoDialog
 				open={Boolean(deleteTargetId)}
 				onOpenChange={(open) => {
 					if (!open) setDeleteTargetId(null);
 				}}
-			>
-				<AlertDialog.Portal>
-					<AlertDialog.Overlay className={styles["delete-overlay"]} />
-					<AlertDialog.Content className={styles["delete-dialog"]}>
-						<AlertDialog.Title className={styles["delete-title"]}>
-							Delete todo?
-						</AlertDialog.Title>
-						<AlertDialog.Description className={styles["delete-description"]}>
-							This action cannot be undone.
-						</AlertDialog.Description>
-						<div className={styles["delete-actions"]}>
-							<AlertDialog.Cancel asChild>
-								<Button variant="secondary" fontWeight={500}>Cancel</Button>
-							</AlertDialog.Cancel>
-							<AlertDialog.Action asChild>
-								<Button className={styles["delete-button"]} onClick={handleDelete} fontWeight={700} autoFocus>
-									Delete
-								</Button>
-							</AlertDialog.Action>
-						</div>
-					</AlertDialog.Content>
-				</AlertDialog.Portal>
-			</AlertDialog.Root>
+				onConfirm={handleDelete}
+			/>
 			<Dialog.Root open={isCompletedOpen} onOpenChange={setIsCompletedOpen}>
 				<Dialog.Portal>
 					<Dialog.Overlay className={styles["completed-overlay"]} />

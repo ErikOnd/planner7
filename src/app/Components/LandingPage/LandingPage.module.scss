@@ -264,14 +264,14 @@
 }
 
 .typing-word {
-	color: var(--color-primary-ink);
+	color: var(--color-primary);
 }
 
 .typing-cursor {
 	display: inline-block;
 	width: 0.04em;
 	height: 0.82em;
-	background: var(--color-primary-ink);
+	background: var(--color-primary);
 	margin-left: 0.04em;
 	vertical-align: baseline;
 	animation: blink 1s step-end infinite;
