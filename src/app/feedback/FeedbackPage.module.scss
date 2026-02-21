@@ -1,11 +1,8 @@
-@use "../styles/mixins" as mixins;
 @use "../styles/variables" as variables;
 
 .page {
 	min-height: 100dvh;
-	display: grid;
-	place-items: center;
-	padding: var(--space-xl);
+	padding: var(--space-xl) var(--content-spacing);
 	background: linear-gradient(
 		135deg,
 		var(--color-background) 0%,
@@ -13,25 +10,148 @@
 	);
 }
 
-.card {
-	background: var(--color-surface);
-	border: 0.1rem solid var(--color-border-light);
-	border-radius: variables.$radius-xl;
-	padding: var(--space-2xl);
-	max-width: 32rem;
-	text-align: center;
+.shell {
+	width: min(62rem, 100%);
+	margin-inline: auto;
+	background: var(--surface-2, var(--color-surface));
+	border: 0.1rem solid var(--surface-border-strong, var(--color-border));
+	border-radius: var(--radius-surface, #{variables.$radius-lg});
+	padding: clamp(1rem, 2.8vw, 1.5rem);
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	@include mixins.shadow-lg;
+	gap: var(--space-lg);
+	box-shadow: var(--elevation-3, 0 1rem 2.4rem var(--shadow-lg));
+}
+
+.header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--space-md);
 }
 
 .title {
-	margin-bottom: var(--space-sm);
+	margin-bottom: 0.2rem;
 }
 
 .subtitle {
 	color: var(--color-text-muted);
-	margin-bottom: var(--space-lg);
-	line-height: 1.6;
+	line-height: 1.5;
+	max-width: 42rem;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: 0.55rem;
+}
+
+.sectionLabel {
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+.typeGroup {
+	display: flex;
+	gap: 0.6rem;
+	flex-wrap: wrap;
+}
+
+.typeOption {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+	min-height: 2.25rem;
+	padding: 0.35rem 0.75rem;
+	border: 0.1rem solid var(--surface-border, var(--color-border-light));
+	border-radius: variables.$radius-sm;
+	background: var(--surface-1, var(--color-surface-elevated));
+	font-size: var(--font-size-sm);
+	font-weight: 600;
+	color: var(--color-text);
+	cursor: pointer;
+
+	input {
+		accent-color: var(--color-primary);
+	}
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.42rem;
+}
+
+.label {
+	font-size: var(--font-size-sm);
+	font-weight: 700;
+	color: var(--color-text-muted);
+}
+
+.helperHint {
+	color: var(--color-text-muted);
+	line-height: 1.45;
+}
+
+.textarea {
+	width: 100%;
+	min-height: var(--control-height, 3rem);
+	padding: 0.68rem 0.85rem;
+	border: 0.1rem solid var(--surface-border, var(--color-border-light));
+	border-radius: var(--radius-control, #{variables.$radius-md});
+	background: var(--surface-1, var(--color-surface));
+	color: var(--color-text);
+	transition:
+		border-color variables.$transition-base,
+		background-color variables.$transition-base,
+		box-shadow variables.$transition-base;
+
+	&:hover {
+		border-color: var(--surface-border-strong, var(--color-border));
+	}
+
+	&:focus-visible {
+		outline: none;
+		border-color: var(--color-primary);
+		box-shadow: var(--ring-focus, 0 0 0 .2rem var(--shadow-primary-sm));
+		background: var(--surface-2, var(--color-surface-elevated));
+	}
+
+	&::placeholder {
+		color: var(--color-text-placeholder);
+	}
+}
+
+.textarea {
+	min-height: 7rem;
+	resize: vertical;
+}
+
+.footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--space-md);
+}
+
+@media (max-width: 639px) {
+	.page {
+		padding: var(--space-md);
+	}
+
+	.header {
+		flex-direction: column;
+	}
+
+	.footer {
+		flex-direction: column;
+		align-items: stretch;
+	}
 }
