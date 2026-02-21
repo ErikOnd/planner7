@@ -180,7 +180,13 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 							dotClassName={styles["gradient-dot"]}
 							activeDotClassName={styles["gradient-dot--active"]}
 						/>
-						<Button type="submit" variant="primary" fontWeight={700} disabled={isSaving}>
+						<Button
+							type="submit"
+							variant="primary"
+							fontWeight={700}
+							disabled={isSaving}
+							className={styles["create-submit"]}
+						>
 							Create
 						</Button>
 					</div>

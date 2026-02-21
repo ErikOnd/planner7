@@ -183,14 +183,6 @@
 	}
 }
 
-.smart-editor__placeholder--with-toolbar {
-	top: 2.95rem;
-
-	@media (max-width: 639px) {
-		top: 3.15rem;
-	}
-}
-
 .smart-editor__paragraph {
 	margin: 0;
 	line-height: 1.6;
@@ -399,7 +391,7 @@
 
 .smart-editor__li {
 	display: list-item;
-	margin: 0.2rem 0;
+	margin: 0.3rem 0;
 }
 
 .smart-editor__li-nested {
@@ -411,7 +403,8 @@
 	list-style: none;
 	display: block;
 	position: relative;
-	padding-left: 1.8rem;
+	padding-left: 2.45rem;
+	margin: 0.45rem 0;
 	cursor: text;
 
 	&:focus,
@@ -427,36 +420,83 @@
 	content: "";
 	position: absolute;
 	left: 0;
-	top: 0.08rem;
-	width: 1.1rem;
-	height: 1.1rem;
-	border-radius: variables.$radius-sm;
-	border: 0.1rem solid var(--color-border);
-	background-color: var(--color-surface);
+	top: 0.02rem;
+	width: 1.55rem;
+	height: 1.55rem;
+	border-radius: variables.$radius-md;
+	border: 0.1rem solid color-mix(in srgb, var(--color-border) 88%, transparent);
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--color-surface-elevated) 94%, var(--color-surface)) 0%,
+			var(--color-surface) 100%
+		);
+	box-shadow:
+		0 0.1rem 0.42rem color-mix(in srgb, var(--shadow-sm) 80%, transparent),
+		inset 0 0 0 0.05rem color-mix(in srgb, var(--color-border-light) 62%, transparent);
 	cursor: pointer;
+	transition:
+		border-color variables.$transition-base,
+		background-color variables.$transition-base,
+		box-shadow variables.$transition-base,
+		transform variables.$transition-fast;
 }
 
 .smart-editor__li-checked::before {
 	border-color: var(--color-primary);
-	background-color: var(--color-primary);
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--color-primary-light) 24%, var(--color-primary)) 0%,
+			var(--color-primary) 100%
+		);
+	box-shadow:
+		0 0.2rem 0.65rem color-mix(in srgb, var(--shadow-primary-sm) 95%, transparent),
+		inset 0 0 0 0.06rem color-mix(in srgb, var(--color-primary-light) 38%, transparent);
 }
 
 .smart-editor__li-checked::after {
 	content: "";
 	position: absolute;
-	left: 0.37rem;
-	top: 0.28rem;
-	width: 0.28rem;
-	height: 0.52rem;
+	left: 0.56rem;
+	top: 0.33rem;
+	width: 0.34rem;
+	height: 0.68rem;
 	border: solid var(--color-on-primary);
-	border-width: 0 0.12rem 0.12rem 0;
+	border-width: 0 0.16rem 0.16rem 0;
 	transform: rotate(45deg);
 	pointer-events: none;
 }
 
+.smart-editor__li-unchecked:focus-within::before {
+	border-color: color-mix(in srgb, var(--color-primary) 55%, var(--color-border));
+	box-shadow:
+		0 0.2rem 0.58rem color-mix(in srgb, var(--shadow-md) 82%, transparent),
+		inset 0 0 0 0.06rem color-mix(in srgb, var(--color-primary-light) 32%, transparent);
+}
+
+.smart-editor__li-checked:focus-within::before {
+	box-shadow:
+		0 0.26rem 0.72rem color-mix(in srgb, var(--shadow-primary-sm) 98%, transparent),
+		inset 0 0 0 0.06rem color-mix(in srgb, var(--color-primary-light) 40%, transparent);
+}
+
 .smart-editor__li-checked {
-	text-decoration: line-through;
-	opacity: 0.85;
+	--smart-editor-checked-text: color-mix(in srgb, var(--color-text-placeholder) 90%, var(--color-text-light));
+	text-decoration: none;
+	color: var(--smart-editor-checked-text);
+	opacity: 1;
+}
+
+.smart-editor__li-checked :is(
+	.smart-editor__paragraph,
+	.smart-editor__text--bold,
+	.smart-editor__text--italic,
+	.smart-editor__text--underline,
+	.smart-editor__link,
+	span[data-lexical-text="true"]
+) {
+	color: var(--smart-editor-checked-text);
 }
 
 .smart-editor__slash-menu {
