@@ -7,7 +7,7 @@ import { Text } from "@atoms/Text/Text";
 import { GradientPicker } from "@components/WorkspaceSwitcher/GradientPicker";
 import * as Dialog from "@radix-ui/react-dialog";
 import clsx from "clsx";
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import type { WorkspaceSummary } from "../../actions/workspaces";
 import styles from "./WorkspaceManagerDialog.module.scss";
 
@@ -59,6 +59,7 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 		onCancelEditing,
 		onRequestDelete,
 	} = props;
+	const [isCreateOpen, setIsCreateOpen] = useState(false);
 
 	return (
 		<Dialog.Portal>
@@ -72,7 +73,6 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 				</div>
 
 				<div className={styles["switch-section"]}>
-					<Text size="sm" fontWeight={700}>Switch Workspace</Text>
 					<div className={styles["switch-list"]}>
 						{workspaces.map((workspace) => {
 							const isActive = workspace.id === activeWorkspaceId;
@@ -105,16 +105,18 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 											</div>
 										)
 										: (
-											<button
+											<Button
 												type="button"
-												className={styles["switch-main"]}
+												variant={isActive ? "primary" : "secondary"}
+												className={clsx(styles["switch-main"], isActive && styles["switch-main--active"])}
 												onClick={() => {
 													onQuickSwitchWorkspace(workspace.id);
+													setIsCreateOpen(false);
 												}}
+												wrapText={false}
 											>
-												<span>{workspace.name}</span>
-												{isActive && <span className={styles["switch-active-pill"]}>Active</span>}
-											</button>
+												<span className={styles["switch-main-label"]}>{workspace.name}</span>
+											</Button>
 										)}
 
 									<div className={styles["switch-actions"]}>
@@ -161,36 +163,45 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 					</div>
 				</div>
 
-				<form className={styles["create-form"]} onSubmit={onCreateWorkspace}>
-					<input
-						type="text"
-						value={newWorkspaceName}
-						onChange={(event) => onNewWorkspaceNameChange(event.target.value)}
-						className={clsx(styles["workspace-input"], styles["workspace-input--create"])}
-						placeholder="New workspace name"
-						maxLength={60}
-					/>
-					<div className={styles["create-controls"]}>
-						<GradientPicker
-							idPrefix="new"
-							selected={newWorkspaceGradient}
-							presets={gradientPresets}
-							onPick={onNewWorkspaceGradientChange}
-							className={styles["gradient-picker"]}
-							dotClassName={styles["gradient-dot"]}
-							activeDotClassName={styles["gradient-dot--active"]}
+				<div className={styles["create-toggle-row"]}>
+					<Button type="button" variant="secondary" fontWeight={700} onClick={() => setIsCreateOpen((value) => !value)}>
+						{isCreateOpen ? "Hide Create Workspace" : "Create New Workspace"}
+					</Button>
+				</div>
+
+				{isCreateOpen && (
+					<form className={styles["create-form"]} onSubmit={onCreateWorkspace}>
+						<Text size="sm" fontWeight={700}>Create Workspace</Text>
+						<input
+							type="text"
+							value={newWorkspaceName}
+							onChange={(event) => onNewWorkspaceNameChange(event.target.value)}
+							className={clsx(styles["workspace-input"], styles["workspace-input--create"])}
+							placeholder="New workspace name"
+							maxLength={60}
 						/>
-						<Button
-							type="submit"
-							variant="primary"
-							fontWeight={700}
-							disabled={isSaving}
-							className={styles["create-submit"]}
-						>
-							Create
-						</Button>
-					</div>
-				</form>
+						<div className={styles["create-controls"]}>
+							<GradientPicker
+								idPrefix="new"
+								selected={newWorkspaceGradient}
+								presets={gradientPresets}
+								onPick={onNewWorkspaceGradientChange}
+								className={styles["gradient-picker"]}
+								dotClassName={styles["gradient-dot"]}
+								activeDotClassName={styles["gradient-dot--active"]}
+							/>
+							<Button
+								type="submit"
+								variant="primary"
+								fontWeight={700}
+								disabled={isSaving}
+								className={styles["create-submit"]}
+							>
+								Create
+							</Button>
+						</div>
+					</form>
+				)}
 
 				{(localError || error) && <Text size="sm" className={styles["error-text"]}>{localError ?? error}</Text>}
 			</Dialog.Content>

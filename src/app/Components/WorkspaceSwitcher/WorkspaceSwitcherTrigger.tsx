@@ -96,7 +96,7 @@ export function WorkspaceSwitcherTrigger(props: WorkspaceSwitcherTriggerProps) {
 								}}
 								aria-label={`Open workspace switcher, active workspace ${activeLabel}`}
 							>
-								<span className={styles["workspace-tab-label"]}>Workspace</span>
+								<span className={styles["workspace-tab-label"]}>{activeLabel}</span>
 							</button>
 						</Dialog.Trigger>
 						{manageContent}
