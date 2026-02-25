@@ -35,6 +35,15 @@ type WorkspaceManagerDialogProps = {
 	onRequestDelete: (workspaceId: string, name: string) => void;
 };
 
+function getWorkspaceInitials(name: string) {
+	return name
+		.split(/\s+/)
+		.filter(Boolean)
+		.slice(0, 2)
+		.map((part) => part[0]?.toUpperCase() ?? "")
+		.join("") || "W";
+}
+
 export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 	const {
 		workspaces,
@@ -60,23 +69,31 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 		onRequestDelete,
 	} = props;
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
+	const gradientMap = Object.fromEntries(gradientPresets);
 
 	return (
 		<Dialog.Portal>
 			<Dialog.Overlay className={styles["manage-overlay"]} />
 			<Dialog.Content className={styles["manage-dialog"]}>
 				<div className={styles["manage-header"]}>
-					<Dialog.Title className={styles["manage-title"]}>Workspaces</Dialog.Title>
+					<div>
+						<Dialog.Title className={styles["manage-title"]}>Switch Workspace</Dialog.Title>
+						<Text size="sm" className={styles["manage-subtitle"]}>
+							Manage your productivity environments
+						</Text>
+					</div>
 					<Dialog.Close asChild>
 						<Button type="button" variant="secondary" icon="close" aria-label="Close workspace manager" />
 					</Dialog.Close>
 				</div>
+				<div className={styles["manage-divider"]} />
 
 				<div className={styles["switch-section"]}>
 					<div className={styles["switch-list"]}>
 						{workspaces.map((workspace) => {
 							const isActive = workspace.id === activeWorkspaceId;
 							const isEditing = workspace.id === editingWorkspaceId;
+							const gradient = gradientMap[workspace.gradientPreset] ?? gradientPresets[0]?.[1] ?? { from: "#555", to: "#888" };
 
 							return (
 								<div
@@ -105,18 +122,27 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 											</div>
 										)
 										: (
-											<Button
+											<button
 												type="button"
-												variant={isActive ? "primary" : "secondary"}
 												className={clsx(styles["switch-main"], isActive && styles["switch-main--active"])}
 												onClick={() => {
 													onQuickSwitchWorkspace(workspace.id);
 													setIsCreateOpen(false);
 												}}
-												wrapText={false}
+												style={{
+													["--workspace-grad-from" as string]: gradient.from,
+													["--workspace-grad-to" as string]: gradient.to,
+												}}
 											>
-												<span className={styles["switch-main-label"]}>{workspace.name}</span>
-											</Button>
+												<span className={styles["switch-main-avatar"]}>{getWorkspaceInitials(workspace.name)}</span>
+												<span className={styles["switch-main-content"]}>
+													<span className={styles["switch-main-label"]}>{workspace.name}</span>
+													<span className={styles["switch-main-sub"]}>
+														{isActive ? "Active workspace" : "Tap to switch"}
+													</span>
+												</span>
+												<span className={styles["switch-main-indicator"]} aria-hidden />
+											</button>
 										)}
 
 									<div className={styles["switch-actions"]}>
@@ -164,8 +190,20 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 				</div>
 
 				<div className={styles["create-toggle-row"]}>
-					<Button type="button" variant="secondary" fontWeight={700} onClick={() => setIsCreateOpen((value) => !value)}>
-						{isCreateOpen ? "Hide Create Workspace" : "Create New Workspace"}
+					<Text size="lg" fontWeight={700}>Need a fresh start?</Text>
+					<Text size="sm" className={styles["create-toggle-subtitle"]}>
+						Dedicated environments keep you focused.
+					</Text>
+					<Button
+						type="button"
+						variant="primary"
+						fontWeight={700}
+						wrapText={false}
+						className={styles["create-toggle-button"]}
+						onClick={() => setIsCreateOpen((value) => !value)}
+					>
+						<Icon name="plus" size={18} />
+						<span>{isCreateOpen ? "Hide New Workspace" : "New Workspace"}</span>
 					</Button>
 				</div>
 

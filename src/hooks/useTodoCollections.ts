@@ -8,6 +8,7 @@ import { useTodoToggle } from "./useTodoToggle";
 export function useTodoCollections(
 	todos: GeneralTodo[],
 	updateTodoCompletion: (todoId: string, completed: boolean) => Promise<void>,
+	resetKey?: string | null,
 ) {
 	const activeTodos = useMemo(() => todos.filter((todo) => !todo.completed), [todos]);
 	const completedTodos = useMemo(
@@ -23,7 +24,7 @@ export function useTodoCollections(
 	);
 
 	const draggable = useDraggableTodos(activeTodos);
-	const toggle = useTodoToggle(updateTodoCompletion);
+	const toggle = useTodoToggle(updateTodoCompletion, resetKey);
 
 	return {
 		activeTodos,

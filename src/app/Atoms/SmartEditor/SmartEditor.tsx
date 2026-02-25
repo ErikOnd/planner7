@@ -47,6 +47,7 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 	const { mounted } = useTheme();
 	const { showEditorToolbar } = useWeekDisplayPreference();
 	const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
+	const [isFocused, setIsFocused] = useState(false);
 	const [toolbarOffset, setToolbarOffset] = useState(0);
 	const dragMenuRef = useRef<HTMLElement>(null);
 	const dragTargetLineRef = useRef<HTMLElement>(null);
@@ -168,7 +169,18 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 	if (typeof window === "undefined" || !mounted) return null;
 
 	return (
-		<div className={styles["smart-editor"]} ref={setFloatingAnchorElem}>
+		<div
+			className={styles["smart-editor"]}
+			ref={setFloatingAnchorElem}
+			onFocusCapture={() => {
+				setIsFocused(true);
+			}}
+			onBlurCapture={(event) => {
+				if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+					setIsFocused(false);
+				}
+			}}
+		>
 			<LexicalComposer initialConfig={initialConfig}>
 				<div ref={toolbarContainerRef}>
 					{showEditorToolbar && <ToolbarPlugin />}
@@ -181,9 +193,9 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 							spellCheck={true}
 							autoCorrect="on"
 							autoCapitalize="sentences"
-							data-gramm="true"
-							data-gramm_editor="true"
-							data-enable-grammarly="true"
+							data-gramm="false"
+							data-gramm_editor="false"
+							data-enable-grammarly="false"
 						/>
 					}
 					placeholder={
@@ -206,14 +218,16 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 				<CheckListPlugin />
 				<HorizontalRulePlugin />
 				<MarkdownShortcutPlugin />
-				<SlashCommandPlugin />
-				<ImageUploadDropPlugin
-					onUploadError={(message) => {
-						toast.error(message, { toastId: `image-upload-error:${message}` });
-					}}
-				/>
-				<SpeechToTextButtonPlugin />
-				{floatingAnchorElem && (
+				{isFocused && <SlashCommandPlugin />}
+				{isFocused && (
+					<ImageUploadDropPlugin
+						onUploadError={(message) => {
+							toast.error(message, { toastId: `image-upload-error:${message}` });
+						}}
+					/>
+				)}
+				{isFocused && <SpeechToTextButtonPlugin />}
+				{isFocused && floatingAnchorElem && (
 					<DraggableBlockPlugin_EXPERIMENTAL
 						anchorElem={floatingAnchorElem}
 						menuRef={dragMenuRef as unknown as RefObject<HTMLElement>}

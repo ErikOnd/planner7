@@ -1,6 +1,7 @@
 "use client";
 
 import { getRandomTodoGreeting } from "@/lib/greetings";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { Button } from "@atoms/Button/Button";
 import Checkbox from "@atoms/Checkbox/Checkbox";
 import { Icon } from "@atoms/Icons/Icon";
@@ -38,12 +39,13 @@ type SidebarProps = {
 
 export function Sidebar({ todosState }: SidebarProps) {
 	const { todos, deleteTodo, addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
+	const { activeWorkspaceId } = useWorkspace();
 
 	const [isAddOpen, setIsAddOpen] = useState(false);
 	const [editingTodo, setEditingTodo] = useState<GeneralTodo | null>(null);
 	const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 	const [isCompletedOpen, setIsCompletedOpen] = useState(false);
-	const displayName = useDisplayName("Planner");
+	const { displayName, isResolved: isDisplayNameResolved } = useDisplayName("Planner");
 	const {
 		localTodos,
 		activeTodo,
@@ -54,7 +56,7 @@ export function Sidebar({ todosState }: SidebarProps) {
 		checkedTodos,
 		handleTodoToggle,
 		completedTodos,
-	} = useTodoCollections(todos, updateTodoCompletion);
+	} = useTodoCollections(todos, updateTodoCompletion, activeWorkspaceId);
 	const greeting = useMemo(() => getRandomTodoGreeting(), []);
 
 	const handleEditTodo = (todo: GeneralTodo) => {
@@ -86,10 +88,12 @@ export function Sidebar({ todosState }: SidebarProps) {
 				<div className={styles["sidebar-header"]}>
 					<div className={styles["brand"]}>
 						<Image src="/logo-mark.svg" alt="Planner7 logo" width={48} height={48} className={styles["brand-logo"]} />
-						<div className={styles["brand-greeting"]}>
-							<span className={styles["brand-greeting-title"]}>{greeting.headline}, {displayName}</span>
-							<span className={styles["brand-greeting-subtitle"]}>{greeting.subline}</span>
-						</div>
+						{isDisplayNameResolved && (
+							<div className={styles["brand-greeting"]}>
+								<span className={styles["brand-greeting-title"]}>{greeting.headline}, {displayName}</span>
+								<span className={styles["brand-greeting-subtitle"]}>{greeting.subline}</span>
+							</div>
+						)}
 					</div>
 				</div>
 

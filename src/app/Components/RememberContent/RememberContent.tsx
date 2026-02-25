@@ -1,5 +1,6 @@
 "use client";
 
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { Button } from "@atoms/Button/Button";
 import Checkbox from "@atoms/Checkbox/Checkbox";
 import { Text } from "@atoms/Text/Text";
@@ -33,6 +34,7 @@ type RememberContentProps = {
 export function RememberContent(props: RememberContentProps) {
 	const { todosState } = props;
 	const { todos, deleteTodo, addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
+	const { activeWorkspaceId } = useWorkspace();
 
 	const [modalOpen, setModalOpen] = useState(false);
 	const [editingTodo, setEditingTodo] = useState<GeneralTodo | null>(null);
@@ -48,7 +50,7 @@ export function RememberContent(props: RememberContentProps) {
 		checkedTodos,
 		handleTodoToggle,
 		completedTodos,
-	} = useTodoCollections(todos, updateTodoCompletion);
+	} = useTodoCollections(todos, updateTodoCompletion, activeWorkspaceId);
 
 	const handleEditTodo = (todo: GeneralTodo) => {
 		setEditingTodo(todo);

@@ -69,6 +69,7 @@ export function DesktopContent(props: DesktopContentProps) {
 							textareaDate={day.fullDate}
 							autoFocus={day.fullDate.toDateString() === today}
 							isHighlighted={isHighlighted}
+							mountPriority={index}
 						/>
 					</motion.div>
 				);

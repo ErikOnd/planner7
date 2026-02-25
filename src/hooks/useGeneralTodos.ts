@@ -2,7 +2,7 @@
 
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import type { GeneralTodo } from "@prisma/client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { deleteGeneralTodo, getGeneralTodos, updateGeneralTodoCompletion } from "../app/actions/generalTodos";
 
 export function useGeneralTodos() {
@@ -10,30 +10,40 @@ export function useGeneralTodos() {
 	const [todos, setTodos] = useState<GeneralTodo[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const requestCounterRef = useRef(0);
 
 	const fetchTodos = useCallback(async () => {
+		const requestId = ++requestCounterRef.current;
 		setLoading(true);
 		setError(null);
 		try {
 			const data = await getGeneralTodos();
+			if (requestId !== requestCounterRef.current) return;
 			setTodos(data);
 		} catch (fetchError) {
+			if (requestId !== requestCounterRef.current) return;
 			setError("Failed to load todos");
 			console.error("Error fetching todos:", fetchError);
 		} finally {
+			if (requestId !== requestCounterRef.current) return;
 			setLoading(false);
 		}
-	}, [activeWorkspaceId]);
+	}, []);
 
 	useEffect(() => {
+		setTodos([]);
+		setError(null);
 		fetchTodos();
-	}, [fetchTodos]);
+	}, [activeWorkspaceId, fetchTodos]);
 
 	const silentRefresh = useCallback(async () => {
+		const requestId = ++requestCounterRef.current;
 		try {
 			const data = await getGeneralTodos();
+			if (requestId !== requestCounterRef.current) return;
 			setTodos(data);
 		} catch (fetchError) {
+			if (requestId !== requestCounterRef.current) return;
 			console.error("Error refreshing todos:", fetchError);
 		}
 	}, []);

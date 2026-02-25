@@ -64,25 +64,23 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 	const switchWorkspace = useCallback(async (workspaceId: string) => {
 		setIsSaving(true);
 		setError(null);
-		const previous = activeWorkspaceId;
-		setActiveWorkspaceId(workspaceId);
 
 		try {
 			const result = await setActiveWorkspace(workspaceId);
 			if (!result.success) {
-				setActiveWorkspaceId(previous);
 				setError(result.error ?? "Failed to switch workspace");
+				return result;
 			}
+			setActiveWorkspaceId(workspaceId);
 			return result;
 		} catch (switchError) {
-			setActiveWorkspaceId(previous);
 			setError("Failed to switch workspace");
 			console.error("Error switching workspace:", switchError);
 			return { success: false, error: "Failed to switch workspace" };
 		} finally {
 			setIsSaving(false);
 		}
-	}, [activeWorkspaceId]);
+	}, []);
 
 	const createWorkspaceAction = useCallback(async (name: string, gradientPreset: WorkspaceGradientPreset) => {
 		setIsSaving(true);

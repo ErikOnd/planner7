@@ -11,6 +11,7 @@ const SmartEditor = dynamic(() => import("@atoms/SmartEditor/SmartEditor"), {
 });
 
 import { useNotes } from "@/contexts/NotesContext";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { Text } from "@atoms/Text/Text";
 import { formatToDayLabel } from "@utils/formatToDayLabel";
 import clsx from "clsx";
@@ -19,20 +20,39 @@ type DailyTextareaProps = {
 	textareaDate: Date;
 	autoFocus?: boolean;
 	isHighlighted?: boolean;
+	mountPriority?: number;
 };
 
 function DailyTextareaBlockComponent(props: DailyTextareaProps) {
-	const { textareaDate, isHighlighted = false } = props;
+	const { textareaDate, autoFocus = false, isHighlighted = false, mountPriority = 0 } = props;
 	const { weekday, date } = formatToDayLabel(textareaDate);
 	const isToday = textareaDate.toDateString() === new Date().toDateString();
 	const textareaBlock = useRef<HTMLDivElement | null>(null);
 	const editorContainerRef = useRef<HTMLDivElement | null>(null);
 	const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const dateKey = textareaDate.toISOString().split("T")[0];
+	const { activeWorkspaceId } = useWorkspace();
 
 	const { getNote, hasNote, saveNote } = useNotes();
 	const content = getNote(dateKey);
 	const isLoading = !hasNote(dateKey);
+	const [isEditorReady, setIsEditorReady] = React.useState(autoFocus);
+
+	useEffect(() => {
+		if (autoFocus) {
+			setIsEditorReady(true);
+			return;
+		}
+
+		setIsEditorReady(false);
+		const timeout = window.setTimeout(() => {
+			setIsEditorReady(true);
+		}, Math.min(800, 80 + mountPriority * 120));
+
+		return () => {
+			window.clearTimeout(timeout);
+		};
+	}, [autoFocus, mountPriority, dateKey]);
 
 	useEffect(() => {
 		if (!isToday || !textareaBlock.current) return;
@@ -101,7 +121,7 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 				className={styles["editor-container"]}
 				onClick={handleEditorContainerClick}
 			>
-				{isLoading && (
+				{(isLoading || !isEditorReady) && (
 					<div className={styles["editor-loading"]} aria-hidden="true">
 						<div className={styles["editor-skeleton"]}>
 							<span className={styles["editor-skeleton-line"]} />
@@ -112,9 +132,9 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 						</div>
 					</div>
 				)}
-				{!isLoading && (
+				{!isLoading && isEditorReady && (
 					<SmartEditor
-						key={dateKey}
+						key={`${activeWorkspaceId ?? "no-workspace"}:${dateKey}`}
 						initialContent={content}
 						onChange={handleChange}
 						ariaLabel={`Notes for ${weekday}, ${date}`}
