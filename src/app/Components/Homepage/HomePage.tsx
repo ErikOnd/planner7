@@ -3,6 +3,7 @@
 import styles from "@components/Homepage/HomePage.module.scss";
 
 import { useNotes } from "@/contexts/NotesContext";
+import { useProfile } from "@/contexts/ProfileContext";
 import { Button } from "@atoms/Button/Button";
 import { Spinner } from "@atoms/Spinner/Spinner";
 import { DesktopContent } from "@components/DesktopContent/DesktopContent";
@@ -12,13 +13,11 @@ import { ProfileContent } from "@components/ProfileContent/ProfileContent";
 import { RememberContent } from "@components/RememberContent/RememberContent";
 import { Sidebar } from "@components/SideBar/Sidebar";
 import { WeeklyContent } from "@components/WeeklyContent/WeeklyContent";
-import { useGeneralTodos } from "@hooks/useGeneralTodos";
 import { useMediaQuery } from "@hooks/useMediaQuery";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import * as Dialog from "@radix-ui/react-dialog";
 import { getCurrentWeek } from "@utils/getCurrentWeek";
 import { FormEvent, useEffect, useState } from "react";
-import { getUserProfile, updateUserProfile } from "../../actions/profile";
 
 export default function HomePage() {
 	const isMobile = useMediaQuery("(max-width: 1023px)");
@@ -32,8 +31,7 @@ export default function HomePage() {
 	const [namePromptError, setNamePromptError] = useState<string | null>(null);
 	const { rangeLabel } = getCurrentWeek(baseDate);
 	const { showWeekends, isLoading: isPreferencesLoading } = useWeekDisplayPreference();
-
-	const todosState = useGeneralTodos();
+	const { profile, isLoading: isProfileLoading, updateDisplayName } = useProfile();
 	const { loadWeek } = useNotes();
 
 	useEffect(() => {
@@ -62,21 +60,11 @@ export default function HomePage() {
 	}, [showWeekends, selectedDate, baseDate]);
 
 	useEffect(() => {
-		let mounted = true;
-		const fetchProfile = async () => {
-			const result = await getUserProfile();
-			if (!mounted || !result.success || !result.data) return;
-
-			const currentName = result.data.displayName?.trim() ?? "";
-			setNameInput(currentName);
-			setIsNamePromptOpen(currentName.length === 0);
-		};
-
-		void fetchProfile();
-		return () => {
-			mounted = false;
-		};
-	}, []);
+		if (isProfileLoading || !profile) return;
+		const currentName = profile.displayName?.trim() ?? "";
+		setNameInput(currentName);
+		setIsNamePromptOpen(currentName.length === 0);
+	}, [isProfileLoading, profile]);
 
 	const handleCalendarDateSelect = (date: Date) => {
 		setBaseDate(date);
@@ -94,14 +82,13 @@ export default function HomePage() {
 
 		setIsSavingName(true);
 		setNamePromptError(null);
-		const result = await updateUserProfile({ displayName: normalized });
+		const result = await updateDisplayName(normalized);
 		if (!result.success) {
 			setNamePromptError(result.error ?? "Failed to save your name.");
 			setIsSavingName(false);
 			return;
 		}
 
-		window.dispatchEvent(new CustomEvent("profile:display-name-updated", { detail: { displayName: normalized } }));
 		setIsNamePromptOpen(false);
 		setIsSavingName(false);
 	};
@@ -110,8 +97,8 @@ export default function HomePage() {
 		switch (selectedContent) {
 			case "weekly":
 				return <WeeklyContent selectedDate={selectedDate} />;
-			case "remember":
-				return <RememberContent todosState={todosState} />;
+				case "remember":
+					return <RememberContent />;
 			case "profile":
 				return <ProfileContent />;
 			default:
@@ -147,10 +134,10 @@ export default function HomePage() {
 					</div>
 				)
 				: (
-					<div className={styles["desktop-view"]}>
-						<div className={styles["desktop-layout"]}>
-							<Sidebar todosState={todosState} />
-							<div className={styles["desktop-main"]}>
+						<div className={styles["desktop-view"]}>
+							<div className={styles["desktop-layout"]}>
+								<Sidebar />
+								<div className={styles["desktop-main"]}>
 								<DesktopNavigation
 									rangeLabel={rangeLabel}
 									onDateSelect={handleCalendarDateSelect}

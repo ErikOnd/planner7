@@ -1,8 +1,7 @@
 "use server";
 
-import { getCurrentUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { ensureWorkspaceSession } from "@/lib/workspaces";
+import { withWorkspace } from "@/lib/serverActionContext";
 
 export type FormState = {
 	message?: string;
@@ -12,241 +11,211 @@ export type FormState = {
 
 export async function saveGeneralTodo(_prevState: FormState, formData: FormData): Promise<FormState> {
 	const todoId = formData.get("todoId") as string;
-
 	if (todoId && todoId.trim().length > 0) {
 		return updateGeneralTodo(_prevState, formData);
-	} else {
-		return createGeneralTodo(_prevState, formData);
 	}
+	return createGeneralTodo(_prevState, formData);
 }
 
 async function createGeneralTodo(_prevState: FormState, formData: FormData): Promise<FormState> {
-	try {
-		const authResult = await getCurrentUser();
-		if (!authResult.success) {
-			return {
-				error: authResult.error,
-				success: false,
-			};
-		}
-		const session = await ensureWorkspaceSession(authResult.userId);
+	const text = formData.get("text") as string;
+	if (!text || text.trim().length === 0) {
+		return {
+			error: "Task text is required",
+			success: false,
+		};
+	}
 
-		const text = formData.get("text") as string;
+	return withWorkspace<FormState>({
+		run: async (context) => {
+			const maxOrder = await prisma.generalTodo.findFirst({
+				where: {
+					userId: context.userId,
+					workspaceId: context.activeWorkspaceId,
+				},
+				orderBy: { order: "desc" },
+				select: { order: true },
+			});
 
-		if (!text || text.trim().length === 0) {
-			return {
-				error: "Task text is required",
-				success: false,
-			};
-		}
-
-		const maxOrder = await prisma.generalTodo.findFirst({
-			where: {
-				userId: session.userId,
-				workspaceId: session.activeWorkspaceId,
-			},
-			orderBy: { order: "desc" },
-			select: { order: true },
-		});
-
-		await prisma.generalTodo.create({
-			data: {
-				userId: session.userId,
-				workspaceId: session.activeWorkspaceId,
-				text: text.trim(),
-				order: (maxOrder?.order ?? -1) + 1,
-			},
-		});
+			await prisma.generalTodo.create({
+				data: {
+					userId: context.userId,
+					workspaceId: context.activeWorkspaceId,
+					text: text.trim(),
+					order: (maxOrder?.order ?? -1) + 1,
+				},
+			});
 
 			return {
 				message: "Task created successfully",
 				success: true,
-		};
-	} catch (error) {
-		console.error("Error creating general todo:", error);
-		return {
-			error: "Failed to create task",
-			success: false,
-		};
-	}
+			};
+		},
+		onAuthError: (error) => ({ success: false, error }),
+		onError: (error) => {
+			console.error("Error creating general todo:", error);
+			return {
+				error: "Failed to create task",
+				success: false,
+			};
+		},
+	});
 }
 
 export async function getGeneralTodos() {
-	try {
-		const authResult = await getCurrentUser();
-		if (!authResult.success) {
+	return withWorkspace({
+		run: async (context) => {
+			return await prisma.generalTodo.findMany({
+				where: {
+					userId: context.userId,
+					workspaceId: context.activeWorkspaceId,
+				},
+				orderBy: { order: "asc" },
+			});
+		},
+		onAuthError: () => [],
+		onError: (error) => {
+			console.error("Error fetching general todos:", error);
 			return [];
-		}
-		const session = await ensureWorkspaceSession(authResult.userId);
-
-		return await prisma.generalTodo.findMany({
-			where: {
-				userId: session.userId,
-				workspaceId: session.activeWorkspaceId,
-			},
-			orderBy: { order: "asc" },
-		});
-	} catch (error) {
-		console.error("Error fetching general todos:", error);
-		return [];
-	}
+		},
+	});
 }
 
 export async function updateGeneralTodoCompletion(todoId: string, completed: boolean): Promise<FormState> {
-	try {
-		const authResult = await getCurrentUser();
-		if (!authResult.success) {
-			return {
-				error: authResult.error,
-				success: false,
-			};
-		}
-		const session = await ensureWorkspaceSession(authResult.userId);
-
-		await prisma.generalTodo.updateMany({
-			where: {
-				id: todoId,
-				userId: session.userId,
-				workspaceId: session.activeWorkspaceId,
-			},
-			data: {
-				completed,
-				completedAt: completed ? new Date() : null,
-			},
-		});
+	return withWorkspace<FormState>({
+		run: async (context) => {
+			await prisma.generalTodo.updateMany({
+				where: {
+					id: todoId,
+					userId: context.userId,
+					workspaceId: context.activeWorkspaceId,
+				},
+				data: {
+					completed,
+					completedAt: completed ? new Date() : null,
+				},
+			});
 
 			return {
 				message: "Task updated successfully",
 				success: true,
-		};
-	} catch (error) {
-		console.error("Error updating todo completion:", error);
-		return {
-			error: "Failed to update task",
-			success: false,
-		};
-	}
+			};
+		},
+		onAuthError: (error) => ({ success: false, error }),
+		onError: (error) => {
+			console.error("Error updating todo completion:", error);
+			return {
+				error: "Failed to update task",
+				success: false,
+			};
+		},
+	});
 }
 
 export async function deleteGeneralTodo(todoId: string): Promise<FormState> {
-	try {
-		const authResult = await getCurrentUser();
-		if (!authResult.success) {
-			return {
-				error: authResult.error,
-				success: false,
-			};
-		}
-		const session = await ensureWorkspaceSession(authResult.userId);
-
-		await prisma.generalTodo.deleteMany({
-			where: {
-				id: todoId,
-				userId: session.userId,
-				workspaceId: session.activeWorkspaceId,
-			},
-		});
+	return withWorkspace<FormState>({
+		run: async (context) => {
+			await prisma.generalTodo.deleteMany({
+				where: {
+					id: todoId,
+					userId: context.userId,
+					workspaceId: context.activeWorkspaceId,
+				},
+			});
 
 			return {
 				message: "Task deleted successfully",
 				success: true,
-		};
-	} catch (error) {
-		console.error("Error deleting general todo:", error);
-		return {
-			error: "Failed to delete task",
-			success: false,
-		};
-	}
+			};
+		},
+		onAuthError: (error) => ({ success: false, error }),
+		onError: (error) => {
+			console.error("Error deleting general todo:", error);
+			return {
+				error: "Failed to delete task",
+				success: false,
+			};
+		},
+	});
 }
 
 async function updateGeneralTodo(_prevState: FormState, formData: FormData): Promise<FormState> {
-	try {
-		const authResult = await getCurrentUser();
-		if (!authResult.success) {
-			return {
-				error: authResult.error,
-				success: false,
-			};
-		}
-		const session = await ensureWorkspaceSession(authResult.userId);
+	const todoId = formData.get("todoId") as string;
+	const text = formData.get("text") as string;
 
-		const todoId = formData.get("todoId") as string;
-		const text = formData.get("text") as string;
+	if (!todoId) {
+		return {
+			error: "Task ID is required",
+			success: false,
+		};
+	}
 
-		if (!todoId) {
-			return {
-				error: "Task ID is required",
-				success: false,
-			};
-		}
+	if (!text || text.trim().length === 0) {
+		return {
+			error: "Task text is required",
+			success: false,
+		};
+	}
 
-		if (!text || text.trim().length === 0) {
-			return {
-				error: "Task text is required",
-				success: false,
-			};
-		}
-
-		await prisma.generalTodo.updateMany({
-			where: {
-				id: todoId,
-				userId: session.userId,
-				workspaceId: session.activeWorkspaceId,
-			},
-			data: {
-				text: text.trim(),
-			},
-		});
+	return withWorkspace<FormState>({
+		run: async (context) => {
+			await prisma.generalTodo.updateMany({
+				where: {
+					id: todoId,
+					userId: context.userId,
+					workspaceId: context.activeWorkspaceId,
+				},
+				data: {
+					text: text.trim(),
+				},
+			});
 
 			return {
 				message: "Task updated successfully",
 				success: true,
-		};
-	} catch (error) {
-		console.error("Error updating general todo:", error);
-		return {
-			error: "Failed to update task",
-			success: false,
-		};
-	}
+			};
+		},
+		onAuthError: (error) => ({ success: false, error }),
+		onError: (error) => {
+			console.error("Error updating general todo:", error);
+			return {
+				error: "Failed to update task",
+				success: false,
+			};
+		},
+	});
 }
 
 export async function reorderGeneralTodos(todoIds: string[]): Promise<FormState> {
-	try {
-		const authResult = await getCurrentUser();
-		if (!authResult.success) {
-			return {
-				error: authResult.error,
-				success: false,
-			};
-		}
-		const session = await ensureWorkspaceSession(authResult.userId);
-
-		await prisma.$transaction(
-			todoIds.map((id, index) =>
-				prisma.generalTodo.updateMany({
-					where: {
-						id,
-						userId: session.userId,
-						workspaceId: session.activeWorkspaceId,
-					},
-					data: {
-						order: index,
-					},
-				})
+	return withWorkspace<FormState>({
+		run: async (context) => {
+			await prisma.$transaction(
+				todoIds.map((id, index) =>
+					prisma.generalTodo.updateMany({
+						where: {
+							id,
+							userId: context.userId,
+							workspaceId: context.activeWorkspaceId,
+						},
+						data: {
+							order: index,
+						},
+					}),
 			),
-		);
+			);
 
 			return {
 				message: "Tasks reordered successfully",
 				success: true,
-		};
-	} catch (error) {
-		console.error("Error reordering general todos:", error);
-		return {
-			error: "Failed to reorder tasks",
-			success: false,
-		};
-	}
+			};
+		},
+		onAuthError: (error) => ({ success: false, error }),
+		onError: (error) => {
+			console.error("Error reordering general todos:", error);
+			return {
+				error: "Failed to reorder tasks",
+				success: false,
+			};
+		},
+	});
 }

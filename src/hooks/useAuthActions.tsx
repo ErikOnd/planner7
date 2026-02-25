@@ -1,14 +1,13 @@
 "use client";
 
 import { mapAuthError } from "@utils/authErrors";
-import { createClient } from "@utils/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-import { checkUserExists } from "../app/actions/profile";
 
 export function useAuthActions() {
 	const router = useRouter();
-	const supabase = createClient();
+	const auth = useAuth();
 
 	const [loading, setLoading] = useState(false);
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -27,19 +26,18 @@ export function useAuthActions() {
 		}
 		setLoading(true);
 		try {
-			const { error } = await supabase.auth.signInWithPassword({ email, password });
-			if (error) {
-				setErrorMsg(mapAuthError(error, "sign_in"));
+			const result = await auth.logInWithPassword(email, password);
+			if (!result.success) {
+				setErrorMsg(mapAuthError(result.error ?? "Failed to sign in", "sign_in"));
 				return;
 			}
-			await checkUserExists();
 			router.push("/app");
 		} catch (err) {
 			setErrorMsg(mapAuthError(err, "sign_in"));
 		} finally {
 			setLoading(false);
 		}
-	}, [clearMessages, router, supabase]);
+	}, [auth, clearMessages, router]);
 
 	const signUp = useCallback(async (email: string, password: string, displayName?: string) => {
 		clearMessages();
@@ -53,36 +51,22 @@ export function useAuthActions() {
 		}
 		setLoading(true);
 		try {
-			const { data, error } = await supabase.auth.signUp({
-				email,
-				password,
-				options: {
-					emailRedirectTo: typeof window !== "undefined" ? `${location.origin}/auth/callback` : undefined,
-					data: {
-						displayName: displayName,
-					},
-				},
-			});
-			if (error) {
-				setErrorMsg(mapAuthError(error, "sign_up"));
+			const result = await auth.signUpWithPassword(email, password, displayName);
+			if (!result.success) {
+				setErrorMsg(mapAuthError(result.error ?? "Failed to sign up", "sign_up"));
 				return;
 			}
-			if (data?.user && !data?.session && data.user.identities && data.user.identities.length === 0) {
-				setErrorMsg("An account with this email already exists. Please log in instead.");
-				return;
-			}
-			if (!data?.session) {
+			if (result.userNeedsConfirmation) {
 				setInfoMsg("Success! Please check your email to confirm your account.");
 				return;
 			}
-			await checkUserExists();
 			router.push("/app");
 		} catch (err) {
 			setErrorMsg(mapAuthError(err, "sign_up"));
 		} finally {
 			setLoading(false);
 		}
-	}, [clearMessages, router, supabase]);
+	}, [auth, clearMessages, router]);
 
 	const sendResetPassword = useCallback(async (email: string) => {
 		clearMessages();
@@ -92,13 +76,9 @@ export function useAuthActions() {
 		}
 		setLoading(true);
 		try {
-			const { error } = await supabase.auth.resetPasswordForEmail(email, {
-				redirectTo: typeof window !== "undefined"
-					? `${location.origin}/auth/callback?type=recovery`
-					: undefined,
-			});
-			if (error) {
-				setErrorMsg(mapAuthError(error, "reset"));
+			const result = await auth.sendResetPasswordEmail(email);
+			if (!result.success) {
+				setErrorMsg(mapAuthError(result.error ?? "Failed to send reset email", "reset"));
 				return;
 			}
 			setInfoMsg("Password reset email sent. Please check your inbox.");
@@ -107,29 +87,22 @@ export function useAuthActions() {
 		} finally {
 			setLoading(false);
 		}
-	}, [clearMessages, supabase]);
+	}, [auth, clearMessages]);
 
 	const signInWithGoogle = useCallback(async () => {
 		clearMessages();
 		setLoading(true);
 		try {
-			const { error } = await supabase.auth.signInWithOAuth({
-				provider: "google",
-				options: {
-					redirectTo: typeof window !== "undefined"
-						? `${location.origin}/auth/callback`
-						: undefined,
-				},
-			});
-			if (error) {
-				setErrorMsg(mapAuthError(error, "sign_in"));
+			const result = await auth.signInWithGoogle();
+			if (!result.success) {
+				setErrorMsg(mapAuthError(result.error ?? "Failed to sign in with Google", "sign_in"));
 				setLoading(false);
 			}
 		} catch (err) {
 			setErrorMsg(mapAuthError(err, "sign_in"));
 			setLoading(false);
 		}
-	}, [clearMessages, supabase]);
+	}, [auth, clearMessages]);
 
 	return { loading, errorMsg, infoMsg, setErrorMsg, setInfoMsg, logIn, signUp, sendResetPassword, signInWithGoogle };
 }

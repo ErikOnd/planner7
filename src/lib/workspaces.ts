@@ -8,7 +8,7 @@ export type WorkspaceSession = {
 	activeWorkspaceId: string;
 };
 
-async function ensureProfileExists(userId: string) {
+export async function ensureProfileExists(userId: string) {
 	const existingProfile = await prisma.profile.findUnique({
 		where: { id: userId },
 		select: { id: true },

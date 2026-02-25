@@ -1,6 +1,7 @@
 "use client";
 
 import { getRandomTodoGreeting } from "@/lib/greetings";
+import { useBacklog } from "@/contexts/BacklogContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { Button } from "@atoms/Button/Button";
 import Checkbox from "@atoms/Checkbox/Checkbox";
@@ -12,41 +13,27 @@ import { DraggableTodoItem } from "@components/DraggableTodoItem/DraggableTodoIt
 import { WorkspaceSwitcher } from "@components/WorkspaceSwitcher/WorkspaceSwitcher";
 import { closestCenter, DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { useBacklogController } from "@hooks/useBacklogController";
 import { useDisplayName } from "@hooks/useDisplayName";
 import { useKeyboardShortcut } from "@hooks/useKeyboardShortcut";
-import { useTodoCollections } from "@hooks/useTodoCollections";
-import type { GeneralTodo } from "@prisma/client";
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import styles from "./Sidebar.module.scss";
 
-type TodosState = {
-	todos: GeneralTodo[];
-	loading: boolean;
-	error: string | null;
-	deleteTodo: (todoId: string) => Promise<void>;
-	addTodo: (todo: GeneralTodo) => void;
-	updateTodo: (todoId: string, text: string) => void;
-	updateTodoCompletion: (todoId: string, completed: boolean) => Promise<void>;
-	refresh: () => Promise<void>;
-	silentRefresh: () => Promise<void>;
-};
-
-type SidebarProps = {
-	todosState: TodosState;
-};
-
-export function Sidebar({ todosState }: SidebarProps) {
-	const { todos, deleteTodo, addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
+export function Sidebar() {
+	const todosState = useBacklog();
+	const { addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
 	const { activeWorkspaceId } = useWorkspace();
-
-	const [isAddOpen, setIsAddOpen] = useState(false);
-	const [editingTodo, setEditingTodo] = useState<GeneralTodo | null>(null);
-	const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
-	const [isCompletedOpen, setIsCompletedOpen] = useState(false);
 	const { displayName, isResolved: isDisplayNameResolved } = useDisplayName("Planner");
 	const {
+		isAddOpen,
+		setIsAddOpen,
+		editingTodo,
+		deleteTargetId,
+		setDeleteTargetId,
+		isCompletedOpen,
+		setIsCompletedOpen,
 		localTodos,
 		activeTodo,
 		sensors,
@@ -56,26 +43,11 @@ export function Sidebar({ todosState }: SidebarProps) {
 		checkedTodos,
 		handleTodoToggle,
 		completedTodos,
-	} = useTodoCollections(todos, updateTodoCompletion, activeWorkspaceId);
+		handleEditTodo,
+		handleModalChange,
+		handleDelete,
+	} = useBacklogController(todosState, activeWorkspaceId);
 	const greeting = useMemo(() => getRandomTodoGreeting(), []);
-
-	const handleEditTodo = (todo: GeneralTodo) => {
-		setEditingTodo(todo);
-		setIsAddOpen(true);
-	};
-
-	const handleModalChange = (open: boolean) => {
-		setIsAddOpen(open);
-		if (!open) {
-			setEditingTodo(null);
-		}
-	};
-
-	const handleDelete = async () => {
-		if (!deleteTargetId) return;
-		await deleteTodo(deleteTargetId);
-		setDeleteTargetId(null);
-	};
 
 	useKeyboardShortcut({
 		key: "k",

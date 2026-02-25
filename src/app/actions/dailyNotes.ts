@@ -1,8 +1,7 @@
 "use server";
 
-import { getCurrentUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { ensureWorkspaceSession } from "@/lib/workspaces";
+import { withWorkspace } from "@/lib/serverActionContext";
 import type { Prisma } from "@prisma/client";
 import type { NoteContent } from "types/noteContent";
 
@@ -12,97 +11,88 @@ export type DailyNoteResult = {
 };
 
 export async function saveDailyNote(date: string, content: NoteContent): Promise<DailyNoteResult> {
-	try {
-		const authResult = await getCurrentUser();
-		if (!authResult.success) {
+	return withWorkspace<DailyNoteResult>({
+		run: async (context) => {
+			const noteDate = new Date(date);
+
+			await prisma.dailyNote.upsert({
+				where: {
+					userId_workspaceId_date: {
+						userId: context.userId,
+						workspaceId: context.activeWorkspaceId,
+						date: noteDate,
+					},
+				},
+				update: {
+					content: content as Prisma.InputJsonValue,
+				},
+				create: {
+					userId: context.userId,
+					workspaceId: context.activeWorkspaceId,
+					date: noteDate,
+					content: content as Prisma.InputJsonValue,
+				},
+			});
+
 			return {
-				error: authResult.error,
+				success: true,
+			};
+		},
+		onAuthError: (error) => ({
+			error,
+			success: false,
+		}),
+		onError: (error) => {
+			console.error("Error saving daily note:", error);
+			return {
+				error: "Failed to save note",
 				success: false,
 			};
-		}
-
-		const session = await ensureWorkspaceSession(authResult.userId);
-
-		const noteDate = new Date(date);
-
-		await prisma.dailyNote.upsert({
-			where: {
-				userId_workspaceId_date: {
-					userId: session.userId,
-					workspaceId: session.activeWorkspaceId,
-					date: noteDate,
-				},
-			},
-			update: {
-				content: content as Prisma.InputJsonValue,
-			},
-			create: {
-				userId: session.userId,
-				workspaceId: session.activeWorkspaceId,
-				date: noteDate,
-				content: content as Prisma.InputJsonValue,
-			},
-		});
-
-		return {
-			success: true,
-		};
-	} catch (error) {
-		console.error("Error saving daily note:", error);
-		return {
-			error: "Failed to save note",
-			success: false,
-		};
-	}
+		},
+	});
 }
 
 export async function getDailyNote(date: string) {
-	try {
-		const authResult = await getCurrentUser();
-		if (!authResult.success) {
-			return null;
-		}
+	return withWorkspace({
+		run: async (context) => {
+			const noteDate = new Date(date);
 
-		const session = await ensureWorkspaceSession(authResult.userId);
-
-		const noteDate = new Date(date);
-
-		return await prisma.dailyNote.findUnique({
-			where: {
-				userId_workspaceId_date: {
-					userId: session.userId,
-					workspaceId: session.activeWorkspaceId,
-					date: noteDate,
+			return await prisma.dailyNote.findUnique({
+				where: {
+					userId_workspaceId_date: {
+						userId: context.userId,
+						workspaceId: context.activeWorkspaceId,
+						date: noteDate,
+					},
 				},
-			},
-		});
-	} catch (error) {
-		console.error("Error fetching daily note:", error);
-		return null;
-	}
+			});
+		},
+		onAuthError: () => null,
+		onError: (error) => {
+			console.error("Error fetching daily note:", error);
+			return null;
+		},
+	});
 }
 
 export async function getWeeklyNotes(startDate: Date, endDate: Date) {
-	try {
-		const authResult = await getCurrentUser();
-		if (!authResult.success) {
-			return [];
-		}
-
-		const session = await ensureWorkspaceSession(authResult.userId);
-
-		return await prisma.dailyNote.findMany({
-			where: {
-				userId: session.userId,
-				workspaceId: session.activeWorkspaceId,
-				date: {
-					gte: startDate,
-					lte: endDate,
+	return withWorkspace({
+		run: async (context) => {
+			return await prisma.dailyNote.findMany({
+				where: {
+					userId: context.userId,
+					workspaceId: context.activeWorkspaceId,
+					date: {
+						gte: startDate,
+						lte: endDate,
+					},
 				},
-			},
-		});
-	} catch (error) {
-		console.error("Error fetching weekly notes:", error);
-		return [];
-	}
+			});
+		},
+		onAuthError: () => [],
+		onError: (error) => {
+			console.error("Error fetching weekly notes:", error);
+			return [];
+		},
+	});
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { deleteUserAccount, getUserProfile, updateUserPassword, updateUserProfile } from "../app/actions/profile";
+import { useProfile } from "@/contexts/ProfileContext";
+import { deleteUserAccount, updateUserPassword } from "../app/actions/profile";
 
 export type ProfileData = {
 	displayName: string;
@@ -46,13 +47,13 @@ export type ProfileActions = {
 };
 
 export function useProfileSettings() {
+	const { profile, isLoading: isProfileLoading, error: profileError, updateProfile } = useProfile();
 	const [originalProfile, setOriginalProfile] = useState<ProfileData | null>(null);
 	const [displayName, setDisplayName] = useState("");
 	const [email, setEmail] = useState("");
 	const [currentPassword, setCurrentPassword] = useState("");
 	const [newPassword, setNewPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
-	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
 	const [isChangingPassword, setIsChangingPassword] = useState(false);
 	const [isDeletingAccount, setIsDeletingAccount] = useState(false);
@@ -67,28 +68,17 @@ export function useProfileSettings() {
 	);
 
 	useEffect(() => {
-		const fetchProfile = async () => {
-			setIsLoading(true);
+		if (!profile) return;
+		setOriginalProfile(profile);
+		setDisplayName(profile.displayName);
+		setEmail(profile.email);
+	}, [profile]);
 
-			const { createClient } = await import("@utils/supabase/client");
-			const supabase = createClient();
-			await supabase.auth.refreshSession();
-
-			const result = await getUserProfile();
-
-			if (result.success && result.data) {
-				setOriginalProfile(result.data);
-				setDisplayName(result.data.displayName);
-				setEmail(result.data.email);
-			} else {
-				setError(result.error || "Failed to load profile");
-			}
-
-			setIsLoading(false);
-		};
-
-		fetchProfile();
-	}, []);
+	useEffect(() => {
+		if (profileError) {
+			setError(profileError);
+		}
+	}, [profileError]);
 
 	const handleSave = async () => {
 		if (!hasChanges) return;
@@ -99,7 +89,7 @@ export function useProfileSettings() {
 
 		const emailChanged = originalProfile && email !== originalProfile.email;
 
-		const result = await updateUserProfile({
+		const result = await updateProfile({
 			displayName,
 			email,
 		});
@@ -185,7 +175,7 @@ export function useProfileSettings() {
 	};
 
 	const uiState: UIState = {
-		isLoading,
+		isLoading: isProfileLoading,
 		isSaving,
 		isChangingPassword,
 		isDeletingAccount,

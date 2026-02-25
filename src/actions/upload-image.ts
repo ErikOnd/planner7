@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { ensureProfileExists } from "@/lib/workspaces";
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { createClient } from "@utils/supabase/server";
 
@@ -49,37 +50,6 @@ async function compressImage(buffer: Buffer): Promise<Buffer> {
 		console.error("Sharp unavailable, using original image buffer:", error);
 		return buffer;
 	}
-}
-
-async function ensureProfileExists(userId: string) {
-	const existingProfile = await prisma.profile.findUnique({
-		where: { id: userId },
-		select: { id: true },
-	});
-
-	if (existingProfile) {
-		return;
-	}
-
-	const supabase = await createClient();
-	const { data: { user }, error } = await supabase.auth.getUser();
-	if (error || !user || user.id !== userId) {
-		throw new Error("Failed to resolve authenticated user for profile bootstrap");
-	}
-
-	const fallbackEmail = `${userId}@placeholder.local`;
-	const displayName = (user.user_metadata?.displayName as string | undefined) ?? "";
-
-	await prisma.profile.upsert({
-		where: { id: userId },
-		update: {},
-		create: {
-			id: userId,
-			email: user.email ?? fallbackEmail,
-			displayName,
-			showEditorToolbar: true,
-		},
-	});
 }
 
 export async function uploadImage(

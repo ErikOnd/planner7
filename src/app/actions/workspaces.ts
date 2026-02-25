@@ -1,9 +1,8 @@
 "use server";
 
-import { getCurrentUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { requireWorkspaceContext } from "@/lib/serverActionContext";
 import { isWorkspaceGradientPreset, type WorkspaceGradientPreset } from "@/lib/workspaceGradients";
-import { ensureWorkspaceSession } from "@/lib/workspaces";
 
 export type WorkspaceActionResult = {
 	success: boolean;
@@ -39,11 +38,11 @@ function validateWorkspaceName(value: string) {
 }
 
 async function requireWorkspaceSession() {
-	const authResult = await getCurrentUser();
-	if (!authResult.success) {
-		throw new Error(authResult.error);
+	const context = await requireWorkspaceContext();
+	if (!context.success) {
+		throw new Error(context.error);
 	}
-	return ensureWorkspaceSession(authResult.userId);
+	return context;
 }
 
 export async function getWorkspaces(): Promise<WorkspacesPayload> {

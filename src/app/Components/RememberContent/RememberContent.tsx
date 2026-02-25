@@ -1,5 +1,6 @@
 "use client";
 
+import { useBacklog } from "@/contexts/BacklogContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { Button } from "@atoms/Button/Button";
 import Checkbox from "@atoms/Checkbox/Checkbox";
@@ -9,38 +10,21 @@ import { DeleteTodoDialog } from "@components/DeleteTodoDialog/DeleteTodoDialog"
 import { DraggableTaskItem } from "@components/DraggableTaskItem/DraggableTaskItem";
 import { closestCenter, DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { useTodoCollections } from "@hooks/useTodoCollections";
-import type { GeneralTodo } from "@prisma/client";
+import { useBacklogController } from "@hooks/useBacklogController";
 import * as Dialog from "@radix-ui/react-dialog";
-import { useState } from "react";
 import styles from "./RememberContent.module.scss";
 
-type TodosState = {
-	todos: GeneralTodo[];
-	loading: boolean;
-	error: string | null;
-	deleteTodo: (todoId: string) => Promise<void>;
-	addTodo: (todo: GeneralTodo) => void;
-	updateTodo: (todoId: string, text: string) => void;
-	updateTodoCompletion: (todoId: string, completed: boolean) => Promise<void>;
-	refresh: () => Promise<void>;
-	silentRefresh: () => Promise<void>;
-};
-
-type RememberContentProps = {
-	todosState: TodosState;
-};
-
-export function RememberContent(props: RememberContentProps) {
-	const { todosState } = props;
-	const { todos, deleteTodo, addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
+export function RememberContent() {
+	const todosState = useBacklog();
+	const { addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
 	const { activeWorkspaceId } = useWorkspace();
-
-	const [modalOpen, setModalOpen] = useState(false);
-	const [editingTodo, setEditingTodo] = useState<GeneralTodo | null>(null);
-	const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
-	const [isCompletedOpen, setIsCompletedOpen] = useState(false);
 	const {
+		isAddOpen,
+		editingTodo,
+		deleteTargetId,
+		setDeleteTargetId,
+		isCompletedOpen,
+		setIsCompletedOpen,
 		localTodos,
 		activeTodo,
 		sensors,
@@ -50,25 +34,10 @@ export function RememberContent(props: RememberContentProps) {
 		checkedTodos,
 		handleTodoToggle,
 		completedTodos,
-	} = useTodoCollections(todos, updateTodoCompletion, activeWorkspaceId);
-
-	const handleEditTodo = (todo: GeneralTodo) => {
-		setEditingTodo(todo);
-		setModalOpen(true);
-	};
-
-	const handleModalChange = (open: boolean) => {
-		setModalOpen(open);
-		if (!open) {
-			setEditingTodo(null);
-		}
-	};
-
-	const handleDelete = async () => {
-		if (!deleteTargetId) return;
-		await deleteTodo(deleteTargetId);
-		setDeleteTargetId(null);
-	};
+		handleEditTodo,
+		handleModalChange,
+		handleDelete,
+	} = useBacklogController(todosState, activeWorkspaceId);
 
 	return (
 		<div className={styles["remember-content"]}>
@@ -118,9 +87,9 @@ export function RememberContent(props: RememberContentProps) {
 			>
 				Completed ({completedTodos.length})
 			</button>
-			<AddTaskModal
-				open={modalOpen}
-				onOpenAction={handleModalChange}
+				<AddTaskModal
+					open={isAddOpen}
+					onOpenAction={handleModalChange}
 				editMode={editingTodo
 					? {
 						todoId: editingTodo.id,

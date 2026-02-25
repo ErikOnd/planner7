@@ -6,13 +6,13 @@ import { Button } from "@atoms/Button/Button";
 import { Message } from "@atoms/Message/Message";
 import { Text } from "@atoms/Text/Text";
 import { PasswordField } from "@components/auth/PasswordField";
-import { createClient } from "@utils/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 export default function ResetPasswordPage() {
 	const router = useRouter();
-	const supabase = createClient();
+	const auth = useAuth();
 
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
@@ -38,12 +38,9 @@ export default function ResetPasswordPage() {
 		setLoading(true);
 
 		try {
-			const { error } = await supabase.auth.updateUser({
-				password: password,
-			});
-
-			if (error) {
-				setErrorMsg(error.message || "Failed to update password");
+			const result = await auth.updatePassword(password);
+			if (!result.success) {
+				setErrorMsg(result.error || "Failed to update password");
 			} else {
 				setSuccessMsg("Password updated successfully! Redirecting...");
 				setTimeout(() => {

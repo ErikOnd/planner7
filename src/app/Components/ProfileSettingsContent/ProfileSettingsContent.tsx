@@ -16,6 +16,7 @@ import { GeneralSettings } from "./GeneralSettings";
 import { PreferencesSettings } from "./PreferencesSettings";
 
 type TabType = "general" | "preferences" | "connectors";
+type NavigationLayout = "side-menu" | "tab-navigation";
 
 type ProfileSettingsContentProps = {
 	originalProfile: ProfileData | null;
@@ -27,6 +28,7 @@ type ProfileSettingsContentProps = {
 	handleLogout?: () => Promise<void>;
 	handleAccountDeleted?: () => Promise<void>;
 	styles: Record<string, string>;
+	navigationLayout?: NavigationLayout;
 };
 
 export function ProfileSettingsContent({
@@ -39,6 +41,7 @@ export function ProfileSettingsContent({
 	handleLogout,
 	handleAccountDeleted,
 	styles,
+	navigationLayout = "side-menu",
 }: ProfileSettingsContentProps) {
 	const [selectedTab, setSelectedTab] = useState<TabType>("general");
 	const { theme, setTheme } = useTheme();
@@ -70,7 +73,7 @@ export function ProfileSettingsContent({
 
 	return (
 		<>
-			<nav className={styles["side-menu"] || styles["tab-navigation"]}>
+			<nav className={styles[navigationLayout]}>
 				<button
 					className={clsx(styles["tab-button"], selectedTab === "general" && styles["tab-button--active"])}
 					onClick={() => setSelectedTab("general")}

@@ -1,7 +1,7 @@
 "use client";
 
+import { useProfile } from "@/contexts/ProfileContext";
 import { useEffect, useState } from "react";
-import { getUserProfile } from "../app/actions/profile";
 
 const DISPLAY_NAME_STORAGE_KEY = "planner7:display-name";
 
@@ -25,56 +25,20 @@ function writeStoredDisplayName(value: string) {
 }
 
 export function useDisplayName(fallback = "Planner") {
+	const { profile, isLoading } = useProfile();
 	const [displayName, setDisplayName] = useState<string | null>(null);
-	const [isResolved, setIsResolved] = useState(false);
+	const isResolved = !isLoading;
 
 	useEffect(() => {
-		let mounted = true;
-		const loadProfile = async () => {
-			try {
-				const result = await getUserProfile();
-				if (!mounted) return;
-				if (!result.success || !result.data) {
-					setDisplayName(readStoredDisplayName() ?? fallback);
-					return;
-				}
-
-				const profileName = result.data.displayName?.trim() ?? "";
-				if (profileName) {
-					setDisplayName(profileName);
-					writeStoredDisplayName(profileName);
-					return;
-				}
-
-				setDisplayName(readStoredDisplayName() ?? fallback);
-			} finally {
-				if (mounted) {
-					setIsResolved(true);
-				}
-			}
-		};
-		void loadProfile();
-		return () => {
-			mounted = false;
-		};
-	}, [fallback]);
-
-	useEffect(() => {
-		const onDisplayNameUpdated = (event: Event) => {
-			const customEvent = event as CustomEvent<{ displayName?: string }>;
-			const nextName = customEvent.detail?.displayName?.trim();
-			if (nextName) {
-				setDisplayName(nextName);
-				writeStoredDisplayName(nextName);
-				setIsResolved(true);
-			}
-		};
-
-		window.addEventListener("profile:display-name-updated", onDisplayNameUpdated as EventListener);
-		return () => {
-			window.removeEventListener("profile:display-name-updated", onDisplayNameUpdated as EventListener);
-		};
-	}, []);
+		if (isLoading) return;
+		const profileName = profile?.displayName?.trim() ?? "";
+		if (profileName) {
+			setDisplayName(profileName);
+			writeStoredDisplayName(profileName);
+			return;
+		}
+		setDisplayName(readStoredDisplayName() ?? fallback);
+	}, [fallback, isLoading, profile]);
 
 	return {
 		displayName,
