@@ -34,29 +34,6 @@ async function getUserStorageUsed(userId: string): Promise<number> {
 	return result._sum.fileSize || 0;
 }
 
-export async function getUserStorageInfo() {
-	const supabase = await createClient();
-	const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-	if (authError || !user) {
-		throw new Error("Unauthorized");
-	}
-
-	const usedBytes = await getUserStorageUsed(user.id);
-	const usedMB = usedBytes / 1024 / 1024;
-	const totalMB = MAX_TOTAL_STORAGE / 1024 / 1024;
-	const remainingMB = totalMB - usedMB;
-	const percentageUsed = (usedBytes / MAX_TOTAL_STORAGE) * 100;
-
-	return {
-		usedBytes,
-		usedMB: Number(usedMB.toFixed(2)),
-		totalMB,
-		remainingMB: Number(remainingMB.toFixed(2)),
-		percentageUsed: Number(percentageUsed.toFixed(1)),
-	};
-}
-
 async function compressImage(buffer: Buffer): Promise<Buffer> {
 	try {
 		const sharpModule = await import("sharp");

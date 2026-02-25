@@ -3,7 +3,6 @@
 import { getCurrentUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { ensureWorkspaceSession } from "@/lib/workspaces";
-import { revalidatePath } from "next/cache";
 
 export type FormState = {
 	message?: string;
@@ -21,7 +20,7 @@ export async function saveGeneralTodo(_prevState: FormState, formData: FormData)
 	}
 }
 
-export async function createGeneralTodo(_prevState: FormState, formData: FormData): Promise<FormState> {
+async function createGeneralTodo(_prevState: FormState, formData: FormData): Promise<FormState> {
 	try {
 		const authResult = await getCurrentUser();
 		if (!authResult.success) {
@@ -59,11 +58,9 @@ export async function createGeneralTodo(_prevState: FormState, formData: FormDat
 			},
 		});
 
-		revalidatePath("/");
-
-		return {
-			message: "Task created successfully",
-			success: true,
+			return {
+				message: "Task created successfully",
+				success: true,
 		};
 	} catch (error) {
 		console.error("Error creating general todo:", error);
@@ -81,16 +78,6 @@ export async function getGeneralTodos() {
 			return [];
 		}
 		const session = await ensureWorkspaceSession(authResult.userId);
-
-		const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-		await prisma.generalTodo.deleteMany({
-			where: {
-				userId: session.userId,
-				workspaceId: session.activeWorkspaceId,
-				completed: true,
-				completedAt: { lt: cutoff },
-			},
-		});
 
 		return await prisma.generalTodo.findMany({
 			where: {
@@ -128,11 +115,9 @@ export async function updateGeneralTodoCompletion(todoId: string, completed: boo
 			},
 		});
 
-		revalidatePath("/");
-
-		return {
-			message: "Task updated successfully",
-			success: true,
+			return {
+				message: "Task updated successfully",
+				success: true,
 		};
 	} catch (error) {
 		console.error("Error updating todo completion:", error);
@@ -162,11 +147,9 @@ export async function deleteGeneralTodo(todoId: string): Promise<FormState> {
 			},
 		});
 
-		revalidatePath("/");
-
-		return {
-			message: "Task deleted successfully",
-			success: true,
+			return {
+				message: "Task deleted successfully",
+				success: true,
 		};
 	} catch (error) {
 		console.error("Error deleting general todo:", error);
@@ -177,7 +160,7 @@ export async function deleteGeneralTodo(todoId: string): Promise<FormState> {
 	}
 }
 
-export async function updateGeneralTodo(_prevState: FormState, formData: FormData): Promise<FormState> {
+async function updateGeneralTodo(_prevState: FormState, formData: FormData): Promise<FormState> {
 	try {
 		const authResult = await getCurrentUser();
 		if (!authResult.success) {
@@ -216,11 +199,9 @@ export async function updateGeneralTodo(_prevState: FormState, formData: FormDat
 			},
 		});
 
-		revalidatePath("/");
-
-		return {
-			message: "Task updated successfully",
-			success: true,
+			return {
+				message: "Task updated successfully",
+				success: true,
 		};
 	} catch (error) {
 		console.error("Error updating general todo:", error);
@@ -257,11 +238,9 @@ export async function reorderGeneralTodos(todoIds: string[]): Promise<FormState>
 			),
 		);
 
-		revalidatePath("/");
-
-		return {
-			message: "Tasks reordered successfully",
-			success: true,
+			return {
+				message: "Tasks reordered successfully",
+				success: true,
 		};
 	} catch (error) {
 		console.error("Error reordering general todos:", error);

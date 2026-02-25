@@ -1,4 +1,4 @@
-import HomePage from "@components/Homepage/page";
+import HomePage from "@components/Homepage/HomePage";
 import { createClient } from "@utils/supabase/server";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";

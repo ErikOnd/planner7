@@ -43,12 +43,6 @@ function toWeekKey(workspaceId: string, startDate: Date, endDate: Date) {
 	return `${workspaceId}:${toDateString(startDate)}:${toDateString(endDate)}`;
 }
 
-type WeeklyNoteApiResponse = {
-	success: boolean;
-	error?: string;
-	notes?: Array<{ date: string; content: NoteContent | undefined }>;
-};
-
 function readJsonFromSessionStorage<T>(key: string): T | null {
 	if (typeof window === "undefined") return null;
 	try {
@@ -67,29 +61,6 @@ function writeJsonToSessionStorage<T>(key: string, value: T) {
 	} catch {
 		// Ignore storage write failures.
 	}
-}
-
-async function fetchWeeklyNotesFromApi(startDate: Date, endDate: Date) {
-	const params = new URLSearchParams({
-		start: toDateString(startDate),
-		end: toDateString(endDate),
-	});
-	const response = await fetch(`/api/notes/week?${params.toString()}`, {
-		method: "GET",
-		credentials: "same-origin",
-		cache: "no-store",
-	});
-
-	if (!response.ok) {
-		throw new Error(`Weekly notes API failed with status ${response.status}`);
-	}
-
-	const payload = await response.json() as WeeklyNoteApiResponse;
-	if (!payload.success) {
-		throw new Error(payload.error ?? "Weekly notes API failed");
-	}
-
-	return payload.notes ?? [];
 }
 
 export function NotesProvider({ children }: { children: ReactNode }) {
@@ -181,20 +152,13 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 			return;
 		}
 
-		const loadPromise = (async () => {
-			try {
-				const noteMap: Record<string, NoteContent | undefined> = {};
+			const loadPromise = (async () => {
 				try {
-					const notes = await fetchWeeklyNotesFromApi(startDate, endDate);
-					notes.forEach((note) => {
-						noteMap[note.date] = note.content;
-					});
-				} catch {
+					const noteMap: Record<string, NoteContent | undefined> = {};
 					const notes = await getWeeklyNotes(startDate, endDate);
 					notes.forEach(note => {
 						noteMap[toDateString(note.date)] = note.content as NoteContent | undefined;
 					});
-				}
 
 				weekDates.forEach((dateString) => {
 					cacheRef.current[toNoteKey(activeWorkspaceId, dateString)] = noteMap[dateString];

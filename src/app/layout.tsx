@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.scss";
-import { NotesProvider } from "@/contexts/NotesContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { WeekDisplayProvider } from "@/contexts/WeekDisplayContext";
-import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import React, { ReactNode } from "react";
 import ToastProvider from "./Providers/ToastProvider";
@@ -71,18 +68,12 @@ export default function RootLayout({ children }: Readonly<{
 						`,
 					}}
 				/>
-				<ThemeProvider>
-					<ToastProvider />
-					<WorkspaceProvider>
-						<WeekDisplayProvider>
-							<NotesProvider>
-								{children}
-							</NotesProvider>
-						</WeekDisplayProvider>
-					</WorkspaceProvider>
-				</ThemeProvider>
-				<SpeedInsights />
-			</body>
+					<ThemeProvider>
+						<ToastProvider />
+						{children}
+					</ThemeProvider>
+					<SpeedInsights />
+				</body>
 		</html>
 	);
 }
