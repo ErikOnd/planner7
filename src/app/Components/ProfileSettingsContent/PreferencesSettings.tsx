@@ -1,6 +1,7 @@
 "use client";
 
 import { Text } from "@atoms/Text/Text";
+import { SPEECH_LANGUAGES, type SupportedSpeechLanguage, useSpeechLanguagePreference } from "@hooks/useSpeechLanguagePreference";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import * as Switch from "@radix-ui/react-switch";
 import clsx from "clsx";
@@ -20,6 +21,7 @@ export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSett
 		setShowWeekends,
 		setShowEditorToolbar,
 	} = useWeekDisplayPreference();
+	const { speechLanguage, setSpeechLanguage } = useSpeechLanguagePreference();
 	const isFiveDayWeek = !showWeekends;
 
 	return (
@@ -99,6 +101,24 @@ export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSett
 					>
 						<Switch.Thumb className={styles["switch-thumb"]} />
 					</Switch.Root>
+				</div>
+				<div className={styles["notification-item"]}>
+					<div className={styles["notification-info"]}>
+						<span className={styles["notification-label"]}>Voice input language</span>
+						<span className={styles["notification-description"]}>Default dictation language for the editor mic</span>
+					</div>
+					<select
+						className={styles["settings-select"]}
+						value={speechLanguage}
+						onChange={(event) => setSpeechLanguage(event.target.value as SupportedSpeechLanguage)}
+						aria-label="Voice input language"
+					>
+						{SPEECH_LANGUAGES.map((language) => (
+							<option key={language.value} value={language.value}>
+								{language.label}
+							</option>
+						))}
+					</select>
 				</div>
 			</section>
 		</div>

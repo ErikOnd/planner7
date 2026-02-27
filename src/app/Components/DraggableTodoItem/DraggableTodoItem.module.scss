@@ -23,22 +23,35 @@
 	}
 
 	.todo-content {
+		position: relative;
 		display: flex;
 		padding: var(--space-sm) var(--space-sm);
 		border-radius: variables.$radius-md;
 		background: var(--color-surface);
 		border: 0.1rem solid var(--color-border-light);
-		justify-content: space-between;
 		align-items: center;
 		gap: var(--space-sm);
 
+		.todo-checkbox {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+
+		.todo-label {
+			min-width: 0;
+			word-break: break-word;
+		}
+
 		.action-buttons {
-			display: flex;
+			position: absolute;
+			right: 0.4rem;
+			top: 50%;
+			transform: translate(0.25rem, -50%);
+			display: inline-flex;
 			align-items: center;
-			gap: var(--space-xs);
+			gap: 0.25rem;
 			opacity: 0;
 			pointer-events: none;
-			transform: translateX(0.2rem);
 			transition: opacity variables.$transition-base, transform variables.$transition-base;
 		}
 
@@ -46,19 +59,20 @@
 		.delete-button {
 			width: 2.45rem;
 			height: 2.45rem;
-			background-color: transparent;
+			background-color: color-mix(in srgb, var(--color-gray-medium) 78%, var(--color-surface));
+			border: 0.1rem solid color-mix(in srgb, var(--color-border-light) 78%, transparent);
 			color: var(--color-text);
 			cursor: pointer;
-			border: none;
 			padding: 0;
 			border-radius: 0.7rem;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			transition: background-color variables.$transition-fast, color variables.$transition-fast;
+			transition: background-color variables.$transition-fast, color variables.$transition-fast, border-color variables.$transition-fast;
 
 			&:hover, &:focus-visible {
-				background: color-mix(in srgb, var(--color-text) 10%, transparent);
+				background: color-mix(in srgb, var(--color-gray-light) 86%, var(--color-surface));
+				border-color: color-mix(in srgb, var(--color-primary-light) 45%, transparent);
 				color: var(--color-primary);
 			}
 
@@ -80,6 +94,6 @@
 	.todo-content:focus-within .action-buttons {
 		opacity: 1;
 		pointer-events: auto;
-		transform: translateX(0);
+		transform: translate(0, -50%);
 	}
 }

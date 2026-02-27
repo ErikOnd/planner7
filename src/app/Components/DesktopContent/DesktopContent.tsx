@@ -1,5 +1,6 @@
 import styles from "./DesktopContent.module.scss";
 
+import { useNotes } from "@/contexts/NotesContext";
 import { DailyTextareaBlock } from "@components/DailyTextareaBlock/DailyTextareaBlock";
 import { getCurrentWeek } from "@utils/getCurrentWeek";
 import { motion } from "framer-motion";
@@ -12,6 +13,7 @@ type DesktopContentProps = {
 
 export function DesktopContent(props: DesktopContentProps) {
 	const { baseDate, highlightedDate, showWeekends = true } = props;
+	const { isWeekLoading } = useNotes();
 	const { days } = getCurrentWeek(baseDate);
 	const today = new Date().toDateString();
 	const visibleDays = showWeekends
@@ -21,13 +23,20 @@ export function DesktopContent(props: DesktopContentProps) {
 			return dayIndex >= 1 && dayIndex <= 5;
 		});
 
+	const highlightedIndex = highlightedDate
+		? visibleDays.findIndex((day) => day.fullDate.toDateString() === highlightedDate.toDateString())
+		: -1;
+	const todayIndex = visibleDays.findIndex((day) => day.fullDate.toDateString() === today);
+	const primaryIndex = highlightedIndex >= 0 ? highlightedIndex : (todayIndex >= 0 ? todayIndex : 0);
+	const isColdWeekLoad = isWeekLoading;
+
 	const containerVariants = {
 		hidden: { opacity: 0 },
 		visible: {
 			opacity: 1,
 			transition: {
-				staggerChildren: 0.08,
-				delayChildren: 0.2,
+				staggerChildren: isColdWeekLoad ? 0.03 : 0.08,
+				delayChildren: isColdWeekLoad ? 0.04 : 0.2,
 			},
 		},
 	};
@@ -43,7 +52,7 @@ export function DesktopContent(props: DesktopContentProps) {
 			y: 0,
 			scale: 1,
 			transition: {
-				duration: 0.5,
+				duration: isColdWeekLoad ? 0.32 : 0.5,
 				ease: [0.16, 1, 0.3, 1] as const,
 			},
 		},
@@ -70,6 +79,7 @@ export function DesktopContent(props: DesktopContentProps) {
 							autoFocus={day.fullDate.toDateString() === today}
 							isHighlighted={isHighlighted}
 							mountPriority={index}
+							lazyMountOnIdle={isColdWeekLoad && index !== primaryIndex}
 						/>
 					</motion.div>
 				);

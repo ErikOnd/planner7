@@ -230,6 +230,24 @@
 	color: var(--color-text-muted);
 }
 
+.settings-select {
+	min-height: 2.5rem;
+	min-width: 11rem;
+	border: 0.1rem solid var(--color-border);
+	border-radius: variables.$radius-sm;
+	background-color: var(--color-surface-elevated);
+	color: var(--color-text);
+	padding: 0.35rem 0.6rem;
+	font-size: var(--font-size-sm);
+	font-weight: 600;
+
+	&:focus-visible {
+		outline: none;
+		border-color: var(--color-border-focus);
+		box-shadow: 0 0 0 .2rem var(--shadow-primary-sm);
+	}
+}
+
 .switch {
 	position: relative;
 	width: 3.6rem;

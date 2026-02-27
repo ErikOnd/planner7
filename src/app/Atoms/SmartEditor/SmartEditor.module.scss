@@ -64,6 +64,24 @@
 	}
 }
 
+.smart-editor__upload-status {
+	padding: 0.35rem 0.75rem;
+	border-bottom: 0.1rem solid color-mix(in srgb, var(--color-border-light) 80%, transparent);
+	background: color-mix(in srgb, var(--color-info-background) 88%, var(--color-surface-elevated));
+	color: var(--color-text);
+	font-size: 0.82rem;
+	font-weight: 600;
+}
+
+.smart-editor__upload-error {
+	padding: 0.35rem 0.75rem;
+	border-bottom: 0.1rem solid color-mix(in srgb, var(--color-error-border) 80%, transparent);
+	background: color-mix(in srgb, var(--color-error-background) 90%, var(--color-surface-elevated));
+	color: var(--color-error);
+	font-size: 0.82rem;
+	font-weight: 600;
+}
+
 .smart-editor__toolbar-btn {
 	border: 0.1rem solid color-mix(in srgb, var(--color-border) 82%, transparent);
 	background:
@@ -587,7 +605,6 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	z-index: 4;
 	cursor: pointer;
 	transition: all variables.$transition-fast;
 
@@ -616,7 +633,7 @@
 	position: absolute;
 	right: 4.5rem;
 	bottom: max(1.3rem, calc(env(safe-area-inset-bottom) + 0.3rem));
-	max-width: min(18rem, calc(100% - 6rem));
+	max-width: min(20rem, calc(100% - 6rem));
 	margin: 0;
 	padding: 0.45rem 0.65rem;
 	border: 0.1rem solid var(--color-border);
@@ -627,13 +644,23 @@
 	line-height: 1.25;
 	box-shadow: 0 0.35rem 1.1rem rgba(0, 0, 0, 0.12);
 	z-index: 4;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(0.2rem);
+	transition: opacity variables.$transition-fast, transform variables.$transition-fast;
 
 	@media (max-width: 639px) {
 		right: 4.2rem;
 		bottom: max(1rem, calc(env(safe-area-inset-bottom) + 0.25rem));
-		max-width: min(15rem, calc(100% - 5.5rem));
+		max-width: min(16rem, calc(100% - 5.5rem));
 		font-size: 0.74rem;
 	}
+}
+
+.smart-editor__mic-button:hover + .smart-editor__mic-note,
+.smart-editor__mic-button:focus-visible + .smart-editor__mic-note {
+	opacity: 1;
+	transform: translateY(0);
 }
 
 @keyframes mic-pulse {

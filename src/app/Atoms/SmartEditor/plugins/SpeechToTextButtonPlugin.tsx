@@ -3,6 +3,7 @@
 import styles from "../SmartEditor.module.scss";
 
 import { Icon } from "@atoms/Icons/Icon";
+import { SPEECH_LANGUAGES, useSpeechLanguagePreference } from "@hooks/useSpeechLanguagePreference";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $getSelection, $isRangeSelection } from "lexical";
 import { useEffect, useRef, useState } from "react";
@@ -27,11 +28,25 @@ type SpeechWindow = Window & {
 
 export default function SpeechToTextButtonPlugin() {
 	const [editor] = useLexicalComposerContext();
+	const { speechLanguage } = useSpeechLanguagePreference();
 	const [isSpeechAvailable, setIsSpeechAvailable] = useState(false);
 	const [isListening, setIsListening] = useState(false);
-	const [showLanguageHint, setShowLanguageHint] = useState(false);
 	const speechRecognitionRef = useRef<BrowserSpeechRecognition | null>(null);
-	const hintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const speechLanguageRef = useRef(speechLanguage);
+
+	const currentLanguageLabel =
+		SPEECH_LANGUAGES.find((language) => language.value === speechLanguage)?.label ?? "English (US)";
+
+	useEffect(() => {
+		speechLanguageRef.current = speechLanguage;
+	}, [speechLanguage]);
+
+	useEffect(() => {
+		const recognition = speechRecognitionRef.current;
+		if (recognition) {
+			recognition.lang = speechLanguage;
+		}
+	}, [speechLanguage]);
 
 	useEffect(() => {
 		const SpeechRecognitionCtor = typeof window !== "undefined"
@@ -44,7 +59,7 @@ export default function SpeechToTextButtonPlugin() {
 		const recognition: BrowserSpeechRecognition = new SpeechRecognitionCtor();
 		recognition.continuous = true;
 		recognition.interimResults = false;
-		recognition.lang = "en-US";
+		recognition.lang = speechLanguageRef.current;
 
 		recognition.onresult = (event) => {
 			const speechEvent = event as {
@@ -82,24 +97,12 @@ export default function SpeechToTextButtonPlugin() {
 			speechRecognitionRef.current = null;
 			setIsSpeechAvailable(false);
 			setIsListening(false);
-			if (hintTimeoutRef.current) {
-				clearTimeout(hintTimeoutRef.current);
-				hintTimeoutRef.current = null;
-			}
 		};
 	}, [editor]);
 
 	const toggleSpeechToText = () => {
 		const recognition = speechRecognitionRef.current;
 		if (!recognition) return;
-		setShowLanguageHint(true);
-		if (hintTimeoutRef.current) {
-			clearTimeout(hintTimeoutRef.current);
-		}
-		hintTimeoutRef.current = setTimeout(() => {
-			setShowLanguageHint(false);
-			hintTimeoutRef.current = null;
-		}, 3000);
 
 		if (isListening) {
 			recognition.stop();
@@ -129,11 +132,9 @@ export default function SpeechToTextButtonPlugin() {
 			>
 				<Icon name="Microphone" size={24} />
 			</button>
-			{showLanguageHint && (
-				<p className={styles["smart-editor__mic-note"]} role="status" aria-live="polite">
-					Speech input currently supports English only.
-				</p>
-			)}
+			<p className={styles["smart-editor__mic-note"]} role="status" aria-live="polite">
+				Language: {currentLanguageLabel}. Change in Profile Settings → Preferences.
+			</p>
 		</>
 	);
 }

@@ -43,6 +43,10 @@ export default function HomePage() {
 	}, [baseDate, loadWeek]);
 
 	useEffect(() => {
+		void import("@atoms/SmartEditor/SmartEditor");
+	}, []);
+
+	useEffect(() => {
 		if (showWeekends) return;
 
 		const dayIndex = selectedDate.getDay();

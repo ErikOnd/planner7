@@ -21,10 +21,17 @@ type DailyTextareaProps = {
 	autoFocus?: boolean;
 	isHighlighted?: boolean;
 	mountPriority?: number;
+	lazyMountOnIdle?: boolean;
 };
 
 function DailyTextareaBlockComponent(props: DailyTextareaProps) {
-	const { textareaDate, autoFocus = false, isHighlighted = false, mountPriority = 0 } = props;
+	const {
+		textareaDate,
+		autoFocus = false,
+		isHighlighted = false,
+		mountPriority = 0,
+		lazyMountOnIdle = false,
+	} = props;
 	const { weekday, date } = formatToDayLabel(textareaDate);
 	const isToday = textareaDate.toDateString() === new Date().toDateString();
 	const textareaBlock = useRef<HTMLDivElement | null>(null);
@@ -36,23 +43,47 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	const { getNote, hasNote, saveNote } = useNotes();
 	const content = getNote(dateKey);
 	const isLoading = !hasNote(dateKey);
-	const [isEditorReady, setIsEditorReady] = React.useState(autoFocus);
+	const [isEditorReady, setIsEditorReady] = React.useState(autoFocus || !lazyMountOnIdle);
 
 	useEffect(() => {
-		if (autoFocus) {
+		if (autoFocus || !lazyMountOnIdle) {
 			setIsEditorReady(true);
 			return;
 		}
 
 		setIsEditorReady(false);
-		const timeout = window.setTimeout(() => {
+		let cancelled = false;
+		let timeoutId: number | null = null;
+		let idleId: number | null = null;
+
+		const mountEditor = () => {
+			if (cancelled) return;
 			setIsEditorReady(true);
-		}, Math.min(800, 80 + mountPriority * 120));
+		};
+
+		if (typeof window.requestIdleCallback === "function") {
+			idleId = window.requestIdleCallback(
+				() => {
+					mountEditor();
+				},
+				{ timeout: Math.min(2200, 500 + mountPriority * 220) },
+			);
+		} else {
+			timeoutId = window.setTimeout(() => {
+				mountEditor();
+			}, Math.min(1200, 100 + mountPriority * 160));
+		}
 
 		return () => {
-			window.clearTimeout(timeout);
+			cancelled = true;
+			if (timeoutId !== null) {
+				window.clearTimeout(timeoutId);
+			}
+			if (idleId !== null && typeof window.cancelIdleCallback === "function") {
+				window.cancelIdleCallback(idleId);
+			}
 		};
-	}, [autoFocus, mountPriority, dateKey]);
+	}, [autoFocus, lazyMountOnIdle, mountPriority, dateKey, activeWorkspaceId]);
 
 	useEffect(() => {
 		if (!isToday || !textareaBlock.current) return;
@@ -92,9 +123,17 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	const handleEditorContainerClick = useCallback(() => {
 		const container = editorContainerRef.current;
 		if (!container) return;
+		if (!isEditorReady) {
+			setIsEditorReady(true);
+			window.requestAnimationFrame(() => {
+				const editorElement = container.querySelector<HTMLElement>("[contenteditable=\"true\"]");
+				editorElement?.focus();
+			});
+			return;
+		}
 		const editorElement = container.querySelector<HTMLElement>("[contenteditable=\"true\"]");
 		editorElement?.focus();
-	}, []);
+	}, [isEditorReady]);
 
 	useEffect(() => {
 		return () => {
@@ -151,5 +190,6 @@ export const DailyTextareaBlock = memo(DailyTextareaBlockComponent, (prevProps, 
 	return (
 		prevProps.textareaDate.getTime() === nextProps.textareaDate.getTime()
 		&& prevProps.isHighlighted === nextProps.isHighlighted
+		&& prevProps.lazyMountOnIdle === nextProps.lazyMountOnIdle
 	);
 });

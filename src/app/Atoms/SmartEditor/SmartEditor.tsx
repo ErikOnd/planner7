@@ -49,6 +49,8 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 	const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
 	const [isFocused, setIsFocused] = useState(false);
 	const [toolbarOffset, setToolbarOffset] = useState(0);
+	const [activeImageUploads, setActiveImageUploads] = useState(0);
+	const [imageUploadError, setImageUploadError] = useState<string | null>(null);
 	const dragMenuRef = useRef<HTMLElement>(null);
 	const dragTargetLineRef = useRef<HTMLElement>(null);
 	const toolbarContainerRef = useRef<HTMLDivElement | null>(null);
@@ -176,15 +178,27 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 				setIsFocused(true);
 			}}
 			onBlurCapture={(event) => {
-				if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-					setIsFocused(false);
-				}
+				const currentTarget = event.currentTarget;
+				const nextTarget = event.relatedTarget as Node | null;
+				if (nextTarget === null) return;
+				if (currentTarget.contains(nextTarget)) return;
+				setIsFocused(false);
 			}}
 		>
 			<LexicalComposer initialConfig={initialConfig}>
 				<div ref={toolbarContainerRef}>
 					{showEditorToolbar && <ToolbarPlugin />}
 				</div>
+				{activeImageUploads > 0 && (
+					<div className={styles["smart-editor__upload-status"]} role="status" aria-live="polite">
+						Uploading image{activeImageUploads > 1 ? "s" : ""}...
+					</div>
+				)}
+				{imageUploadError && (
+					<div className={styles["smart-editor__upload-error"]} role="alert">
+						{imageUploadError}
+					</div>
+				)}
 				<RichTextPlugin
 					contentEditable={
 						<ContentEditable
@@ -219,14 +233,20 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 				<HorizontalRulePlugin />
 				<MarkdownShortcutPlugin />
 				{isFocused && <SlashCommandPlugin />}
-				{isFocused && (
-					<ImageUploadDropPlugin
-						onUploadError={(message) => {
-							toast.error(message, { toastId: `image-upload-error:${message}` });
-						}}
-					/>
-				)}
-				{isFocused && <SpeechToTextButtonPlugin />}
+				<ImageUploadDropPlugin
+					onUploadStart={(count) => {
+						setImageUploadError(null);
+						setActiveImageUploads((prev) => prev + count);
+					}}
+					onUploadEnd={(count) => {
+						setActiveImageUploads((prev) => Math.max(0, prev - count));
+					}}
+					onUploadError={(message) => {
+						setImageUploadError(message);
+						toast.error(message, { toastId: `image-upload-error:${message}` });
+					}}
+				/>
+				<SpeechToTextButtonPlugin />
 				{isFocused && floatingAnchorElem && (
 					<DraggableBlockPlugin_EXPERIMENTAL
 						anchorElem={floatingAnchorElem}

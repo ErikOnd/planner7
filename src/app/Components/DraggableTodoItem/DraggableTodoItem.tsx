@@ -42,7 +42,13 @@ export function DraggableTodoItem({ id, text, checked, onToggle, onEdit, onDelet
 			})}
 		>
 			<div className={styles["todo-content"]}>
-				<Checkbox label={text} checked={checked} onChange={onToggle} />
+				<Checkbox
+					label={text}
+					checked={checked}
+					onChange={onToggle}
+					className={styles["todo-checkbox"]}
+					labelClassName={styles["todo-label"]}
+				/>
 				<div className={styles["action-buttons"]}>
 					{onEdit && (
 						<button

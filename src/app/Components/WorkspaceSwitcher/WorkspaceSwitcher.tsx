@@ -40,6 +40,7 @@ export function WorkspaceSwitcher({ compact = false, variant = "default" }: Work
 	const [editingGradient, setEditingGradient] = useState<WorkspaceGradientPreset>("violet");
 	const [deleteWorkspaceTarget, setDeleteWorkspaceTarget] = useState<{ id: string; name: string } | null>(null);
 	const [localError, setLocalError] = useState<string | null>(null);
+	const [switchingWorkspaceId, setSwitchingWorkspaceId] = useState<string | null>(null);
 
 	const activeWorkspace = workspaces.find((workspace) => workspace.id === activeWorkspaceId);
 	const activeLabel = activeWorkspace?.name ?? "Personal";
@@ -65,7 +66,9 @@ export function WorkspaceSwitcher({ compact = false, variant = "default" }: Work
 
 	const onQuickSwitchWorkspace = async (workspaceId: string) => {
 		setLocalError(null);
+		setSwitchingWorkspaceId(workspaceId);
 		const result = await switchWorkspace(workspaceId);
+		setSwitchingWorkspaceId(null);
 		if (!result.success) {
 			setLocalError(result.error ?? "Failed to switch workspace");
 			return;
@@ -139,6 +142,7 @@ export function WorkspaceSwitcher({ compact = false, variant = "default" }: Work
 							editingWorkspaceId={editingWorkspaceId}
 							editingName={editingName}
 							editingGradient={editingGradient}
+							switchingWorkspaceId={switchingWorkspaceId}
 							onNewWorkspaceNameChange={setNewWorkspaceName}
 							onNewWorkspaceGradientChange={setNewWorkspaceGradient}
 							onEditingNameChange={setEditingName}

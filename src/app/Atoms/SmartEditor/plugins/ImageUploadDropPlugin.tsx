@@ -20,31 +20,39 @@ import { $createImageNode, INSERT_IMAGE_COMMAND } from "../nodes/ImageNode";
 
 type ImageUploadDropPluginProps = {
 	onUploadError?: (message: string) => void;
+	onUploadStart?: (count: number) => void;
+	onUploadEnd?: (count: number) => void;
 };
 
-export default function ImageUploadDropPlugin({ onUploadError }: ImageUploadDropPluginProps) {
+export default function ImageUploadDropPlugin({ onUploadError, onUploadStart, onUploadEnd }: ImageUploadDropPluginProps) {
 	const [editor] = useLexicalComposerContext();
 
 	useEffect(() => {
 		const uploadAndInsertImages = async (files: File[]) => {
-			for (const file of files) {
-				try {
-					const formData = new FormData();
-					formData.append("file", file);
-					const result = await uploadImage(formData);
-					if (result.success) {
-						editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-							src: result.url,
-							altText: file.name,
-						});
-					} else {
-						console.error("Image upload failed:", result.error);
-						onUploadError?.(result.error);
+			if (files.length === 0) return;
+			onUploadStart?.(files.length);
+			try {
+				for (const file of files) {
+					try {
+						const formData = new FormData();
+						formData.append("file", file);
+						const result = await uploadImage(formData);
+						if (result.success) {
+							editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+								src: result.url,
+								altText: file.name,
+							});
+						} else {
+							console.error("Image upload failed:", result.error);
+							onUploadError?.(result.error);
+						}
+					} catch (error) {
+						console.error("Image upload action crashed:", error);
+						onUploadError?.(error instanceof Error ? error.message : "Image upload failed");
 					}
-				} catch (error) {
-					console.error("Image upload action crashed:", error);
-					onUploadError?.(error instanceof Error ? error.message : "Image upload failed");
 				}
+			} finally {
+				onUploadEnd?.(files.length);
 			}
 		};
 
@@ -131,7 +139,7 @@ export default function ImageUploadDropPlugin({ onUploadError }: ImageUploadDrop
 			unregisterDrop();
 			unregisterPaste();
 		};
-	}, [editor, onUploadError]);
+	}, [editor, onUploadEnd, onUploadError, onUploadStart]);
 
 	return null;
 }

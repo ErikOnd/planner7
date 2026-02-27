@@ -23,6 +23,7 @@ type WorkspaceManagerDialogProps = {
 	editingWorkspaceId: string | null;
 	editingName: string;
 	editingGradient: WorkspaceGradientPreset;
+	switchingWorkspaceId: string | null;
 	onNewWorkspaceNameChange: (value: string) => void;
 	onNewWorkspaceGradientChange: (preset: WorkspaceGradientPreset) => void;
 	onEditingNameChange: (value: string) => void;
@@ -57,6 +58,7 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 		editingWorkspaceId,
 		editingName,
 		editingGradient,
+		switchingWorkspaceId,
 		onNewWorkspaceNameChange,
 		onNewWorkspaceGradientChange,
 		onEditingNameChange,
@@ -93,6 +95,7 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 						{workspaces.map((workspace) => {
 							const isActive = workspace.id === activeWorkspaceId;
 							const isEditing = workspace.id === editingWorkspaceId;
+							const isSwitching = workspace.id === switchingWorkspaceId;
 							const gradient = gradientMap[workspace.gradientPreset] ?? gradientPresets[0]?.[1] ?? { from: "#555", to: "#888" };
 
 							return (
@@ -129,6 +132,7 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 													onQuickSwitchWorkspace(workspace.id);
 													setIsCreateOpen(false);
 												}}
+												disabled={isSaving || Boolean(switchingWorkspaceId) || isActive}
 												style={{
 													["--workspace-grad-from" as string]: gradient.from,
 													["--workspace-grad-to" as string]: gradient.to,
@@ -138,10 +142,10 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 												<span className={styles["switch-main-content"]}>
 													<span className={styles["switch-main-label"]}>{workspace.name}</span>
 													<span className={styles["switch-main-sub"]}>
-														{isActive ? "Active workspace" : "Tap to switch"}
+														{isSwitching ? "Switching workspace..." : isActive ? "Active workspace" : "Tap to switch"}
 													</span>
 												</span>
-												<span className={styles["switch-main-indicator"]} aria-hidden />
+												{isSwitching && <span className={styles["switch-loading-dot"]} aria-hidden />}
 											</button>
 										)}
 
@@ -149,7 +153,13 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 										{isEditing
 											? (
 												<>
-													<button type="button" className={styles["switch-action"]} onClick={onSaveRename}>Save</button>
+													<button
+														type="button"
+														className={`${styles["switch-action"]} ${styles["switch-action--save"]}`}
+														onClick={onSaveRename}
+													>
+														Save
+													</button>
 													<button type="button" className={styles["switch-action"]} onClick={onCancelEditing}>
 														Cancel
 													</button>
@@ -165,8 +175,9 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 															onStartEditingWorkspace(workspace.id, workspace.name);
 														}}
 														aria-label={`Rename ${workspace.name}`}
+														disabled={isSaving || Boolean(switchingWorkspaceId)}
 													>
-														<Icon name="pencil" />
+														<Icon name="pencil" size={14} />
 													</button>
 													<button
 														type="button"
@@ -176,9 +187,9 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 															onRequestDelete(workspace.id, workspace.name);
 														}}
 														aria-label={`Delete ${workspace.name}`}
-														disabled={workspaces.length <= 1 || isSaving}
+														disabled={workspaces.length <= 1 || isSaving || Boolean(switchingWorkspaceId)}
 													>
-														<Icon name="trash" />
+														<Icon name="trash" size={14} />
 													</button>
 												</>
 											)}
@@ -190,13 +201,9 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 				</div>
 
 				<div className={styles["create-toggle-row"]}>
-					<Text size="lg" fontWeight={700}>Need a fresh start?</Text>
-					<Text size="sm" className={styles["create-toggle-subtitle"]}>
-						Dedicated environments keep you focused.
-					</Text>
 					<Button
 						type="button"
-						variant="primary"
+						variant="secondary"
 						fontWeight={700}
 						wrapText={false}
 						className={styles["create-toggle-button"]}
