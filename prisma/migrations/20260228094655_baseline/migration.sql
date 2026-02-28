@@ -69,6 +69,18 @@ CREATE TABLE "UploadedImage" (
     CONSTRAINT "UploadedImage_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "DailyVoiceUsage" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "date" DATE NOT NULL,
+    "secondsUsed" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "DailyVoiceUsage_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Profile_email_key" ON "Profile"("email");
 
@@ -99,6 +111,12 @@ CREATE INDEX "UploadedImage_userId_createdAt_idx" ON "UploadedImage"("userId", "
 -- CreateIndex
 CREATE UNIQUE INDEX "UploadedImage_userId_key_key" ON "UploadedImage"("userId", "key");
 
+-- CreateIndex
+CREATE INDEX "DailyVoiceUsage_userId_date_idx" ON "DailyVoiceUsage"("userId", "date");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "DailyVoiceUsage_userId_date_key" ON "DailyVoiceUsage"("userId", "date");
+
 -- AddForeignKey
 ALTER TABLE "Workspace" ADD CONSTRAINT "Workspace_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -116,4 +134,7 @@ ALTER TABLE "GeneralTodo" ADD CONSTRAINT "GeneralTodo_workspaceId_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "UploadedImage" ADD CONSTRAINT "UploadedImage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DailyVoiceUsage" ADD CONSTRAINT "DailyVoiceUsage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
