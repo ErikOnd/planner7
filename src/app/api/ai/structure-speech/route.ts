@@ -5,6 +5,8 @@ import { NextResponse } from "next/server";
 import { structureNotesSelection } from "../../../actions/aiNotes";
 
 export const runtime = "nodejs";
+const ESTIMATED_MIN_AUDIO_BITRATE_BPS = 32_000;
+const MAX_SINGLE_RECORDING_SECONDS = 600;
 
 export async function POST(request: Request) {
 	const apiKey = process.env.OPENAI_API_KEY;
@@ -110,10 +112,16 @@ export async function POST(request: Request) {
 			return NextResponse.json({ success: false, error: "No speech was detected." }, { status: 400 });
 		}
 
+		// Do not trust client-reported duration alone; combine server-observable estimates.
 		const fallbackByWords = Math.max(1, Math.ceil(transcript.split(/\s+/).filter(Boolean).length / 2.5));
-		const chargedSeconds = Number.isFinite(durationSeconds) && durationSeconds > 0 && durationSeconds <= 600
-			? durationSeconds
-			: fallbackByWords;
+		const estimatedByFileSize = Math.max(
+			1,
+			Math.ceil((audioFile.size * 8) / ESTIMATED_MIN_AUDIO_BITRATE_BPS),
+		);
+		const boundedClientDuration = Number.isFinite(durationSeconds) && durationSeconds > 0
+			? Math.min(MAX_SINGLE_RECORDING_SECONDS, durationSeconds)
+			: 0;
+		const chargedSeconds = Math.max(fallbackByWords, estimatedByFileSize, boundedClientDuration);
 		const nextUsed = usedBefore + chargedSeconds;
 		if (nextUsed > DAILY_VOICE_LIMIT_SECONDS) {
 			return NextResponse.json(

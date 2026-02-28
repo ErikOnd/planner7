@@ -1,0 +1,113 @@
+@use "./styles/variables" as variables;
+
+.not-found-page {
+	min-height: 100dvh;
+	display: grid;
+	place-items: center;
+	padding: var(--space-lg);
+	background: linear-gradient(
+		135deg,
+		var(--color-background) 0%,
+		var(--color-gray-light) 100%
+	);
+}
+
+.not-found-card {
+	width: min(36rem, 100%);
+	background: var(--color-surface);
+	border: 0.1rem solid var(--color-border-light);
+	border-radius: variables.$radius-lg;
+	padding: clamp(1.5rem, 4vw, 2rem);
+	box-shadow:
+		0 0.9rem 2.2rem var(--shadow-lg),
+		0 0.2rem 0.8rem var(--shadow-sm);
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
+}
+
+.not-found-badge {
+	display: inline-flex;
+	align-items: center;
+	width: fit-content;
+	padding: 0.25rem 0.6rem;
+	border-radius: variables.$radius-pill;
+	border: 0.1rem solid color-mix(in srgb, var(--color-info) 45%, transparent);
+	background: color-mix(in srgb, var(--color-info) 14%, transparent);
+	color: var(--color-info);
+	font-size: 0.78rem;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.not-found-title {
+	font-size: clamp(1.5rem, 3.2vw, 2rem);
+	font-weight: 800;
+	color: var(--color-text);
+}
+
+.not-found-text {
+	color: var(--color-text-muted);
+	line-height: 1.55;
+}
+
+.not-found-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.6rem;
+	margin-top: 0.4rem;
+}
+
+.primary-link,
+.secondary-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 2.8rem;
+	padding: 0 1rem;
+	border-radius: variables.$radius-md;
+	font-weight: 700;
+	text-decoration: none;
+	transition:
+		transform var(--transition-base),
+		box-shadow var(--transition-base),
+		border-color var(--transition-base),
+		background-color var(--transition-base),
+		color var(--transition-base);
+}
+
+.primary-link {
+	border: 0.1rem solid color-mix(in srgb, var(--color-primary) 60%, transparent);
+	background: var(--color-primary);
+	color: var(--color-on-primary);
+}
+
+.secondary-link {
+	border: 0.1rem solid var(--color-border-light);
+	background: var(--color-surface);
+	color: var(--color-text-muted);
+}
+
+.primary-link:hover,
+.secondary-link:hover {
+	transform: translateY(-0.1rem);
+}
+
+.primary-link:hover {
+	background: var(--color-primary-dark);
+	border-color: color-mix(in srgb, var(--color-primary-dark) 70%, transparent);
+	box-shadow: 0 0.55rem 1.2rem color-mix(in srgb, var(--color-primary) 28%, transparent);
+}
+
+.secondary-link:hover {
+	border-color: var(--color-border-focus);
+	color: var(--color-text);
+}
+
+@media (max-width: 42rem) {
+	.not-found-actions {
+		display: grid;
+		grid-template-columns: 1fr;
+	}
+}
