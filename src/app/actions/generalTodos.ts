@@ -200,8 +200,8 @@ export async function reorderGeneralTodos(todoIds: string[]): Promise<FormState>
 						data: {
 							order: index,
 						},
-					}),
-			),
+					})
+				),
 			);
 
 			return {

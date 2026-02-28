@@ -1,8 +1,8 @@
 "use client";
 
-import { getRandomTodoGreeting } from "@/lib/greetings";
 import { useBacklog } from "@/contexts/BacklogContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { getRandomTodoGreeting } from "@/lib/greetings";
 import { Button } from "@atoms/Button/Button";
 import Checkbox from "@atoms/Checkbox/Checkbox";
 import { Icon } from "@atoms/Icons/Icon";

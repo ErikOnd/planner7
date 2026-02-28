@@ -37,11 +37,18 @@
 	}
 }
 
+.home-page-loading {
+	display: flex;
+	justify-content: center;
+	padding-top: 5rem;
+	padding-bottom: 2rem;
+}
+
 .name-prompt-overlay {
 	position: fixed;
 	inset: 0;
 	background: var(--color-overlay);
-	z-index: 1200;
+	z-index: var(--z-priority-overlay);
 }
 
 .name-prompt-dialog {
@@ -58,7 +65,7 @@
 	flex-direction: column;
 	gap: var(--space-sm);
 	box-shadow: 0 1rem 3rem var(--shadow-xl);
-	z-index: 1201;
+	z-index: var(--z-priority-modal);
 }
 
 .name-prompt-title {
@@ -91,4 +98,46 @@
 .name-prompt-error {
 	color: var(--color-error);
 	font-size: 0.9rem;
+}
+
+.daily-greeting-overlay {
+	position: fixed;
+	inset: 0;
+	background: var(--color-overlay);
+	z-index: var(--z-greeting-overlay);
+}
+
+.daily-greeting-dialog {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: min(32rem, 92vw);
+	background: var(--color-surface-elevated);
+	border: 0.1rem solid var(--color-border);
+	border-radius: variables.$radius-lg;
+	padding: var(--space-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	box-shadow: 0 1rem 3rem var(--shadow-xl);
+	z-index: var(--z-greeting-modal);
+}
+
+.daily-greeting-title {
+	font-size: 1.35rem;
+	font-weight: 800;
+	color: var(--color-text);
+}
+
+.daily-greeting-description {
+	color: var(--color-text-muted);
+	line-height: 1.5;
+}
+
+.daily-greeting-actions {
+	display: flex;
+	gap: 0.65rem;
+	flex-wrap: wrap;
+	margin-top: 0.4rem;
 }

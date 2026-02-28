@@ -69,14 +69,14 @@ export default function RootLayout({ children }: Readonly<{
 						`,
 					}}
 				/>
-					<ThemeProvider>
-						<AuthProvider>
-							<ToastProvider />
-							{children}
-						</AuthProvider>
-					</ThemeProvider>
-					<SpeedInsights />
-				</body>
+				<ThemeProvider>
+					<AuthProvider>
+						<ToastProvider />
+						{children}
+					</AuthProvider>
+				</ThemeProvider>
+				<SpeedInsights />
+			</body>
 		</html>
 	);
 }

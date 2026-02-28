@@ -6,7 +6,7 @@ import { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
 import styles from "./Button.module.scss";
 
 type BaseButtonProps = {
-	variant?: "primary" | "secondary" | "ghost";
+	variant?: "primary" | "secondary" | "ghost" | "ai";
 	children?: ReactNode;
 	size?: "xs" | "sm" | "base" | "lg" | "xl";
 	iconSize?: number;
@@ -33,8 +33,18 @@ function renderContent(
 	fontWeight: BaseButtonProps["fontWeight"],
 	children: ReactNode,
 ) {
-	if (icon) return <Icon name={icon} size={iconSize} />;
-	return wrapText ? <Text size={size} fontWeight={fontWeight}>{children}</Text> : children;
+	const hasChildren = children !== undefined && children !== null;
+	const textContent = wrapText ? <Text size={size} fontWeight={fontWeight}>{children}</Text> : children;
+
+	if (!icon) return textContent;
+	if (!hasChildren) return <Icon name={icon} size={iconSize} />;
+
+	return (
+		<span className={styles["button-content"]}>
+			<Icon name={icon} size={iconSize} />
+			{textContent}
+		</span>
+	);
 }
 
 export function Button(props: ButtonProps) {
@@ -51,8 +61,9 @@ export function Button(props: ButtonProps) {
 			href,
 			...linkProps
 		} = props;
+		const iconOnly = Boolean(icon) && !children;
 
-		const classNames = clsx(styles.button, styles[variant], icon && styles["icon-button"], className);
+		const classNames = clsx(styles.button, styles[variant], iconOnly && styles["icon-button"], className);
 
 		return (
 			<Link
@@ -78,8 +89,9 @@ export function Button(props: ButtonProps) {
 		type = "button",
 		...buttonProps
 	} = buttonPropsTyped;
+	const iconOnly = Boolean(icon) && !children;
 
-	const classNames = clsx(styles.button, styles[variant], icon && styles["icon-button"], className);
+	const classNames = clsx(styles.button, styles[variant], iconOnly && styles["icon-button"], className);
 
 	return (
 		<button

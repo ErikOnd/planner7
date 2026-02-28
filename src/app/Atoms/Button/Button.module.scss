@@ -34,6 +34,12 @@
 	}
 }
 
+.button-content {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
 .icon-button {
 	padding: var(--space-sm);
 	width: 3.2rem;
@@ -98,5 +104,95 @@
 	&:active:not(:disabled) {
 		border: .1rem solid var(--color-primary-ink);
 		color: var(--color-primary-dark);
+	}
+}
+
+.ai {
+	position: relative;
+	border: 0.1rem solid transparent;
+	color: #f3f8ff;
+	background:
+		linear-gradient(135deg, rgba(14, 18, 31, 0.96), rgba(26, 31, 46, 0.94)) padding-box,
+		linear-gradient(90deg, #29e7d6, #3a9dff 45%, #7c5cff 75%, #d24dff) border-box;
+	box-shadow:
+		0 0.5rem 1.2rem rgba(23, 31, 54, 0.48),
+		0 0 1.1rem rgba(58, 157, 255, 0.3),
+		0 0 1.4rem rgba(210, 77, 255, 0.22);
+	animation: ai-button-glow 2.6s ease-in-out infinite;
+	isolation: isolate;
+
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		background: linear-gradient(115deg, transparent 18%, rgba(255, 255, 255, 0.45) 50%, transparent 82%);
+		transform: translateX(-125%);
+		animation: ai-button-shine 2.8s cubic-bezier(0.19, 1, 0.22, 1) infinite;
+		pointer-events: none;
+		z-index: 0;
+	}
+
+	> * {
+		position: relative;
+		z-index: 1;
+	}
+
+	&:hover:not(:disabled) {
+		transform: translateY(-1px);
+		filter: saturate(1.12);
+		box-shadow:
+			0 0.7rem 1.5rem rgba(20, 25, 42, 0.6),
+			0 0 1.25rem rgba(58, 157, 255, 0.42),
+			0 0 1.8rem rgba(210, 77, 255, 0.34);
+	}
+
+	&:focus-visible {
+		outline: 0.12rem solid #8ec5ff;
+		outline-offset: 0.14rem;
+	}
+
+	&:active:not(:disabled) {
+		transform: translateY(0);
+	}
+}
+
+@keyframes ai-button-shine {
+	0% {
+		transform: translateX(-125%);
+		opacity: 0;
+	}
+	15% {
+		opacity: 1;
+	}
+	60% {
+		opacity: 1;
+	}
+	100% {
+		transform: translateX(130%);
+		opacity: 0;
+	}
+}
+
+@keyframes ai-button-glow {
+	0%,
+	100% {
+		box-shadow:
+			0 0.5rem 1.2rem rgba(23, 31, 54, 0.48),
+			0 0 1.1rem rgba(58, 157, 255, 0.3),
+			0 0 1.4rem rgba(210, 77, 255, 0.22);
+	}
+	50% {
+		box-shadow:
+			0 0.7rem 1.6rem rgba(18, 24, 43, 0.64),
+			0 0 1.35rem rgba(58, 157, 255, 0.42),
+			0 0 1.9rem rgba(210, 77, 255, 0.34);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ai,
+	.ai::before {
+		animation: none;
 	}
 }

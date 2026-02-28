@@ -1,0 +1,163 @@
+@use "../../styles/variables" as variables;
+
+.image-library-overlay {
+	position: fixed;
+	inset: 0;
+	background: var(--color-overlay);
+	z-index: var(--z-image-library-overlay);
+}
+
+.image-library-dialog {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: min(60rem, calc(100vw - 2rem));
+	max-height: min(48rem, calc(100vh - 2rem));
+	background: var(--color-surface-elevated);
+	border: 0.1rem solid var(--color-border-light);
+	border-radius: variables.$radius-lg;
+	box-shadow: 0 1rem 3rem var(--shadow-xl);
+	display: flex;
+	flex-direction: column;
+	z-index: var(--z-image-library-modal);
+	overflow: hidden;
+}
+
+.image-library-header {
+	padding: 1rem 1rem 0.75rem;
+	border-bottom: 0.1rem solid var(--color-border-light);
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+}
+
+.image-library-title-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+}
+
+.image-library-title {
+	margin: 0;
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--color-text);
+}
+
+.image-library-close {
+	width: 2.2rem;
+	height: 2.2rem;
+	border: 0.1rem solid var(--color-border);
+	background: var(--color-surface);
+	color: var(--color-text);
+	border-radius: variables.$radius-sm;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.image-library-limit-banner {
+	padding: 0.55rem 0.75rem;
+	border: 0.1rem solid color-mix(in srgb, var(--color-error-border) 80%, transparent);
+	background: color-mix(in srgb, var(--color-error-background) 88%, var(--color-surface));
+	color: var(--color-error);
+	border-radius: variables.$radius-sm;
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+
+.image-library-storage {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.image-library-storage-text {
+	font-size: 0.86rem;
+	color: var(--color-text-muted);
+}
+
+.image-library-storage-bar {
+	width: 100%;
+	height: 0.55rem;
+	border-radius: variables.$radius-md;
+	background: color-mix(in srgb, var(--color-surface) 88%, var(--color-border-light));
+	overflow: hidden;
+}
+
+.image-library-storage-bar-fill {
+	height: 100%;
+	background: linear-gradient(90deg, #29e7d6, #3a9dff 45%, #7c5cff 75%, #d24dff);
+	transition: width variables.$transition-base;
+}
+
+.image-library-content {
+	padding: 1rem;
+	overflow: auto;
+	flex: 1;
+}
+
+.image-library-status {
+	padding: 0.8rem;
+	border: 0.1rem solid var(--color-border-light);
+	border-radius: variables.$radius-sm;
+	background: var(--color-surface);
+	color: var(--color-text-muted);
+}
+
+.image-library-status--error {
+	color: var(--color-error);
+	border-color: var(--color-error-border);
+	background: var(--color-error-background);
+}
+
+.image-library-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+	gap: 0.75rem;
+}
+
+.image-library-card {
+	border: 0.1rem solid var(--color-border-light);
+	border-radius: variables.$radius-sm;
+	background: var(--color-surface);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.image-library-thumb-wrap {
+	aspect-ratio: 1 / 1;
+	background: color-mix(in srgb, var(--color-surface-elevated) 80%, var(--color-surface));
+	position: relative;
+}
+
+.image-library-thumb {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.image-library-card-body {
+	padding: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+}
+
+.image-library-meta {
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+	line-height: 1.25;
+}
+
+.image-library-delete {
+	align-self: flex-start;
+	min-height: 2rem;
+	padding: 0.35rem 0.55rem;
+	font-size: 0.8rem;
+}

@@ -3,6 +3,7 @@
 import styles from "./SmartEditor.module.scss";
 
 import { useTheme } from "@/contexts/ThemeContext";
+import { ImageLibraryDialog } from "@components/ImageLibraryDialog/ImageLibraryDialog";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
@@ -41,9 +42,10 @@ type SmartEditorProps = {
 	initialContent?: NoteContent;
 	onChange?: (content: NoteContent) => void;
 	ariaLabel?: string;
+	editorId?: string;
 };
 
-export default function SmartEditor({ initialContent, onChange, ariaLabel }: SmartEditorProps) {
+export default function SmartEditor({ initialContent, onChange, ariaLabel, editorId }: SmartEditorProps) {
 	const { mounted } = useTheme();
 	const { showEditorToolbar } = useWeekDisplayPreference();
 	const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
@@ -51,6 +53,8 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 	const [toolbarOffset, setToolbarOffset] = useState(0);
 	const [activeImageUploads, setActiveImageUploads] = useState(0);
 	const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+	const [isImageLibraryOpen, setIsImageLibraryOpen] = useState(false);
+	const [showImageLimitNotice, setShowImageLimitNotice] = useState(false);
 	const dragMenuRef = useRef<HTMLElement>(null);
 	const dragTargetLineRef = useRef<HTMLElement>(null);
 	const toolbarContainerRef = useRef<HTMLDivElement | null>(null);
@@ -241,12 +245,16 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 					onUploadEnd={(count) => {
 						setActiveImageUploads((prev) => Math.max(0, prev - count));
 					}}
-					onUploadError={(message) => {
+					onUploadError={(message, errorCode) => {
 						setImageUploadError(message);
 						toast.error(message, { toastId: `image-upload-error:${message}` });
+						if (errorCode === "storage_limit_exceeded") {
+							setShowImageLimitNotice(true);
+							setIsImageLibraryOpen(true);
+						}
 					}}
 				/>
-				<SpeechToTextButtonPlugin />
+				<SpeechToTextButtonPlugin editorId={editorId} />
 				{isFocused && floatingAnchorElem && (
 					<DraggableBlockPlugin_EXPERIMENTAL
 						anchorElem={floatingAnchorElem}
@@ -281,6 +289,16 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 						const editorStateJSON = nextEditorState.toJSON();
 						onChange?.(JSON.stringify(editorStateJSON));
 					}}
+				/>
+				<ImageLibraryDialog
+					open={isImageLibraryOpen}
+					onOpenChange={(open) => {
+						setIsImageLibraryOpen(open);
+						if (!open) {
+							setShowImageLimitNotice(false);
+						}
+					}}
+					showLimitNotice={showImageLimitNotice}
 				/>
 			</LexicalComposer>
 		</div>

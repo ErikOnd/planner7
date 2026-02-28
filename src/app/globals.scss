@@ -102,6 +102,24 @@
 	--font-size-base: 0.9375rem;
 	--font-size-sm: 0.875rem;
 	--font-size-xs: 0.8125rem;
+
+	/* Z-index scale */
+	--z-sticky: 100;
+	--z-overlay-soft: 999;
+	--z-overlay: 1000;
+	--z-modal: 1001;
+	--z-greeting-overlay: 1180;
+	--z-greeting-modal: 1181;
+	--z-priority-overlay: 1200;
+	--z-priority-modal: 1201;
+	--z-image-library-overlay: 1500;
+	--z-image-library-modal: 1501;
+
+	/* Component-local stacking */
+	--z-editor-toolbar: 2;
+	--z-editor-drag: 3;
+	--z-editor-mic: 5;
+	--z-editor-menu: 30;
 }
 
 [data-theme="dark"] {

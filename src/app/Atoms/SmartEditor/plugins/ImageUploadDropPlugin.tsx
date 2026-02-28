@@ -19,12 +19,14 @@ import { uploadImage } from "../../../../actions/upload-image";
 import { $createImageNode, INSERT_IMAGE_COMMAND } from "../nodes/ImageNode";
 
 type ImageUploadDropPluginProps = {
-	onUploadError?: (message: string) => void;
+	onUploadError?: (message: string, errorCode?: "storage_limit_exceeded" | "upload_failed") => void;
 	onUploadStart?: (count: number) => void;
 	onUploadEnd?: (count: number) => void;
 };
 
-export default function ImageUploadDropPlugin({ onUploadError, onUploadStart, onUploadEnd }: ImageUploadDropPluginProps) {
+export default function ImageUploadDropPlugin(
+	{ onUploadError, onUploadStart, onUploadEnd }: ImageUploadDropPluginProps,
+) {
 	const [editor] = useLexicalComposerContext();
 
 	useEffect(() => {
@@ -44,16 +46,27 @@ export default function ImageUploadDropPlugin({ onUploadError, onUploadStart, on
 							});
 						} else {
 							console.error("Image upload failed:", result.error);
-							onUploadError?.(result.error);
+							onUploadError?.(result.error, result.errorCode);
 						}
 					} catch (error) {
 						console.error("Image upload action crashed:", error);
-						onUploadError?.(error instanceof Error ? error.message : "Image upload failed");
+						onUploadError?.(error instanceof Error ? error.message : "Image upload failed", "upload_failed");
 					}
 				}
 			} finally {
 				onUploadEnd?.(files.length);
 			}
+		};
+
+		const handleImageFiles = (files: FileList | null | undefined, preventDefault: () => void) => {
+			if (!files || files.length === 0) return false;
+
+			const imageFiles = Array.from(files).filter((file) => file.type.startsWith("image/"));
+			if (imageFiles.length === 0) return false;
+
+			preventDefault();
+			void uploadAndInsertImages(imageFiles);
+			return true;
 		};
 
 		const unregisterInsert = editor.registerCommand(
@@ -95,19 +108,7 @@ export default function ImageUploadDropPlugin({ onUploadError, onUploadStart, on
 		const unregisterDrop = editor.registerCommand(
 			DROP_COMMAND,
 			(event) => {
-				const files = event.dataTransfer?.files;
-				if (!files || files.length === 0) return false;
-
-				const imageFiles = Array.from(files).filter((file) => file.type.startsWith("image/"));
-				if (imageFiles.length === 0) return false;
-
-				event.preventDefault();
-
-				void (async () => {
-					await uploadAndInsertImages(imageFiles);
-				})();
-
-				return true;
+				return handleImageFiles(event.dataTransfer?.files, () => event.preventDefault());
 			},
 			COMMAND_PRIORITY_HIGH,
 		);
@@ -116,19 +117,7 @@ export default function ImageUploadDropPlugin({ onUploadError, onUploadStart, on
 			PASTE_COMMAND,
 			(event) => {
 				if (!(event instanceof ClipboardEvent)) return false;
-				const files = event.clipboardData?.files;
-				if (!files || files.length === 0) return false;
-
-				const imageFiles = Array.from(files).filter((file) => file.type.startsWith("image/"));
-				if (imageFiles.length === 0) return false;
-
-				event.preventDefault();
-
-				void (async () => {
-					await uploadAndInsertImages(imageFiles);
-				})();
-
-				return true;
+				return handleImageFiles(event.clipboardData?.files, () => event.preventDefault());
 			},
 			COMMAND_PRIORITY_HIGH,
 		);

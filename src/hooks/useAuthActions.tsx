@@ -1,7 +1,7 @@
 "use client";
 
-import { mapAuthError } from "@utils/authErrors";
 import { useAuth } from "@/contexts/AuthContext";
+import { mapAuthError } from "@utils/authErrors";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 

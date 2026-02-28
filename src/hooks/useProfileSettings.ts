@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { useProfile } from "@/contexts/ProfileContext";
+import { useEffect, useState } from "react";
 import { deleteUserAccount, updateUserPassword } from "../app/actions/profile";
 
 export type ProfileData = {

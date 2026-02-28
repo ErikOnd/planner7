@@ -1,8 +1,8 @@
 "use client";
 
-import { checkUserExists } from "../app/actions/profile";
 import { createClient } from "@utils/supabase/client";
 import { createContext, ReactNode, useContext, useMemo } from "react";
+import { checkUserExists } from "../app/actions/profile";
 
 type AuthResult = {
 	success: boolean;

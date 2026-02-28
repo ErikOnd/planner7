@@ -150,7 +150,7 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	);
 
 	return (
-		<div ref={textareaBlock} className={DailyTextareaBlockClass}>
+		<div ref={textareaBlock} className={DailyTextareaBlockClass} id={`daily-note-${dateKey}`} data-note-date={dateKey}>
 			<div className={styles["date"]}>
 				<Text className={styles["day-batch"]}>{weekday}</Text>
 				<Text className={styles["month-and-day"]}>{date}</Text>
@@ -177,6 +177,7 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 						initialContent={content}
 						onChange={handleChange}
 						ariaLabel={`Notes for ${weekday}, ${date}`}
+						editorId={dateKey}
 					/>
 				)}
 			</div>

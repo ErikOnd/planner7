@@ -50,7 +50,7 @@
 	position: fixed;
 	inset: 0;
 	background-color: var(--color-overlay);
-	z-index: 1000;
+	z-index: var(--z-overlay);
 }
 
 .completed-dialog {
@@ -68,7 +68,7 @@
 	box-shadow:
 		0 1rem 3rem var(--shadow-xl),
 		0 0.5rem 1.5rem var(--shadow-lg);
-	z-index: 1001;
+	z-index: var(--z-modal);
 }
 
 .completed-header {

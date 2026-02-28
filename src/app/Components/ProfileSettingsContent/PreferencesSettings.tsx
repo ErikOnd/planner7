@@ -1,10 +1,14 @@
 "use client";
 
+import { useProfile } from "@/contexts/ProfileContext";
+import { Button } from "@atoms/Button/Button";
 import { Text } from "@atoms/Text/Text";
-import { SPEECH_LANGUAGES, type SupportedSpeechLanguage, useSpeechLanguagePreference } from "@hooks/useSpeechLanguagePreference";
+import { ImageLibraryDialog } from "@components/ImageLibraryDialog/ImageLibraryDialog";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import * as Switch from "@radix-ui/react-switch";
 import clsx from "clsx";
+import { useEffect, useState } from "react";
+import { getDailyGreetingDisabledKey } from "../../constants/dailyGreeting";
 
 type PreferencesSettingsProps = {
 	theme: "light" | "dark" | "system";
@@ -13,6 +17,7 @@ type PreferencesSettingsProps = {
 };
 
 export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSettingsProps) {
+	const { profile } = useProfile();
 	const {
 		showWeekends,
 		showEditorToolbar,
@@ -21,8 +26,27 @@ export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSett
 		setShowWeekends,
 		setShowEditorToolbar,
 	} = useWeekDisplayPreference();
-	const { speechLanguage, setSpeechLanguage } = useSpeechLanguagePreference();
 	const isFiveDayWeek = !showWeekends;
+	const [showDailyVoiceWelcome, setShowDailyVoiceWelcome] = useState(true);
+	const [isImageLibraryOpen, setIsImageLibraryOpen] = useState(false);
+
+	useEffect(() => {
+		if (typeof window === "undefined" || !profile) return;
+		const disabledKey = getDailyGreetingDisabledKey(profile.email);
+		const isDisabled = window.localStorage.getItem(disabledKey) === "true";
+		setShowDailyVoiceWelcome(!isDisabled);
+	}, [profile]);
+
+	const handleDailyVoiceWelcomeToggle = (checked: boolean) => {
+		setShowDailyVoiceWelcome(checked);
+		if (typeof window === "undefined" || !profile) return;
+		const disabledKey = getDailyGreetingDisabledKey(profile.email);
+		if (checked) {
+			window.localStorage.removeItem(disabledKey);
+			return;
+		}
+		window.localStorage.setItem(disabledKey, "true");
+	};
 
 	return (
 		<div className={styles["tab-content"]}>
@@ -104,23 +128,45 @@ export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSett
 				</div>
 				<div className={styles["notification-item"]}>
 					<div className={styles["notification-info"]}>
-						<span className={styles["notification-label"]}>Voice input language</span>
-						<span className={styles["notification-description"]}>Default dictation language for the editor mic</span>
+						<span className={styles["notification-label"]}>Show daily voice welcome</span>
+						<span className={styles["notification-description"]}>
+							Show the morning/afternoon voice-notes popup when opening Planner
+						</span>
 					</div>
-					<select
-						className={styles["settings-select"]}
-						value={speechLanguage}
-						onChange={(event) => setSpeechLanguage(event.target.value as SupportedSpeechLanguage)}
-						aria-label="Voice input language"
+					<Switch.Root
+						className={styles["switch"]}
+						checked={showDailyVoiceWelcome}
+						onCheckedChange={handleDailyVoiceWelcomeToggle}
+						aria-label="Show daily voice welcome popup"
 					>
-						{SPEECH_LANGUAGES.map((language) => (
-							<option key={language.value} value={language.value}>
-								{language.label}
-							</option>
-						))}
-					</select>
+						<Switch.Thumb className={styles["switch-thumb"]} />
+					</Switch.Root>
 				</div>
 			</section>
+
+			<section className={styles["settings-section"]}>
+				<div className={styles["section-header"]}>
+					<h3 className={styles["section-heading"]}>Image Storage</h3>
+				</div>
+				<Text size="sm" variant="muted">
+					View all uploaded images and delete any image to free storage space.
+				</Text>
+				<Button
+					type="button"
+					variant="secondary"
+					icon="settings"
+					iconSize={16}
+					onClick={() => setIsImageLibraryOpen(true)}
+				>
+					Manage uploaded images
+				</Button>
+			</section>
+
+			<ImageLibraryDialog
+				open={isImageLibraryOpen}
+				onOpenChange={setIsImageLibraryOpen}
+				showLimitNotice={false}
+			/>
 		</div>
 	);
 }

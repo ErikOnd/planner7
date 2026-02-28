@@ -2,11 +2,11 @@
 
 import styles from "./ResetPassword.module.scss";
 
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@atoms/Button/Button";
 import { Message } from "@atoms/Message/Message";
 import { Text } from "@atoms/Text/Text";
 import { PasswordField } from "@components/auth/PasswordField";
-import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 

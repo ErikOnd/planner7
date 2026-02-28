@@ -19,6 +19,7 @@ model Profile {
   updatedAt        DateTime        @updatedAt
   workspaces       Workspace[]
   dailyNotes       DailyNote[]
+  dailyVoiceUsages DailyVoiceUsage[]
   generalTodos     GeneralTodo[]
   uploadedImages   UploadedImage[]
 }
@@ -88,4 +89,18 @@ model UploadedImage {
 
   @@index([userId, createdAt(sort: Desc)])
   @@unique([userId, key])
+}
+
+model DailyVoiceUsage {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  date        DateTime @db.Date
+  secondsUsed Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  profile Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
 }

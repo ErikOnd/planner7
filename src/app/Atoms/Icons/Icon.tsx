@@ -1,3 +1,4 @@
+import AiSparkles from "@assets/icons/ai-sparkles.svg";
 import ArrowDownRight from "@assets/icons/arrow-down-right.svg";
 import Calendar from "@assets/icons/calendar.svg";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
@@ -46,6 +47,7 @@ const icons = {
 	"Megaphone": Megaphone,
 	"Microphone": Microphone,
 	"arrow-down-right": ArrowDownRight,
+	"ai-sparkles": AiSparkles,
 };
 
 export type IconName = keyof typeof icons;

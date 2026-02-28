@@ -24,11 +24,11 @@ export function ProfileDialog({ children }: ProfileDialogProps) {
 						<Dialog.Close asChild>
 							<Button variant="secondary" icon="close" className={styles["close-button"]} aria-label="Close dialog" />
 						</Dialog.Close>
-						</div>
-						<div className={styles["dialog-body"]}>
-							<ProfileSettingsPanel styles={styles} />
-						</div>
-					</Dialog.Content>
+					</div>
+					<div className={styles["dialog-body"]}>
+						<ProfileSettingsPanel styles={styles} />
+					</div>
+				</Dialog.Content>
 			</Dialog.Portal>
 		</Dialog.Root>
 	);

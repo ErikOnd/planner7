@@ -1,5 +1,7 @@
 "use client";
 
+import styles from "./MagneticButton.module.scss";
+
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
@@ -39,7 +41,7 @@ export function MagneticButton({ children }: MagneticButtonProps) {
 			onMouseLeave={handleMouseLeave}
 			animate={{ x: position.x, y: position.y }}
 			transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
-			style={{ display: "inline-block" }}
+			className={styles["magnetic-button"]}
 		>
 			{children}
 		</motion.div>

@@ -34,7 +34,7 @@
 	-webkit-backdrop-filter: blur(10px);
 	position: sticky;
 	top: 0;
-	z-index: 2;
+	z-index: var(--z-editor-toolbar);
 	box-shadow:
 		0 0.35rem 1rem color-mix(in srgb, var(--shadow-sm) 95%, transparent),
 		0 0 0 0.06rem color-mix(in srgb, var(--color-border-light) 70%, transparent) inset;
@@ -519,7 +519,7 @@
 
 .smart-editor__slash-menu {
 	position: absolute;
-	z-index: 30;
+	z-index: var(--z-editor-menu);
 	margin-top: 0.4rem;
 	background-color: var(--color-surface-elevated);
 	border: 0.1rem solid var(--color-border);
@@ -569,7 +569,7 @@
 	background: transparent;
 	padding: 0 0.2rem;
 	opacity: 0;
-	z-index: 3;
+	z-index: var(--z-editor-drag);
 	cursor: grab;
 
 	@media (max-width: 639px) {
@@ -592,85 +592,165 @@
 	pointer-events: none;
 }
 
-.smart-editor__mic-button {
+.smart-editor__mic-shell {
 	position: absolute;
 	right: 1rem;
 	bottom: max(1rem, env(safe-area-inset-bottom));
-	width: 3rem;
-	height: 3rem;
-	border-radius: 50%;
-	border: 0.1rem solid var(--color-border);
-	background-color: var(--color-surface-elevated);
-	color: var(--color-text);
 	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	transition: all variables.$transition-fast;
-
-	&:hover {
-		border-color: var(--color-primary);
-		background-color: var(--color-primary-subtle);
-	}
-
-	&[data-recording="true"] {
-		border-color: var(--color-primary);
-		background-color: var(--color-primary-subtle);
-		color: var(--color-primary);
-		box-shadow: 0 0 0 0.2rem var(--shadow-primary-sm);
-		animation: mic-pulse 1.2s ease-in-out infinite;
-	}
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.35rem;
+	z-index: var(--z-editor-mic);
 
 	@media (max-width: 639px) {
-		width: 3.25rem;
-		height: 3.25rem;
 		right: 0.75rem;
 		bottom: max(0.75rem, env(safe-area-inset-bottom));
 	}
 }
 
-.smart-editor__mic-note {
-	position: absolute;
-	right: 4.5rem;
-	bottom: max(1.3rem, calc(env(safe-area-inset-bottom) + 0.3rem));
-	max-width: min(20rem, calc(100% - 6rem));
-	margin: 0;
-	padding: 0.45rem 0.65rem;
-	border: 0.1rem solid var(--color-border);
-	border-radius: variables.$radius-md;
-	background: var(--color-surface-elevated);
-	color: var(--color-text-muted);
-	font-size: 0.78rem;
-	line-height: 1.25;
-	box-shadow: 0 0.35rem 1.1rem rgba(0, 0, 0, 0.12);
-	z-index: 4;
+.smart-editor__mic-usage {
+	padding: 0.25rem 0.5rem;
+	border-radius: variables.$radius-sm;
+	border: 0.1rem solid color-mix(in srgb, var(--color-border-light) 76%, transparent);
+	background: color-mix(in srgb, var(--color-surface-elevated) 94%, transparent);
+	color: var(--color-text-subtle);
+	font-size: 0.72rem;
+	font-weight: 700;
+	line-height: 1.1;
+	letter-spacing: 0.01em;
+	box-shadow: 0 0.2rem 0.55rem color-mix(in srgb, var(--shadow-sm) 70%, transparent);
 	opacity: 0;
-	pointer-events: none;
 	transform: translateY(0.2rem);
+	pointer-events: none;
 	transition: opacity variables.$transition-fast, transform variables.$transition-fast;
-
-	@media (max-width: 639px) {
-		right: 4.2rem;
-		bottom: max(1rem, calc(env(safe-area-inset-bottom) + 0.25rem));
-		max-width: min(16rem, calc(100% - 5.5rem));
-		font-size: 0.74rem;
-	}
 }
 
-.smart-editor__mic-button:hover + .smart-editor__mic-note,
-.smart-editor__mic-button:focus-visible + .smart-editor__mic-note {
+.smart-editor__mic-shell:is(:hover, :focus-within) .smart-editor__mic-usage {
 	opacity: 1;
 	transform: translateY(0);
 }
 
-@keyframes mic-pulse {
+.smart-editor__mic-button {
+	position: relative;
+	width: 3.15rem;
+	height: 3.15rem;
+	border-radius: 50%;
+	border: 0.1rem solid transparent;
+	background:
+		linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.94)) padding-box,
+		linear-gradient(90deg, #29e7d6, #3a9dff 45%, #7c5cff 75%, #d24dff) border-box;
+	color: #dbeafe;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	box-shadow:
+		0 0.55rem 1.25rem rgba(17, 24, 39, 0.5),
+		0 0 1rem rgba(58, 157, 255, 0.35),
+		0 0 1.25rem rgba(210, 77, 255, 0.24);
+	transition: transform variables.$transition-fast, border-color variables.$transition-fast, box-shadow variables.$transition-base, color variables.$transition-fast;
+	animation: ai-mic-idle-glow 2.8s ease-in-out infinite;
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: -0.35rem;
+		border-radius: 50%;
+		border: 0.1rem solid transparent;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	&:hover {
+		transform: translateY(-1px) scale(1.02);
+		box-shadow:
+			0 0.75rem 1.6rem rgba(15, 23, 42, 0.62),
+			0 0 1.4rem rgba(58, 157, 255, 0.5),
+			0 0 1.9rem rgba(210, 77, 255, 0.36);
+	}
+
+	&[data-recording="true"] {
+		color: #fef3c7;
+		box-shadow:
+			0 0.75rem 1.7rem rgba(249, 115, 22, 0.38),
+			0 0 1.3rem rgba(249, 115, 22, 0.42),
+			0 0 1.8rem rgba(239, 68, 68, 0.25);
+		animation: ai-pulse-record 1.2s ease-in-out infinite;
+
+		&::after {
+			opacity: 1;
+			border-color: rgba(249, 115, 22, 0.7);
+			animation: ai-mic-record-ring 1.35s ease-out infinite;
+		}
+	}
+
+	&[data-processing="true"] {
+		animation: ai-spin-glow 1.8s linear infinite;
+	}
+
+	@media (max-width: 639px) {
+		width: 3.35rem;
+		height: 3.35rem;
+	}
+}
+
+@keyframes ai-pulse-record {
 	0% {
 		transform: scale(1);
 	}
 	50% {
-		transform: scale(1.06);
+		transform: scale(1.07);
 	}
 	100% {
 		transform: scale(1);
+	}
+}
+
+@keyframes ai-mic-idle-glow {
+	0%,
+	100% {
+		box-shadow:
+			0 0.55rem 1.25rem rgba(17, 24, 39, 0.5),
+			0 0 1rem rgba(58, 157, 255, 0.35),
+			0 0 1.25rem rgba(210, 77, 255, 0.24);
+	}
+	50% {
+		box-shadow:
+			0 0.68rem 1.45rem rgba(17, 24, 39, 0.62),
+			0 0 1.2rem rgba(58, 157, 255, 0.48),
+			0 0 1.65rem rgba(210, 77, 255, 0.32);
+	}
+}
+
+@keyframes ai-mic-record-ring {
+	0% {
+		transform: scale(0.94);
+		opacity: 0.8;
+	}
+	70% {
+		transform: scale(1.14);
+		opacity: 0.2;
+	}
+	100% {
+		transform: scale(1.22);
+		opacity: 0;
+	}
+}
+
+@keyframes ai-spin-glow {
+	0% {
+		box-shadow:
+			0 0.55rem 1.35rem color-mix(in srgb, #f59e0b 20%, transparent),
+			0 0 0 0.08rem color-mix(in srgb, #fbbf24 48%, transparent) inset;
+	}
+	50% {
+		box-shadow:
+			0 0.68rem 1.5rem color-mix(in srgb, #f59e0b 34%, transparent),
+			0 0 0 0.12rem color-mix(in srgb, #fbbf24 72%, transparent) inset;
+	}
+	100% {
+		box-shadow:
+			0 0.55rem 1.35rem color-mix(in srgb, #f59e0b 20%, transparent),
+			0 0 0 0.08rem color-mix(in srgb, #fbbf24 48%, transparent) inset;
 	}
 }

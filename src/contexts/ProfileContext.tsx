@@ -1,8 +1,8 @@
 "use client";
 
-import { getUserProfile, updateUserProfile } from "../app/actions/profile";
-import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ProfileData } from "@hooks/useProfileSettings";
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { getUserProfile, updateUserProfile } from "../app/actions/profile";
 
 type ProfileUpdateInput = {
 	displayName?: string;

@@ -10,40 +10,80 @@ import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
+import type { StructuredNotesResponse } from "../../actions/aiNotes";
+import { LexicalPreview } from "./LexicalPreview";
 import { MagneticButton } from "./MagneticButton";
 import { TypingAnimation } from "./TypingAnimation";
 
 const features = [
 	{
 		icon: "pencil" as const,
-		title: "Daily Rich Planning",
+		title: "Rich Daily Planning",
 		description:
-			"Each day includes a rich text planning space, so you can write structured plans, not just short task items.",
+			"Each day gives you a rich planning area to think clearly, capture context, and shape real execution plans.",
 	},
 	{
-		icon: "star" as const,
-		title: "Task Management",
-		description: "Create, organize, and track your tasks with ease. Prioritize what matters and get things done.",
+		icon: "ai-sparkles" as const,
+		title: "AI Voice Structuring",
+		description:
+			"Speak naturally and get structured notes with headings, bullets, and checkboxes while preserving key details.",
 	},
 	{
 		icon: "calendar" as const,
-		title: "Weekly Overview",
-		description: "See your entire week at a glance and stay organized. Plan ahead and make the most of every day.",
+		title: "Weekly Focus View",
+		description: "Work in one focused weekly view with rich daily notes and backlog tasks side by side.",
 	},
 ];
 
 const steps = [
 	{
 		title: "Create your account",
-		description: "Sign up in seconds, no credit card needed. Get started right away.",
+		description: "Sign up in seconds and open your weekly workspace instantly.",
 	},
 	{
-		title: "Set up your week",
-		description: "Pick your dates and start organizing. Everything is ready for you.",
+		title: "Tap the AI mic",
+		description: "Record your thoughts naturally in any language, just like speaking in a meeting.",
 	},
 	{
-		title: "Plan every day",
-		description: "Write your day plan in rich text, add tasks, and stay on track in one view.",
+		title: "Review and ship your day",
+		description: "Your transcript becomes structured notes you can edit, prioritize, and execute.",
+	},
+];
+
+const transcriptBefore = [
+	"okay quick update i have meeting with northstar labs at 14:30",
+	"need to finish ORBIT-512 and ORBIT-513 today",
+	"blocker: api auth for exports still failing",
+	"ask anna for qa signoff before friday",
+];
+
+const transcriptAfter: StructuredNotesResponse["blocks"] = [
+	{
+		type: "heading2",
+		segments: [{ text: "Today" }],
+	},
+	{
+		type: "bulleted_list",
+		items: [
+			{ segments: [{ text: "Meeting: Northstar Labs sync (14:30)" }] },
+			{ segments: [{ text: "Tickets: ORBIT-512, ORBIT-513" }] },
+		],
+	},
+	{
+		type: "heading2",
+		segments: [{ text: "Blockers" }],
+	},
+	{
+		type: "bulleted_list",
+		items: [{ segments: [{ text: "API auth for exports is still failing" }] }],
+	},
+	{
+		type: "heading2",
+		segments: [{ text: "Next actions" }],
+	},
+	{
+		type: "checklist",
+		items: [{ checked: false, segments: [{ text: "Ask Anna for QA signoff before Friday" }] }],
 	},
 ];
 
@@ -141,8 +181,8 @@ export function LandingPage() {
 					</motion.div>
 					<motion.div variants={heroItemVariants}>
 						<Text size="lg" className={styles["hero-subtitle"]}>
-							Most todo apps only track checkboxes. Planner7 gives every day a rich planning area plus tasks. Plan your
-							work, not just check boxes.
+							Planner7 gives every day a rich planning area for real thinking, not just checkboxes. AI voice notes are
+							built in, so you can speak your thoughts and instantly get a structured plan.
 						</Text>
 					</motion.div>
 				</motion.section>
@@ -150,7 +190,7 @@ export function LandingPage() {
 				<section className={styles.features} ref={featuresRef}>
 					<Text size="sm" fontWeight={700} className={styles["section-label"]}>What you get</Text>
 					<Headline as="h2" className={styles["section-title"]}>
-						Everything you need to stay organized
+						A planning workflow that actually scales
 					</Headline>
 					<motion.div
 						className={styles["feature-cards"]}
@@ -161,7 +201,10 @@ export function LandingPage() {
 						{features.map((feature) => (
 							<motion.div key={feature.title} className={styles["feature-card"]} variants={cardVariants}>
 								<div className={styles["feature-icon"]}>
-									<Icon name={feature.icon} size={22} />
+									<Icon
+										name={feature.icon}
+										size={feature.title === "AI Voice Structuring" ? 40 : 22}
+									/>
 								</div>
 								<Text size="base" fontWeight={600} className={styles["feature-title"]}>{feature.title}</Text>
 								<Text size="sm" className={styles["feature-description"]}>{feature.description}</Text>
@@ -170,10 +213,50 @@ export function LandingPage() {
 					</motion.div>
 				</section>
 
+				<section className={styles["voice-showcase"]}>
+					<Text size="sm" fontWeight={700} className={styles["section-label"]}>AI workflow</Text>
+					<Headline as="h2" className={styles["section-title"]}>
+						How voice becomes structured notes
+					</Headline>
+					<motion.div
+						className={styles["transcript-demo"]}
+						initial={{ opacity: 0, y: 22 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true, amount: 0.35 }}
+						transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+					>
+						<div className={styles["transcript-panel"]}>
+							<span className={styles["transcript-chip"]}>Before</span>
+							<Text size="sm" className={styles["transcript-heading"]}>Raw voice transcript</Text>
+							<motion.div
+								initial={{ opacity: 0, x: -10 }}
+								whileInView={{ opacity: 1, x: 0 }}
+								viewport={{ once: true }}
+								transition={{ duration: 0.35 }}
+							>
+								<LexicalPreview plainLines={transcriptBefore} />
+							</motion.div>
+						</div>
+						<div className={styles["transcript-arrow"]} aria-hidden="true">→</div>
+						<div className={`${styles["transcript-panel"]} ${styles["transcript-panel--after"]}`}>
+							<span className={styles["transcript-chip"]}>After</span>
+							<Text size="sm" className={styles["transcript-heading"]}>Planner7 AI output</Text>
+							<motion.div
+								initial={{ opacity: 0, x: 10 }}
+								whileInView={{ opacity: 1, x: 0 }}
+								viewport={{ once: true }}
+								transition={{ duration: 0.35, delay: 0.08 }}
+							>
+								<LexicalPreview structuredData={{ blocks: transcriptAfter }} />
+							</motion.div>
+						</div>
+					</motion.div>
+				</section>
+
 				<section className={styles["how-it-works"]} ref={stepsRef}>
 					<Text size="sm" fontWeight={700} className={styles["section-label"]}>How it works</Text>
 					<Headline as="h2" className={styles["section-title"]}>
-						Get started in minutes
+						Get value on day one
 					</Headline>
 					<motion.div
 						className={styles.steps}
@@ -207,10 +290,10 @@ export function LandingPage() {
 						}}
 					>
 						<Headline as="h2" className={styles["cta-title"]}>
-							Ready to take control of your week?
+							Ready to plan at the speed of thought?
 						</Headline>
 						<Text size="base" className={styles["cta-subtitle"]}>
-							Join people who plan each day with rich notes and tasks in one focused weekly workflow.
+							Use AI voice notes to capture faster, structure better, and execute your week with less friction.
 						</Text>
 						<div className={styles["cta-button"]}>
 							<MagneticButton>

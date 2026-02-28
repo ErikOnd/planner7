@@ -87,9 +87,9 @@ export function RememberContent() {
 			>
 				Completed ({completedTodos.length})
 			</button>
-				<AddTaskModal
-					open={isAddOpen}
-					onOpenAction={handleModalChange}
+			<AddTaskModal
+				open={isAddOpen}
+				onOpenAction={handleModalChange}
 				editMode={editingTodo
 					? {
 						todoId: editingTodo.id,

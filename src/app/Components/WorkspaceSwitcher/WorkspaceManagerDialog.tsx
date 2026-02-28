@@ -96,7 +96,8 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 							const isActive = workspace.id === activeWorkspaceId;
 							const isEditing = workspace.id === editingWorkspaceId;
 							const isSwitching = workspace.id === switchingWorkspaceId;
-							const gradient = gradientMap[workspace.gradientPreset] ?? gradientPresets[0]?.[1] ?? { from: "#555", to: "#888" };
+							const gradient = gradientMap[workspace.gradientPreset] ?? gradientPresets[0]?.[1]
+								?? { from: "#555", to: "#888" };
 
 							return (
 								<div

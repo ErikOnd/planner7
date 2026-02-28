@@ -21,7 +21,7 @@ const s3Client = new S3Client({
 	},
 });
 
-const MAX_TOTAL_STORAGE = 100 * 1024 * 1024;
+const MAX_TOTAL_STORAGE_BYTES = 100 * 1024 * 1024;
 const MAX_IMAGE_UPLOAD_SIZE = 5 * 1024 * 1024;
 const MAX_IMAGE_WIDTH = 1920;
 const COMPRESSION_QUALITY = 85;
@@ -54,7 +54,10 @@ async function compressImage(buffer: Buffer): Promise<Buffer> {
 
 export async function uploadImage(
 	formData: FormData,
-): Promise<{ success: true; url: string } | { success: false; error: string }> {
+): Promise<
+	| { success: true; url: string }
+	| { success: false; error: string; errorCode?: "storage_limit_exceeded" | "upload_failed" }
+> {
 	try {
 		const supabase = await createClient();
 		const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -90,11 +93,12 @@ export async function uploadImage(
 
 		const compressedSize = compressedBuffer.length;
 
-		if (currentStorageUsed + compressedSize > MAX_TOTAL_STORAGE) {
-			const remainingMB = ((MAX_TOTAL_STORAGE - currentStorageUsed) / 1024 / 1024).toFixed(2);
+		if (currentStorageUsed + compressedSize > MAX_TOTAL_STORAGE_BYTES) {
+			const remainingMB = ((MAX_TOTAL_STORAGE_BYTES - currentStorageUsed) / 1024 / 1024).toFixed(2);
 			return {
 				success: false,
 				error: `Storage limit exceeded. You have ${remainingMB}MB remaining out of 100MB total.`,
+				errorCode: "storage_limit_exceeded",
 			};
 		}
 
@@ -133,6 +137,7 @@ export async function uploadImage(
 		return {
 			success: false,
 			error: error instanceof Error ? error.message : "Failed to upload image",
+			errorCode: "upload_failed",
 		};
 	}
 }
@@ -188,6 +193,121 @@ export async function deleteUploadedImageByUrl(
 		return {
 			success: false,
 			error: error instanceof Error ? error.message : "Failed to delete image",
+		};
+	}
+}
+
+export async function deleteUploadedImageById(
+	imageId: string,
+): Promise<{ success: true } | { success: false; error: string }> {
+	try {
+		const supabase = await createClient();
+		const { data: { user }, error: authError } = await supabase.auth.getUser();
+		if (authError || !user) {
+			return { success: false, error: "Unauthorized" };
+		}
+
+		const image = await prisma.uploadedImage.findFirst({
+			where: {
+				id: imageId,
+				userId: user.id,
+			},
+			select: {
+				id: true,
+				key: true,
+			},
+		});
+
+		if (!image) {
+			return { success: false, error: "Image not found." };
+		}
+
+		if (!DO_ENDPOINT || !DO_REGION || !DO_KEY || !DO_SECRET || !BUCKET_NAME || !CDN_URL) {
+			return {
+				success: false,
+				error: "DigitalOcean Spaces env vars are missing. Check DIGITALOCEAN_SPACES_* settings.",
+			};
+		}
+
+		await s3Client.send(
+			new DeleteObjectCommand({
+				Bucket: BUCKET_NAME,
+				Key: image.key,
+			}),
+		);
+
+		await prisma.uploadedImage.delete({
+			where: {
+				id: image.id,
+			},
+		});
+
+		return { success: true };
+	} catch (error) {
+		console.error("Delete upload by id error:", error);
+		return {
+			success: false,
+			error: error instanceof Error ? error.message : "Failed to delete image",
+		};
+	}
+}
+
+export async function getUploadedImagesOverview(): Promise<
+	| {
+		success: true;
+		images: Array<{
+			id: string;
+			url: string;
+			fileSize: number;
+			mimeType: string;
+			createdAt: string;
+		}>;
+		storageUsedBytes: number;
+		storageLimitBytes: number;
+		remainingBytes: number;
+	}
+	| { success: false; error: string }
+> {
+	try {
+		const supabase = await createClient();
+		const { data: { user }, error: authError } = await supabase.auth.getUser();
+		if (authError || !user) {
+			return { success: false, error: "Unauthorized" };
+		}
+
+		const images = await prisma.uploadedImage.findMany({
+			where: { userId: user.id },
+			orderBy: { createdAt: "desc" },
+			select: {
+				id: true,
+				url: true,
+				fileSize: true,
+				mimeType: true,
+				createdAt: true,
+			},
+		});
+
+		const storageUsedBytes = images.reduce((sum, image) => sum + image.fileSize, 0);
+		const remainingBytes = Math.max(0, MAX_TOTAL_STORAGE_BYTES - storageUsedBytes);
+
+		return {
+			success: true,
+			images: images.map((image) => ({
+				id: image.id,
+				url: image.url,
+				fileSize: image.fileSize,
+				mimeType: image.mimeType,
+				createdAt: image.createdAt.toISOString(),
+			})),
+			storageUsedBytes,
+			storageLimitBytes: MAX_TOTAL_STORAGE_BYTES,
+			remainingBytes,
+		};
+	} catch (error) {
+		console.error("Get uploaded images overview error:", error);
+		return {
+			success: false,
+			error: error instanceof Error ? error.message : "Failed to load uploaded images",
 		};
 	}
 }

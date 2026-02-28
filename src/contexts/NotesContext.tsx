@@ -152,13 +152,13 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 			return;
 		}
 
-			const loadPromise = (async () => {
-				try {
-					const noteMap: Record<string, NoteContent | undefined> = {};
-					const notes = await getWeeklyNotes(startDate, endDate);
-					notes.forEach(note => {
-						noteMap[toDateString(note.date)] = note.content as NoteContent | undefined;
-					});
+		const loadPromise = (async () => {
+			try {
+				const noteMap: Record<string, NoteContent | undefined> = {};
+				const notes = await getWeeklyNotes(startDate, endDate);
+				notes.forEach(note => {
+					noteMap[toDateString(note.date)] = note.content as NoteContent | undefined;
+				});
 
 				weekDates.forEach((dateString) => {
 					cacheRef.current[toNoteKey(activeWorkspaceId, dateString)] = noteMap[dateString];
