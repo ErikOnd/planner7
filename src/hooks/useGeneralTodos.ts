@@ -39,12 +39,18 @@ export function useGeneralTodos() {
 	const requestCounterRef = useRef(0);
 
 	const fetchTodos = useCallback(async () => {
+		if (!activeWorkspaceId) {
+			setTodos([]);
+			setLoading(false);
+			return;
+		}
+
 		const requestId = ++requestCounterRef.current;
 		const startedAt = performance.now();
 		setLoading(true);
 		setError(null);
 		try {
-			const data = await loadWorkspaceTodos({ workspaceId: activeWorkspaceId ?? undefined });
+			const data = await loadWorkspaceTodos({ workspaceId: activeWorkspaceId });
 			if (requestId !== requestCounterRef.current) return;
 			setTodos(data.map(toGeneralTodo));
 			logClientPerf("todos.load", startedAt, {
@@ -56,21 +62,29 @@ export function useGeneralTodos() {
 			setError("Failed to load todos");
 			console.error("Error fetching todos:", fetchError);
 		} finally {
-			if (requestId !== requestCounterRef.current) return;
-			setLoading(false);
+			const isLatestRequest = requestId === requestCounterRef.current;
+			if (isLatestRequest) {
+				setLoading(false);
+			}
 		}
 	}, [activeWorkspaceId]);
 
 	useEffect(() => {
 		setTodos([]);
 		setError(null);
+		if (!activeWorkspaceId) {
+			setLoading(false);
+			return;
+		}
 		fetchTodos();
 	}, [activeWorkspaceId, fetchTodos]);
 
 	const silentRefresh = useCallback(async () => {
+		if (!activeWorkspaceId) return;
+
 		const requestId = ++requestCounterRef.current;
 		try {
-			const data = await loadWorkspaceTodos({ workspaceId: activeWorkspaceId ?? undefined });
+			const data = await loadWorkspaceTodos({ workspaceId: activeWorkspaceId });
 			if (requestId !== requestCounterRef.current) return;
 			setTodos(data.map(toGeneralTodo));
 		} catch (fetchError) {

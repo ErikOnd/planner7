@@ -4,6 +4,7 @@ import styles from "@components/Homepage/HomePage.module.scss";
 
 import { useNotes } from "@/contexts/NotesContext";
 import { useProfile } from "@/contexts/ProfileContext";
+import { logClientPerf } from "@/lib/perf";
 import { Button } from "@atoms/Button/Button";
 import { DesktopContent } from "@components/DesktopContent/DesktopContent";
 import { DesktopNavigation } from "@components/DesktopNavigation/DesktopNavigation";
@@ -17,7 +18,6 @@ import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import * as Dialog from "@radix-ui/react-dialog";
 import { getCurrentWeek } from "@utils/getCurrentWeek";
 import { FormEvent, useEffect, useState } from "react";
-import { logClientPerf } from "@/lib/perf";
 import { getDailyGreetingDisabledKey, getDailyGreetingLastShownKey } from "../../constants/dailyGreeting";
 
 function getTimeBasedGreeting() {
@@ -69,16 +69,22 @@ export default function HomePage() {
 
 			const schedulePrefetch = () => {
 				if (cancelled) return;
-				const prevBase = new Date(baseDate);
-				prevBase.setDate(prevBase.getDate() - 7);
 				const nextBase = new Date(baseDate);
 				nextBase.setDate(nextBase.getDate() + 7);
-
-				const prevWeek = getCurrentWeek(prevBase);
 				const nextWeek = getCurrentWeek(nextBase);
 
-				void loadWeek(prevWeek.days[0].fullDate, prevWeek.days[6].fullDate);
 				void loadWeek(nextWeek.days[0].fullDate, nextWeek.days[6].fullDate);
+
+				// Prefetch the previous week only after a small delay to reduce immediate startup pressure.
+				const prefetchPrevious = () => {
+					if (cancelled) return;
+					const prevBase = new Date(baseDate);
+					prevBase.setDate(prevBase.getDate() - 7);
+					const prevWeek = getCurrentWeek(prevBase);
+					void loadWeek(prevWeek.days[0].fullDate, prevWeek.days[6].fullDate);
+				};
+
+				window.setTimeout(prefetchPrevious, 1400);
 			};
 
 			if (typeof window !== "undefined" && typeof window.requestIdleCallback === "function") {

@@ -1,7 +1,7 @@
 "use client";
 
-import type { WorkspaceGradientPreset } from "@/lib/workspaceGradients";
 import { invalidateWorkspaceTopologyCache, loadAppBootstrap } from "@/lib/clientBootstrap";
+import type { WorkspaceGradientPreset } from "@/lib/workspaceGradients";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
 	createWorkspace,

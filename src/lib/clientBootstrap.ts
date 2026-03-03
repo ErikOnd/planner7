@@ -1,3 +1,4 @@
+import { getCurrentWeek } from "@utils/getCurrentWeek";
 import type {
 	AppBootstrapPayload,
 	BootstrapDailyNote,
@@ -5,7 +6,6 @@ import type {
 	WeekNotesPayload,
 	WorkspaceTodosPayload,
 } from "types/appBootstrap";
-import { getCurrentWeek } from "@utils/getCurrentWeek";
 
 type BootstrapParams = {
 	startDate?: Date;
@@ -45,10 +45,46 @@ function toTodosCacheKey(workspaceId?: string) {
 	return `todos:${workspaceId ?? "active"}`;
 }
 
+function hydrateWorkspaceScopedCachesFromBootstrap(
+	payload: AppBootstrapPayload,
+	startDate: Date,
+	endDate: Date,
+	requestedWorkspaceId?: string,
+) {
+	const effectiveWorkspaceId = requestedWorkspaceId ?? payload.activeWorkspaceId;
+	const scopedWeekKey = toCacheKey(startDate, endDate, effectiveWorkspaceId);
+	const activeWeekKey = toCacheKey(startDate, endDate);
+	const scopedTodosKey = toTodosCacheKey(effectiveWorkspaceId);
+	const activeTodosKey = toTodosCacheKey();
+
+	notesCache.set(scopedWeekKey, payload.notes);
+	todosCache.set(scopedTodosKey, payload.todos);
+	cache.set(scopedWeekKey, payload);
+
+	// Keep the generic "active" keys in sync when bootstrap resolved the active workspace.
+	if (effectiveWorkspaceId === payload.activeWorkspaceId) {
+		notesCache.set(activeWeekKey, payload.notes);
+		todosCache.set(activeTodosKey, payload.todos);
+		cache.set(activeWeekKey, payload);
+	}
+}
+
 function removeWhere<T>(map: Map<string, T>, predicate: (key: string) => boolean) {
 	for (const key of map.keys()) {
 		if (predicate(key)) {
 			map.delete(key);
+		}
+	}
+}
+
+async function awaitInFlightBootstrap(keys: string[]) {
+	for (const key of keys) {
+		const pending = inFlight.get(key);
+		if (!pending) continue;
+		try {
+			await pending;
+		} catch {
+			// Ignore bootstrap failure here; caller performs its own request fallback.
 		}
 	}
 }
@@ -87,6 +123,7 @@ export async function loadAppBootstrap(params: BootstrapParams = {}): Promise<Ap
 		cache.set(cacheKey, payload);
 		notesCache.set(cacheKey, payload.notes);
 		todosCache.set(cacheKey, payload.todos);
+		hydrateWorkspaceScopedCachesFromBootstrap(payload, startDate, endDate, params.workspaceId);
 		return payload;
 	})();
 
@@ -101,6 +138,7 @@ export async function loadAppBootstrap(params: BootstrapParams = {}): Promise<Ap
 export async function loadWeekNotes(params: BootstrapParams = {}): Promise<BootstrapDailyNote[]> {
 	const { startDate, endDate } = getResolvedRange(params.startDate, params.endDate);
 	const cacheKey = toCacheKey(startDate, endDate, params.workspaceId);
+	const activeWeekKey = toCacheKey(startDate, endDate);
 
 	if (notesInFlight.has(cacheKey)) {
 		return notesInFlight.get(cacheKey)!;
@@ -108,6 +146,11 @@ export async function loadWeekNotes(params: BootstrapParams = {}): Promise<Boots
 	if (!params.force) {
 		if (notesCache.has(cacheKey)) return notesCache.get(cacheKey)!;
 		if (cache.has(cacheKey)) return cache.get(cacheKey)!.notes;
+		await awaitInFlightBootstrap([cacheKey, activeWeekKey]);
+		if (notesCache.has(cacheKey)) return notesCache.get(cacheKey)!;
+		if (cache.has(cacheKey)) return cache.get(cacheKey)!.notes;
+		if (params.workspaceId && notesCache.has(activeWeekKey)) return notesCache.get(activeWeekKey)!;
+		if (params.workspaceId && cache.has(activeWeekKey)) return cache.get(activeWeekKey)!.notes;
 	}
 
 	const requestPromise = (async () => {
@@ -144,13 +187,16 @@ export async function loadWeekNotes(params: BootstrapParams = {}): Promise<Boots
 
 export async function loadWorkspaceTodos(params: BootstrapParams = {}): Promise<BootstrapTodo[]> {
 	const cacheKey = toTodosCacheKey(params.workspaceId);
+	const activeTodosKey = toTodosCacheKey();
 
 	if (todosInFlight.has(cacheKey)) {
 		return todosInFlight.get(cacheKey)!;
 	}
 	if (!params.force) {
 		if (todosCache.has(cacheKey)) return todosCache.get(cacheKey)!;
-		if (cache.has(cacheKey)) return cache.get(cacheKey)!.todos;
+		await awaitInFlightBootstrap(Array.from(inFlight.keys()));
+		if (todosCache.has(cacheKey)) return todosCache.get(cacheKey)!;
+		if (params.workspaceId && todosCache.has(activeTodosKey)) return todosCache.get(activeTodosKey)!;
 	}
 
 	const requestPromise = (async () => {

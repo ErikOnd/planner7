@@ -1,13 +1,13 @@
 "use client";
 
 import { loadWeekNotes } from "@/lib/clientBootstrap";
+import { invalidateWorkspaceNotesCache } from "@/lib/clientBootstrap";
 import { logClientPerf } from "@/lib/perf";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import type { NoteContent } from "types/noteContent";
 import { cleanupUnusedImages } from "../actions/upload-image";
 import { getDailyNote, saveDailyNote } from "../app/actions/dailyNotes";
 import { useWorkspace } from "./WorkspaceContext";
-import { invalidateWorkspaceNotesCache } from "@/lib/clientBootstrap";
 
 type NoteCache = {
 	[dateString: string]: NoteContent | undefined;

@@ -1,7 +1,7 @@
 import { getCurrentUser } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { ensureWorkspaceSession } from "@/lib/workspaces";
 import { isWorkspaceGradientPreset } from "@/lib/workspaceGradients";
+import { ensureWorkspaceSession } from "@/lib/workspaces";
 import { NextResponse } from "next/server";
 import type { AppBootstrapPayload } from "types/appBootstrap";
 

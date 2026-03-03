@@ -2,6 +2,7 @@
 
 import styles from "../SmartEditor.module.scss";
 
+import { useVoiceUsage } from "@/contexts/VoiceUsageContext";
 import { DAILY_VOICE_LIMIT_SECONDS, formatRemainingVoiceSeconds } from "@/lib/voiceQuota";
 import { Icon } from "@atoms/Icons/Icon";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -20,11 +21,10 @@ type VoiceNoteEventDetail = {
 
 export default function SpeechToTextButtonPlugin({ editorId }: SpeechToTextButtonPluginProps) {
 	const [editor] = useLexicalComposerContext();
+	const { remainingSeconds, isLoading: isUsageLoading, isLoaded, ensureLoaded, setRemainingSeconds } = useVoiceUsage();
 	const [isSpeechAvailable, setIsSpeechAvailable] = useState(false);
 	const [isListening, setIsListening] = useState(false);
 	const [isProcessing, setIsProcessing] = useState(false);
-	const [remainingSeconds, setRemainingSeconds] = useState<number>(DAILY_VOICE_LIMIT_SECONDS);
-	const [isUsageLoading, setIsUsageLoading] = useState(true);
 	const [liveRemainingSeconds, setLiveRemainingSeconds] = useState<number | null>(null);
 	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 	const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -58,39 +58,6 @@ export default function SpeechToTextButtonPlugin({ editorId }: SpeechToTextButto
 			setIsProcessing(false);
 		};
 	}, []);
-
-	const loadVoiceUsage = useCallback(async () => {
-		let resolvedRemaining = DAILY_VOICE_LIMIT_SECONDS;
-		try {
-			setIsUsageLoading(true);
-			const response = await fetch("/api/ai/voice-usage", {
-				method: "GET",
-			});
-			const payload = (await response.json()) as {
-				success: boolean;
-				remainingSeconds?: number;
-				limitSeconds?: number;
-				quotaEnabled?: boolean;
-			};
-			if (!payload.success) {
-				resolvedRemaining = payload.remainingSeconds ?? 0;
-				setRemainingSeconds(resolvedRemaining);
-				return resolvedRemaining;
-			}
-			resolvedRemaining = payload.remainingSeconds ?? payload.limitSeconds ?? DAILY_VOICE_LIMIT_SECONDS;
-			setRemainingSeconds(resolvedRemaining);
-		} catch {
-			resolvedRemaining = 0;
-			setRemainingSeconds(resolvedRemaining);
-		} finally {
-			setIsUsageLoading(false);
-		}
-		return resolvedRemaining;
-	}, []);
-
-	useEffect(() => {
-		void loadVoiceUsage();
-	}, [loadVoiceUsage]);
 
 	const processAudio = useCallback(async (audioBlob: Blob, durationSeconds?: number) => {
 		setIsProcessing(true);
@@ -147,7 +114,7 @@ export default function SpeechToTextButtonPlugin({ editorId }: SpeechToTextButto
 		} finally {
 			setIsProcessing(false);
 		}
-	}, [editor]);
+	}, [editor, setRemainingSeconds]);
 
 	const stopSpeechToText = useCallback(() => {
 		const recorder = mediaRecorderRef.current;
@@ -174,7 +141,7 @@ export default function SpeechToTextButtonPlugin({ editorId }: SpeechToTextButto
 
 		void (async () => {
 			try {
-				const serverRemaining = await loadVoiceUsage();
+				const serverRemaining = await ensureLoaded();
 				if (serverRemaining <= 0) {
 					toast.info("You have 0:00 voice time left today.");
 					return;
@@ -200,7 +167,7 @@ export default function SpeechToTextButtonPlugin({ editorId }: SpeechToTextButto
 					const durationSeconds = startedAt ? Math.max(1, Math.ceil((Date.now() - startedAt) / 1000)) : undefined;
 					if (durationSeconds) {
 						const localRemaining = Math.max(0, recordingStartedWithRemainingRef.current - durationSeconds);
-						setRemainingSeconds((prev) => Math.min(prev, localRemaining));
+						setRemainingSeconds(localRemaining);
 					}
 					if (audioBlob.size > 0) {
 						void processAudio(audioBlob, durationSeconds);
@@ -223,7 +190,7 @@ export default function SpeechToTextButtonPlugin({ editorId }: SpeechToTextButto
 				setIsListening(false);
 			}
 		})();
-	}, [isListening, isProcessing, loadVoiceUsage, processAudio, stopSpeechToText]);
+	}, [ensureLoaded, isListening, isProcessing, processAudio, setRemainingSeconds, stopSpeechToText]);
 
 	const toggleSpeechToText = () => {
 		if (isProcessing) return;
@@ -233,6 +200,11 @@ export default function SpeechToTextButtonPlugin({ editorId }: SpeechToTextButto
 		}
 		startSpeechToText();
 	};
+
+	const preloadVoiceUsage = useCallback(() => {
+		if (isLoaded || isUsageLoading) return;
+		void ensureLoaded();
+	}, [ensureLoaded, isLoaded, isUsageLoading]);
 
 	useEffect(() => {
 		if (!isListening) return;
@@ -285,7 +257,7 @@ export default function SpeechToTextButtonPlugin({ editorId }: SpeechToTextButto
 
 	if (!isSpeechAvailable) return null;
 	const shownRemainingSeconds = liveRemainingSeconds ?? remainingSeconds;
-	const voiceRemainingLabel = isUsageLoading
+	const voiceRemainingLabel = (isUsageLoading && !isLoaded)
 		? "Voice left today: ..."
 		: `Voice left today: ${formatRemainingVoiceSeconds(shownRemainingSeconds)}`;
 
@@ -307,7 +279,9 @@ export default function SpeechToTextButtonPlugin({ editorId }: SpeechToTextButto
 					event.preventDefault();
 				}}
 				onClick={toggleSpeechToText}
-				disabled={isProcessing || isUsageLoading}
+				onMouseEnter={preloadVoiceUsage}
+				onFocus={preloadVoiceUsage}
+				disabled={isProcessing}
 				aria-label={isListening ? "Stop dictation" : "Start AI voice notes"}
 			>
 				<Icon name="Microphone" size={24} />

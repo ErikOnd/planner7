@@ -12,6 +12,7 @@ import { AutoLinkPlugin } from "@lexical/react/LexicalAutoLinkPlugin";
 import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
 import { ClickableLinkPlugin } from "@lexical/react/LexicalClickableLinkPlugin";
 import { type InitialConfigType, LexicalComposer } from "@lexical/react/LexicalComposer";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { DraggableBlockPlugin_EXPERIMENTAL } from "@lexical/react/LexicalDraggableBlockPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
@@ -20,7 +21,6 @@ import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
 import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -114,10 +114,13 @@ function EditorStateSyncPlugin({ serializedEditorState }: { serializedEditorStat
 	const [editor] = useLexicalComposerContext();
 
 	useEffect(() => {
+		const currentState = JSON.stringify(editor.getEditorState().toJSON());
+		if (currentState === serializedEditorState) return;
+
 		editor.update(() => {
 			const nextState = editor.parseEditorState(serializedEditorState);
 			editor.setEditorState(nextState);
-		});
+		}, { tag: "external-sync" });
 	}, [editor, serializedEditorState]);
 
 	return null;
@@ -327,7 +330,8 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel, edito
 					/>
 				)}
 				<OnChangePlugin
-					onChange={(nextEditorState) => {
+					onChange={(nextEditorState, _editor, tags) => {
+						if (tags.has("external-sync")) return;
 						const editorStateJSON = nextEditorState.toJSON();
 						onChange?.(JSON.stringify(editorStateJSON));
 					}}

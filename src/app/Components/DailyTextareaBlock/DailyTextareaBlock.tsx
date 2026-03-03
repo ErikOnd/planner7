@@ -37,6 +37,9 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	const textareaBlock = useRef<HTMLDivElement | null>(null);
 	const editorContainerRef = useRef<HTMLDivElement | null>(null);
 	const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const lastPersistedContentRef = useRef<NoteContent | undefined>(undefined);
+	const isSavingRef = useRef(false);
+	const pendingContentRef = useRef<NoteContent | null>(null);
 	const dateKey = textareaDate.toISOString().split("T")[0];
 	const { activeWorkspaceId } = useWorkspace();
 
@@ -44,6 +47,10 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	const content = getNote(dateKey);
 	const isLoading = !hasNote(dateKey);
 	const [isEditorReady, setIsEditorReady] = React.useState(autoFocus || !lazyMountOnIdle);
+
+	useEffect(() => {
+		lastPersistedContentRef.current = content;
+	}, [content, dateKey, activeWorkspaceId]);
 
 	useEffect(() => {
 		if (autoFocus || !lazyMountOnIdle) {
@@ -109,13 +116,38 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 
 	const handleChange = useCallback(
 		(newContent: NoteContent) => {
+			if (lastPersistedContentRef.current === newContent) {
+				return;
+			}
+
 			if (saveTimeoutRef.current) {
 				clearTimeout(saveTimeoutRef.current);
 			}
 
 			saveTimeoutRef.current = setTimeout(async () => {
-				await saveNote(dateKey, newContent);
-			}, 1000);
+				if (lastPersistedContentRef.current === newContent) {
+					return;
+				}
+
+				if (isSavingRef.current) {
+					pendingContentRef.current = newContent;
+					return;
+				}
+
+				isSavingRef.current = true;
+				let contentToSave: NoteContent | null = newContent;
+
+				try {
+					while (contentToSave && lastPersistedContentRef.current !== contentToSave) {
+						await saveNote(dateKey, contentToSave);
+						lastPersistedContentRef.current = contentToSave;
+						contentToSave = pendingContentRef.current;
+						pendingContentRef.current = null;
+					}
+				} finally {
+					isSavingRef.current = false;
+				}
+			}, 1800);
 		},
 		[dateKey, saveNote],
 	);
@@ -140,6 +172,7 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 			if (saveTimeoutRef.current) {
 				clearTimeout(saveTimeoutRef.current);
 			}
+			pendingContentRef.current = null;
 		};
 	}, []);
 

@@ -1,7 +1,7 @@
 "use client";
 
-import type { ProfileData } from "@hooks/useProfileSettings";
 import { invalidateProfileAndPreferencesCache, loadAppBootstrap } from "@/lib/clientBootstrap";
+import type { ProfileData } from "@hooks/useProfileSettings";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { updateUserProfile } from "../app/actions/profile";
 
