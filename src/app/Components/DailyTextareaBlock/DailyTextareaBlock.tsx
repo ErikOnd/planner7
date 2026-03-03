@@ -173,7 +173,6 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 				)}
 				{!isLoading && isEditorReady && (
 					<SmartEditor
-						key={`${activeWorkspaceId ?? "no-workspace"}:${dateKey}`}
 						initialContent={content}
 						onChange={handleChange}
 						ariaLabel={`Notes for ${weekday}, ${date}`}

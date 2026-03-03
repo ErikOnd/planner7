@@ -26,6 +26,7 @@ export function WorkspaceSwitcher({ compact = false, variant = "default" }: Work
 		isSaving,
 		error,
 		switchWorkspace,
+		prefetchWorkspace,
 		createWorkspaceAction,
 		renameWorkspaceAction,
 		updateWorkspaceGradientAction,
@@ -150,6 +151,9 @@ export function WorkspaceSwitcher({ compact = false, variant = "default" }: Work
 							onCreateWorkspace={onCreateWorkspace}
 							onQuickSwitchWorkspace={(workspaceId) => {
 								void onQuickSwitchWorkspace(workspaceId);
+							}}
+							onPrefetchWorkspace={(workspaceId) => {
+								void prefetchWorkspace(workspaceId);
 							}}
 							onStartEditingWorkspace={startEditingWorkspace}
 							onSaveRename={() => {

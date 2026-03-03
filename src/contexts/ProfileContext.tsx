@@ -1,8 +1,9 @@
 "use client";
 
 import type { ProfileData } from "@hooks/useProfileSettings";
+import { invalidateProfileAndPreferencesCache, loadAppBootstrap } from "@/lib/clientBootstrap";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { getUserProfile, updateUserProfile } from "../app/actions/profile";
+import { updateUserProfile } from "../app/actions/profile";
 
 type ProfileUpdateInput = {
 	displayName?: string;
@@ -36,15 +37,14 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 		setIsLoading(true);
 		setError(null);
 		try {
-			const result = await getUserProfile();
-			if (!result.success || !result.data) {
-				const message = result.error || "Failed to load profile";
-				setError(message);
-				return { success: false, error: message };
-			}
-
-			setProfile(result.data);
-			return { success: true, data: result.data };
+			const bootstrap = await loadAppBootstrap();
+			setProfile(bootstrap.profile);
+			return { success: true, data: bootstrap.profile };
+		} catch (error) {
+			console.error("Failed to load profile from bootstrap:", error);
+			const message = "Failed to load profile";
+			setError(message);
+			return { success: false, error: message };
 		} finally {
 			setIsLoading(false);
 		}
@@ -63,6 +63,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 			return { success: false, error: message };
 		}
 
+		invalidateProfileAndPreferencesCache();
 		setProfile(result.data);
 		return {
 			success: true,

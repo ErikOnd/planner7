@@ -58,71 +58,6 @@ export async function checkUserExists() {
 	});
 }
 
-export async function getUserProfile() {
-	return withUser({
-		run: async ({ userId }) => {
-			// Get the current auth email from Supabase
-			const { createClient } = await import("@utils/supabase/server");
-			const supabase = await createClient();
-			const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-			if (authError || !user) {
-				return { success: false, error: "Failed to get auth user" };
-			}
-
-			const profile = await prisma.profile.findUnique({
-				where: { id: userId },
-				select: {
-					email: true,
-					displayName: true,
-					showWeekends: true,
-					showEditorToolbar: true,
-				},
-			});
-
-			if (!profile) {
-				return { success: false, error: "Profile not found" };
-			}
-
-			// Sync email from Auth to Profile table if they differ
-			// This happens after user confirms their new email
-			if (user.email && user.email !== profile.email) {
-				await prisma.profile.update({
-					where: { id: userId },
-					data: { email: user.email },
-				});
-
-				return {
-					success: true,
-					data: {
-						email: user.email,
-						displayName: profile.displayName,
-						showWeekends: profile.showWeekends,
-						showEditorToolbar: profile.showEditorToolbar,
-						pendingEmail: user.new_email || undefined,
-					},
-				};
-			}
-
-			return {
-				success: true,
-				data: {
-					email: profile.email,
-					displayName: profile.displayName,
-					showWeekends: profile.showWeekends,
-					showEditorToolbar: profile.showEditorToolbar,
-					pendingEmail: user.new_email || undefined,
-				},
-			};
-		},
-		onAuthError: (error) => ({ success: false, error }),
-		onError: (error) => {
-			console.error("Error fetching user profile:", error);
-			return { success: false, error: "Failed to fetch profile" };
-		},
-	});
-}
-
 export async function updateUserProfile(data: { displayName?: string; email?: string }) {
 	return withUser({
 		run: async ({ userId }) => {
@@ -196,37 +131,6 @@ export async function updateUserProfile(data: { displayName?: string; email?: st
 		onError: (error) => {
 			console.error("Error updating user profile:", error);
 			return { success: false, error: "Failed to update profile" };
-		},
-	});
-}
-
-export async function getUserPreferences() {
-	return withUser<{ success: boolean; error?: string; data?: { showWeekends: boolean; showEditorToolbar: boolean } }>({
-		run: async ({ userId }) => {
-			const profile = await prisma.profile.findUnique({
-				where: { id: userId },
-				select: {
-					showWeekends: true,
-					showEditorToolbar: true,
-				},
-			});
-
-			if (!profile) {
-				return { success: false, error: "Profile not found" };
-			}
-
-			return {
-				success: true,
-				data: {
-					showWeekends: profile.showWeekends,
-					showEditorToolbar: profile.showEditorToolbar,
-				},
-			};
-		},
-		onAuthError: (error) => ({ success: false, error }),
-		onError: (error) => {
-			console.error("Error fetching user preferences:", error);
-			return { success: false, error: "Failed to fetch preferences" };
 		},
 	});
 }

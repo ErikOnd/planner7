@@ -62,25 +62,6 @@ async function createGeneralTodo(_prevState: FormState, formData: FormData): Pro
 	});
 }
 
-export async function getGeneralTodos() {
-	return withWorkspace({
-		run: async (context) => {
-			return await prisma.generalTodo.findMany({
-				where: {
-					userId: context.userId,
-					workspaceId: context.activeWorkspaceId,
-				},
-				orderBy: { order: "asc" },
-			});
-		},
-		onAuthError: () => [],
-		onError: (error) => {
-			console.error("Error fetching general todos:", error);
-			return [];
-		},
-	});
-}
-
 export async function updateGeneralTodoCompletion(todoId: string, completed: boolean): Promise<FormState> {
 	return withWorkspace<FormState>({
 		run: async (context) => {

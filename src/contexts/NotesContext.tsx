@@ -1,10 +1,13 @@
 "use client";
 
+import { loadWeekNotes } from "@/lib/clientBootstrap";
+import { logClientPerf } from "@/lib/perf";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import type { NoteContent } from "types/noteContent";
 import { cleanupUnusedImages } from "../actions/upload-image";
-import { getDailyNote, getWeeklyNotes, saveDailyNote } from "../app/actions/dailyNotes";
+import { getDailyNote, saveDailyNote } from "../app/actions/dailyNotes";
 import { useWorkspace } from "./WorkspaceContext";
+import { invalidateWorkspaceNotesCache } from "@/lib/clientBootstrap";
 
 type NoteCache = {
 	[dateString: string]: NoteContent | undefined;
@@ -153,11 +156,16 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 		}
 
 		const loadPromise = (async () => {
+			const startedAt = performance.now();
 			try {
 				const noteMap: Record<string, NoteContent | undefined> = {};
-				const notes = await getWeeklyNotes(startDate, endDate);
-				notes.forEach(note => {
-					noteMap[toDateString(note.date)] = note.content as NoteContent | undefined;
+				const notes = await loadWeekNotes({
+					startDate,
+					endDate,
+					workspaceId: activeWorkspaceId,
+				});
+				notes.forEach((note) => {
+					noteMap[toDateString(new Date(note.date))] = note.content;
 				});
 
 				weekDates.forEach((dateString) => {
@@ -170,23 +178,36 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 				if (!isCleanupRunningRef.current && typeof window !== "undefined") {
 					const lastCleanupAt = Number(window.localStorage.getItem(LAST_CLEANUP_KEY) || 0);
 					if (!Number.isFinite(lastCleanupAt) || Date.now() - lastCleanupAt >= CLEANUP_INTERVAL_MS) {
-						isCleanupRunningRef.current = true;
-						void cleanupUnusedImages()
-							.then((result) => {
-								if (!result.success) {
-									console.error("Image cleanup failed:", result.error);
-									return;
-								}
-								window.localStorage.setItem(LAST_CLEANUP_KEY, String(Date.now()));
-							})
-							.catch((error) => {
-								console.error("Image cleanup action crashed:", error);
-							})
-							.finally(() => {
-								isCleanupRunningRef.current = false;
-							});
+						const runCleanup = () => {
+							isCleanupRunningRef.current = true;
+							void cleanupUnusedImages()
+								.then((result) => {
+									if (!result.success) {
+										console.error("Image cleanup failed:", result.error);
+										return;
+									}
+									window.localStorage.setItem(LAST_CLEANUP_KEY, String(Date.now()));
+								})
+								.catch((error) => {
+									console.error("Image cleanup action crashed:", error);
+								})
+								.finally(() => {
+									isCleanupRunningRef.current = false;
+								});
+						};
+
+						if (typeof window.requestIdleCallback === "function") {
+							window.requestIdleCallback(() => runCleanup(), { timeout: 2000 });
+						} else {
+							window.setTimeout(runCleanup, 400);
+						}
 					}
 				}
+				logClientPerf("notes.loadWeek", startedAt, {
+					workspaceId: activeWorkspaceId,
+					weekKey,
+					dates: weekDates.length,
+				});
 			} catch (error) {
 				console.error("Error loading weekly notes:", error);
 			} finally {
@@ -207,6 +228,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
 
 		// Optimistic update
 		cacheRef.current[noteKey] = content;
+		invalidateWorkspaceNotesCache(activeWorkspaceId);
 		persistCache();
 		triggerUpdate();
 

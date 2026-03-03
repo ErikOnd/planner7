@@ -74,25 +74,3 @@ export async function getDailyNote(date: string) {
 		},
 	});
 }
-
-export async function getWeeklyNotes(startDate: Date, endDate: Date) {
-	return withWorkspace({
-		run: async (context) => {
-			return await prisma.dailyNote.findMany({
-				where: {
-					userId: context.userId,
-					workspaceId: context.activeWorkspaceId,
-					date: {
-						gte: startDate,
-						lte: endDate,
-					},
-				},
-			});
-		},
-		onAuthError: () => [],
-		onError: (error) => {
-			console.error("Error fetching weekly notes:", error);
-			return [];
-		},
-	});
-}

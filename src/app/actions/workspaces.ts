@@ -17,11 +17,6 @@ export type WorkspaceSummary = {
 	updatedAt: Date;
 };
 
-export type WorkspacesPayload = {
-	workspaces: WorkspaceSummary[];
-	activeWorkspaceId: string;
-};
-
 function normalizeWorkspaceName(value: string) {
 	return value.trim().replace(/\s+/g, " ");
 }
@@ -43,26 +38,6 @@ async function requireWorkspaceSession() {
 		throw new Error(context.error);
 	}
 	return context;
-}
-
-export async function getWorkspaces(): Promise<WorkspacesPayload> {
-	const session = await requireWorkspaceSession();
-	const rows = await prisma.workspace.findMany({
-		where: { userId: session.userId },
-		orderBy: [{ updatedAt: "desc" }, { createdAt: "asc" }],
-	});
-	const workspaces: WorkspaceSummary[] = rows.map((workspace) => ({
-		id: workspace.id,
-		name: workspace.name,
-		gradientPreset: isWorkspaceGradientPreset(workspace.gradientPreset) ? workspace.gradientPreset : "violet",
-		createdAt: workspace.createdAt,
-		updatedAt: workspace.updatedAt,
-	}));
-
-	return {
-		workspaces,
-		activeWorkspaceId: session.activeWorkspaceId,
-	};
 }
 
 export async function setActiveWorkspace(workspaceId: string): Promise<WorkspaceActionResult> {

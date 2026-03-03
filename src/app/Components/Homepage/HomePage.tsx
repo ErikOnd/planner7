@@ -5,7 +5,6 @@ import styles from "@components/Homepage/HomePage.module.scss";
 import { useNotes } from "@/contexts/NotesContext";
 import { useProfile } from "@/contexts/ProfileContext";
 import { Button } from "@atoms/Button/Button";
-import { Spinner } from "@atoms/Spinner/Spinner";
 import { DesktopContent } from "@components/DesktopContent/DesktopContent";
 import { DesktopNavigation } from "@components/DesktopNavigation/DesktopNavigation";
 import { MobileNavigation } from "@components/MobileNavigation/MobileNavigation";
@@ -18,6 +17,7 @@ import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import * as Dialog from "@radix-ui/react-dialog";
 import { getCurrentWeek } from "@utils/getCurrentWeek";
 import { FormEvent, useEffect, useState } from "react";
+import { logClientPerf } from "@/lib/perf";
 import { getDailyGreetingDisabledKey, getDailyGreetingLastShownKey } from "../../constants/dailyGreeting";
 
 function getTimeBasedGreeting() {
@@ -50,16 +50,47 @@ export default function HomePage() {
 	const [namePromptError, setNamePromptError] = useState<string | null>(null);
 	const [isDailyGreetingOpen, setIsDailyGreetingOpen] = useState(false);
 	const { rangeLabel } = getCurrentWeek(baseDate);
-	const { showWeekends, isLoading: isPreferencesLoading } = useWeekDisplayPreference();
+	const { showWeekends } = useWeekDisplayPreference();
 	const { profile, isLoading: isProfileLoading, updateDisplayName } = useProfile();
 	const { loadWeek } = useNotes();
 
 	useEffect(() => {
-		const { days } = getCurrentWeek(baseDate);
-		const startDate = days[0].fullDate;
-		const endDate = days[6].fullDate;
+		let cancelled = false;
+		const startedAt = performance.now();
 
-		loadWeek(startDate, endDate);
+		const currentWeek = getCurrentWeek(baseDate);
+		const startDate = currentWeek.days[0].fullDate;
+		const endDate = currentWeek.days[6].fullDate;
+
+		void (async () => {
+			await loadWeek(startDate, endDate);
+			if (cancelled) return;
+			logClientPerf("homepage.currentWeek.ready", startedAt);
+
+			const schedulePrefetch = () => {
+				if (cancelled) return;
+				const prevBase = new Date(baseDate);
+				prevBase.setDate(prevBase.getDate() - 7);
+				const nextBase = new Date(baseDate);
+				nextBase.setDate(nextBase.getDate() + 7);
+
+				const prevWeek = getCurrentWeek(prevBase);
+				const nextWeek = getCurrentWeek(nextBase);
+
+				void loadWeek(prevWeek.days[0].fullDate, prevWeek.days[6].fullDate);
+				void loadWeek(nextWeek.days[0].fullDate, nextWeek.days[6].fullDate);
+			};
+
+			if (typeof window !== "undefined" && typeof window.requestIdleCallback === "function") {
+				window.requestIdleCallback(schedulePrefetch, { timeout: 1000 });
+				return;
+			}
+			window.setTimeout(schedulePrefetch, 250);
+		})();
+
+		return () => {
+			cancelled = true;
+		};
 	}, [baseDate, loadWeek]);
 
 	useEffect(() => {
@@ -177,16 +208,6 @@ export default function HomePage() {
 				return null;
 		}
 	};
-
-	if (isPreferencesLoading) {
-		return (
-			<main className={styles["home-page"]}>
-				<div className={styles["home-page-loading"]}>
-					<Spinner />
-				</div>
-			</main>
-		);
-	}
 
 	return (
 		<main className={styles["home-page"]}>

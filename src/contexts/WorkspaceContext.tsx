@@ -1,11 +1,11 @@
 "use client";
 
 import type { WorkspaceGradientPreset } from "@/lib/workspaceGradients";
+import { invalidateWorkspaceTopologyCache, loadAppBootstrap } from "@/lib/clientBootstrap";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
 	createWorkspace,
 	deleteWorkspace,
-	getWorkspaces,
 	renameWorkspace,
 	setActiveWorkspace,
 	updateWorkspaceGradient,
@@ -20,6 +20,7 @@ type WorkspaceContextValue = {
 	isSaving: boolean;
 	error: string | null;
 	refreshWorkspaces: () => Promise<void>;
+	prefetchWorkspace: (workspaceId: string) => Promise<void>;
 	switchWorkspace: (workspaceId: string) => Promise<{ success: boolean; error?: string }>;
 	createWorkspaceAction: (
 		name: string,
@@ -46,9 +47,15 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 		setIsLoading(true);
 		setError(null);
 		try {
-			const data = await getWorkspaces();
-			setWorkspaces(data.workspaces);
-			setActiveWorkspaceId(data.activeWorkspaceId);
+			const bootstrap = await loadAppBootstrap();
+			setWorkspaces(
+				bootstrap.workspaces.map((workspace) => ({
+					...workspace,
+					createdAt: new Date(workspace.createdAt),
+					updatedAt: new Date(workspace.updatedAt),
+				})),
+			);
+			setActiveWorkspaceId(bootstrap.activeWorkspaceId);
 		} catch (fetchError) {
 			setError("Failed to load workspaces");
 			console.error("Error loading workspaces:", fetchError);
@@ -82,6 +89,14 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 		}
 	}, []);
 
+	const prefetchWorkspace = useCallback(async (workspaceId: string) => {
+		try {
+			await loadAppBootstrap({ workspaceId });
+		} catch {
+			// ignore prefetch failures
+		}
+	}, []);
+
 	const createWorkspaceAction = useCallback(async (name: string, gradientPreset: WorkspaceGradientPreset) => {
 		setIsSaving(true);
 		setError(null);
@@ -91,6 +106,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 				setError(result.error ?? "Failed to create workspace");
 				return result;
 			}
+			invalidateWorkspaceTopologyCache();
 			await refreshWorkspaces();
 			return result;
 		} catch (createError) {
@@ -111,6 +127,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 				setError(result.error ?? "Failed to rename workspace");
 				return result;
 			}
+			invalidateWorkspaceTopologyCache();
 			await refreshWorkspaces();
 			return result;
 		} catch (renameError) {
@@ -132,6 +149,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 					setError(result.error ?? "Failed to update workspace gradient");
 					return result;
 				}
+				invalidateWorkspaceTopologyCache();
 				await refreshWorkspaces();
 				return result;
 			} catch (gradientError) {
@@ -154,6 +172,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 				setError(result.error ?? "Failed to delete workspace");
 				return result;
 			}
+			invalidateWorkspaceTopologyCache();
 			await refreshWorkspaces();
 			return result;
 		} catch (deleteError) {
@@ -180,6 +199,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 				isSaving,
 				error,
 				refreshWorkspaces,
+				prefetchWorkspace,
 				switchWorkspace,
 				createWorkspaceAction,
 				renameWorkspaceAction,

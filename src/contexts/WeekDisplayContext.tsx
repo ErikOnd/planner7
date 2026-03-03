@@ -1,7 +1,8 @@
 "use client";
 
+import { invalidateProfileAndPreferencesCache, loadAppBootstrap } from "@/lib/clientBootstrap";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { getUserPreferences, updateUserPreferences } from "../app/actions/profile";
+import { updateUserPreferences } from "../app/actions/profile";
 
 type WeekDisplayContextValue = {
 	showWeekends: boolean;
@@ -25,12 +26,13 @@ export function WeekDisplayProvider({ children }: { children: ReactNode }) {
 	useEffect(() => {
 		const fetchPreferences = async () => {
 			setIsLoading(true);
-			const result = await getUserPreferences();
-			if (result.success && result.data) {
-				setShowWeekendsState(result.data.showWeekends);
-				setShowEditorToolbarState(Boolean(result.data.showEditorToolbar));
-			} else {
-				setError(result.error || "Failed to load preferences");
+			try {
+				const bootstrap = await loadAppBootstrap();
+				setShowWeekendsState(bootstrap.profile.showWeekends);
+				setShowEditorToolbarState(Boolean(bootstrap.profile.showEditorToolbar));
+			} catch (error) {
+				console.error("Error loading preferences from bootstrap:", error);
+				setError("Failed to load preferences");
 			}
 			setIsLoading(false);
 		};
@@ -47,6 +49,8 @@ export function WeekDisplayProvider({ children }: { children: ReactNode }) {
 		if (!result.success) {
 			setError(result.error || "Failed to update preferences");
 			setShowWeekendsState(prev => !prev);
+		} else {
+			invalidateProfileAndPreferencesCache();
 		}
 
 		setIsSaving(false);
@@ -61,6 +65,8 @@ export function WeekDisplayProvider({ children }: { children: ReactNode }) {
 		if (!result.success) {
 			setError(result.error || "Failed to update preferences");
 			setShowEditorToolbarState(prev => !prev);
+		} else {
+			invalidateProfileAndPreferencesCache();
 		}
 
 		setIsSaving(false);

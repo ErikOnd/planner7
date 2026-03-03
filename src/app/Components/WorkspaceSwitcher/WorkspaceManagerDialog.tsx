@@ -30,6 +30,7 @@ type WorkspaceManagerDialogProps = {
 	onEditingGradientChange: (preset: WorkspaceGradientPreset) => void;
 	onCreateWorkspace: (event: FormEvent) => void;
 	onQuickSwitchWorkspace: (workspaceId: string) => void;
+	onPrefetchWorkspace: (workspaceId: string) => void;
 	onStartEditingWorkspace: (workspaceId: string, name: string) => void;
 	onSaveRename: () => void;
 	onCancelEditing: () => void;
@@ -65,6 +66,7 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 		onEditingGradientChange,
 		onCreateWorkspace,
 		onQuickSwitchWorkspace,
+		onPrefetchWorkspace,
 		onStartEditingWorkspace,
 		onSaveRename,
 		onCancelEditing,
@@ -134,6 +136,12 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 													setIsCreateOpen(false);
 												}}
 												disabled={isSaving || Boolean(switchingWorkspaceId) || isActive}
+												onMouseEnter={() => {
+													if (!isActive) onPrefetchWorkspace(workspace.id);
+												}}
+												onFocus={() => {
+													if (!isActive) onPrefetchWorkspace(workspace.id);
+												}}
 												style={{
 													["--workspace-grad-from" as string]: gradient.from,
 													["--workspace-grad-to" as string]: gradient.to,

@@ -20,15 +20,15 @@ import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
 import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { $createParagraphNode, $createTextNode, $getRoot } from "lexical";
 import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import type { NoteContent } from "types/noteContent";
+import type { LexicalEditorStateJSON, NoteContent } from "types/noteContent";
 import { ImageNode } from "./nodes/ImageNode";
 import CodeHighlightingPlugin from "./plugins/CodeHighlightingPlugin";
 import ImageUploadDropPlugin from "./plugins/ImageUploadDropPlugin";
@@ -44,6 +44,84 @@ type SmartEditorProps = {
 	ariaLabel?: string;
 	editorId?: string;
 };
+
+function createParagraphNodeJSON(line: string) {
+	return {
+		children: line
+			? [{
+				detail: 0,
+				format: 0,
+				mode: "normal",
+				style: "",
+				text: line,
+				type: "text",
+				version: 1,
+			}]
+			: [],
+		direction: null,
+		format: "",
+		indent: 0,
+		type: "paragraph",
+		version: 1,
+	};
+}
+
+function toLexicalStateJSON(initialContent?: NoteContent): LexicalEditorStateJSON {
+	if (isLexicalEditorState(initialContent)) {
+		return hasNonEmptyRoot(initialContent) ? initialContent : emptyState;
+	}
+
+	if (typeof initialContent === "string") {
+		try {
+			const parsed = JSON.parse(initialContent);
+			if (isLexicalEditorState(parsed)) {
+				return hasNonEmptyRoot(parsed) ? parsed : emptyState;
+			}
+		} catch {
+			// treat as plain text
+		}
+
+		return {
+			root: {
+				children: [createParagraphNodeJSON(initialContent)],
+				direction: null,
+				format: "",
+				indent: 0,
+				type: "root",
+				version: 1,
+			},
+		};
+	}
+
+	const markdown = blockNoteToMarkdown(initialContent);
+	if (!markdown) {
+		return emptyState;
+	}
+
+	return {
+		root: {
+			children: markdown.split("\n").map((line) => createParagraphNodeJSON(line)),
+			direction: null,
+			format: "",
+			indent: 0,
+			type: "root",
+			version: 1,
+		},
+	};
+}
+
+function EditorStateSyncPlugin({ serializedEditorState }: { serializedEditorState: string }) {
+	const [editor] = useLexicalComposerContext();
+
+	useEffect(() => {
+		editor.update(() => {
+			const nextState = editor.parseEditorState(serializedEditorState);
+			editor.setEditorState(nextState);
+		});
+	}, [editor, serializedEditorState]);
+
+	return null;
+}
 
 export default function SmartEditor({ initialContent, onChange, ariaLabel, editorId }: SmartEditorProps) {
 	const { mounted } = useTheme();
@@ -84,44 +162,8 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel, edito
 		return () => window.removeEventListener("resize", updateToolbarOffset);
 	}, [showEditorToolbar]);
 
-	const editorState = useMemo(() => {
-		if (isLexicalEditorState(initialContent)) {
-			return JSON.stringify(hasNonEmptyRoot(initialContent) ? initialContent : emptyState);
-		}
-
-		if (typeof initialContent === "string") {
-			try {
-				const parsed = JSON.parse(initialContent);
-				if (isLexicalEditorState(parsed)) {
-					return JSON.stringify(hasNonEmptyRoot(parsed) ? parsed : emptyState);
-				}
-			} catch {
-				// Fall through and treat as plain text from older data.
-			}
-
-			return () => {
-				const root = $getRoot();
-				root.clear();
-				const paragraph = $createParagraphNode();
-				paragraph.append($createTextNode(initialContent));
-				root.append(paragraph);
-			};
-		}
-
-		const markdown = blockNoteToMarkdown(initialContent);
-		return () => {
-			const root = $getRoot();
-			root.clear();
-			if (!markdown) {
-				root.append($createParagraphNode());
-				return;
-			}
-			markdown.split("\n").forEach((line) => {
-				const paragraph = $createParagraphNode();
-				paragraph.append($createTextNode(line));
-				root.append(paragraph);
-			});
-		};
+	const serializedEditorState = useMemo(() => {
+		return JSON.stringify(toLexicalStateJSON(initialContent));
 	}, [initialContent]);
 
 	const initialConfig = useMemo<InitialConfigType>(() => {
@@ -165,12 +207,12 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel, edito
 				AutoLinkNode,
 				ImageNode,
 			],
-			editorState,
+			editorState: serializedEditorState,
 			onError(error: Error) {
 				console.error(error);
 			},
 		};
-	}, [editorState]);
+	}, [serializedEditorState]);
 
 	if (typeof window === "undefined" || !mounted) return null;
 
@@ -290,6 +332,7 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel, edito
 						onChange?.(JSON.stringify(editorStateJSON));
 					}}
 				/>
+				<EditorStateSyncPlugin serializedEditorState={serializedEditorState} />
 				<ImageLibraryDialog
 					open={isImageLibraryOpen}
 					onOpenChange={(open) => {

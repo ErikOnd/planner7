@@ -1,9 +1,35 @@
 "use client";
 
 import { useWorkspace } from "@/contexts/WorkspaceContext";
+import { invalidateWorkspaceTodosCache, loadWorkspaceTodos } from "@/lib/clientBootstrap";
+import { logClientPerf } from "@/lib/perf";
 import type { GeneralTodo } from "@prisma/client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { deleteGeneralTodo, getGeneralTodos, updateGeneralTodoCompletion } from "../app/actions/generalTodos";
+import { deleteGeneralTodo, updateGeneralTodoCompletion } from "../app/actions/generalTodos";
+
+function toGeneralTodo(todo: {
+	id: string;
+	userId: string;
+	workspaceId: string;
+	text: string;
+	completed: boolean;
+	completedAt: string | null;
+	createdAt: string;
+	updatedAt: string;
+	order: number;
+}): GeneralTodo {
+	return {
+		id: todo.id,
+		userId: todo.userId,
+		workspaceId: todo.workspaceId,
+		text: todo.text,
+		completed: todo.completed,
+		completedAt: todo.completedAt ? new Date(todo.completedAt) : null,
+		createdAt: new Date(todo.createdAt),
+		updatedAt: new Date(todo.updatedAt),
+		order: todo.order,
+	};
+}
 
 export function useGeneralTodos() {
 	const { activeWorkspaceId } = useWorkspace();
@@ -14,12 +40,17 @@ export function useGeneralTodos() {
 
 	const fetchTodos = useCallback(async () => {
 		const requestId = ++requestCounterRef.current;
+		const startedAt = performance.now();
 		setLoading(true);
 		setError(null);
 		try {
-			const data = await getGeneralTodos();
+			const data = await loadWorkspaceTodos({ workspaceId: activeWorkspaceId ?? undefined });
 			if (requestId !== requestCounterRef.current) return;
-			setTodos(data);
+			setTodos(data.map(toGeneralTodo));
+			logClientPerf("todos.load", startedAt, {
+				workspaceId: activeWorkspaceId,
+				count: data.length,
+			});
 		} catch (fetchError) {
 			if (requestId !== requestCounterRef.current) return;
 			setError("Failed to load todos");
@@ -28,7 +59,7 @@ export function useGeneralTodos() {
 			if (requestId !== requestCounterRef.current) return;
 			setLoading(false);
 		}
-	}, []);
+	}, [activeWorkspaceId]);
 
 	useEffect(() => {
 		setTodos([]);
@@ -39,14 +70,14 @@ export function useGeneralTodos() {
 	const silentRefresh = useCallback(async () => {
 		const requestId = ++requestCounterRef.current;
 		try {
-			const data = await getGeneralTodos();
+			const data = await loadWorkspaceTodos({ workspaceId: activeWorkspaceId ?? undefined });
 			if (requestId !== requestCounterRef.current) return;
-			setTodos(data);
+			setTodos(data.map(toGeneralTodo));
 		} catch (fetchError) {
 			if (requestId !== requestCounterRef.current) return;
 			console.error("Error refreshing todos:", fetchError);
 		}
-	}, []);
+	}, [activeWorkspaceId]);
 
 	const deleteTodo = useCallback(async (todoId: string) => {
 		setTodos(prev => prev.filter(todo => todo.id !== todoId));
@@ -55,12 +86,14 @@ export function useGeneralTodos() {
 			const result = await deleteGeneralTodo(todoId);
 			if (!result.success) {
 				await fetchTodos();
+			} else {
+				invalidateWorkspaceTodosCache(activeWorkspaceId ?? undefined);
 			}
 		} catch (fetchError) {
 			await fetchTodos();
 			console.error("Error deleting todo:", fetchError);
 		}
-	}, [fetchTodos]);
+	}, [activeWorkspaceId, fetchTodos]);
 
 	const addTodo = useCallback((todo: GeneralTodo) => {
 		setTodos(prev => [...prev, todo]);
@@ -83,12 +116,14 @@ export function useGeneralTodos() {
 			const result = await updateGeneralTodoCompletion(todoId, completed);
 			if (!result.success) {
 				await fetchTodos();
+			} else {
+				invalidateWorkspaceTodosCache(activeWorkspaceId ?? undefined);
 			}
 		} catch (fetchError) {
 			await fetchTodos();
 			console.error("Error updating todo completion:", fetchError);
 		}
-	}, [fetchTodos]);
+	}, [activeWorkspaceId, fetchTodos]);
 
 	return {
 		todos,
