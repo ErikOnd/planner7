@@ -135,6 +135,22 @@ export async function loadAppBootstrap(params: BootstrapParams = {}): Promise<Ap
 	}
 }
 
+export function hydrateBootstrapPayload(
+	payload: AppBootstrapPayload,
+	params: {
+		startDate?: Date;
+		endDate?: Date;
+		workspaceId?: string;
+	} = {},
+) {
+	const { startDate, endDate } = getResolvedRange(params.startDate, params.endDate);
+	const cacheKey = toCacheKey(startDate, endDate, params.workspaceId);
+	cache.set(cacheKey, payload);
+	notesCache.set(cacheKey, payload.notes);
+	todosCache.set(cacheKey, payload.todos);
+	hydrateWorkspaceScopedCachesFromBootstrap(payload, startDate, endDate, params.workspaceId);
+}
+
 export async function loadWeekNotes(params: BootstrapParams = {}): Promise<BootstrapDailyNote[]> {
 	const { startDate, endDate } = getResolvedRange(params.startDate, params.endDate);
 	const cacheKey = toCacheKey(startDate, endDate, params.workspaceId);

@@ -1,13 +1,13 @@
 "use client";
 
-import { invalidateWorkspaceTopologyCache, loadAppBootstrap } from "@/lib/clientBootstrap";
+import { hydrateBootstrapPayload, invalidateWorkspaceTopologyCache, loadAppBootstrap } from "@/lib/clientBootstrap";
 import type { WorkspaceGradientPreset } from "@/lib/workspaceGradients";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
 	createWorkspace,
 	deleteWorkspace,
 	renameWorkspace,
-	setActiveWorkspace,
+	switchWorkspaceWithBootstrap,
 	updateWorkspaceGradient,
 	type WorkspaceSummary,
 } from "../app/actions/workspaces";
@@ -73,12 +73,31 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 		setError(null);
 
 		try {
-			const result = await setActiveWorkspace(workspaceId);
+			const result = await switchWorkspaceWithBootstrap(workspaceId);
 			if (!result.success) {
 				setError(result.error ?? "Failed to switch workspace");
 				return result;
 			}
-			setActiveWorkspaceId(workspaceId);
+
+			if (!result.data) {
+				setError("Failed to switch workspace");
+				return { success: false, error: "Failed to switch workspace" };
+			}
+
+			hydrateBootstrapPayload(result.data, {
+				workspaceId,
+				startDate: result.range?.startDate ? new Date(result.range.startDate) : undefined,
+				endDate: result.range?.endDate ? new Date(result.range.endDate) : undefined,
+			});
+			setWorkspaces(
+				result.data.workspaces.map((item) => ({
+					...item,
+					createdAt: new Date(item.createdAt),
+					updatedAt: new Date(item.updatedAt),
+				})),
+			);
+			setActiveWorkspaceId(result.data.activeWorkspaceId);
+
 			return result;
 		} catch (switchError) {
 			setError("Failed to switch workspace");

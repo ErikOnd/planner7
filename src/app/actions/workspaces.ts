@@ -3,10 +3,19 @@
 import prisma from "@/lib/prisma";
 import { requireWorkspaceContext } from "@/lib/serverActionContext";
 import { isWorkspaceGradientPreset, type WorkspaceGradientPreset } from "@/lib/workspaceGradients";
+import type { AppBootstrapPayload } from "types/appBootstrap";
 
 export type WorkspaceActionResult = {
 	success: boolean;
 	error?: string;
+};
+
+export type WorkspaceSwitchBootstrapResult = WorkspaceActionResult & {
+	data?: AppBootstrapPayload;
+	range?: {
+		startDate: string;
+		endDate: string;
+	};
 };
 
 export type WorkspaceSummary = {
@@ -32,6 +41,26 @@ function validateWorkspaceName(value: string) {
 	return { valid: true as const, name: normalized };
 }
 
+function toDateParam(date: Date) {
+	return date.toISOString().split("T")[0];
+}
+
+function parseDateParam(value?: string) {
+	if (!value) return null;
+	const parsed = new Date(value);
+	if (Number.isNaN(parsed.getTime())) return null;
+	return parsed;
+}
+
+function getCurrentWeekRange() {
+	const today = new Date();
+	const startDate = new Date(today);
+	startDate.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+	const endDate = new Date(startDate);
+	endDate.setDate(startDate.getDate() + 6);
+	return { startDate, endDate };
+}
+
 async function requireWorkspaceSession() {
 	const context = await requireWorkspaceContext();
 	if (!context.success) {
@@ -40,7 +69,11 @@ async function requireWorkspaceSession() {
 	return context;
 }
 
-export async function setActiveWorkspace(workspaceId: string): Promise<WorkspaceActionResult> {
+export async function switchWorkspaceWithBootstrap(
+	workspaceId: string,
+	startDateInput?: string,
+	endDateInput?: string,
+): Promise<WorkspaceSwitchBootstrapResult> {
 	try {
 		const session = await requireWorkspaceSession();
 		const workspace = await prisma.workspace.findFirst({
@@ -55,15 +88,117 @@ export async function setActiveWorkspace(workspaceId: string): Promise<Workspace
 			return { success: false, error: "Workspace not found" };
 		}
 
+		const parsedStart = parseDateParam(startDateInput);
+		const parsedEnd = parseDateParam(endDateInput);
+		const { startDate, endDate } = parsedStart && parsedEnd
+			? { startDate: parsedStart, endDate: parsedEnd }
+			: getCurrentWeekRange();
+
 		await prisma.profile.update({
 			where: { id: session.userId },
 			data: { activeWorkspaceId: workspace.id },
 		});
 
-		return { success: true };
+		const [profile, workspaces, notes, todos] = await Promise.all([
+			prisma.profile.findUnique({
+				where: { id: session.userId },
+				select: {
+					email: true,
+					displayName: true,
+					showWeekends: true,
+					showEditorToolbar: true,
+				},
+			}),
+			prisma.workspace.findMany({
+				where: { userId: session.userId },
+				orderBy: [{ updatedAt: "desc" }, { createdAt: "asc" }],
+				select: {
+					id: true,
+					name: true,
+					gradientPreset: true,
+					createdAt: true,
+					updatedAt: true,
+				},
+			}),
+			prisma.dailyNote.findMany({
+				where: {
+					userId: session.userId,
+					workspaceId: workspace.id,
+					date: {
+						gte: startDate,
+						lte: endDate,
+					},
+				},
+				select: {
+					date: true,
+					content: true,
+				},
+			}),
+			prisma.generalTodo.findMany({
+				where: {
+					userId: session.userId,
+					workspaceId: workspace.id,
+				},
+				orderBy: { order: "asc" },
+				select: {
+					id: true,
+					userId: true,
+					workspaceId: true,
+					text: true,
+					completed: true,
+					completedAt: true,
+					createdAt: true,
+					updatedAt: true,
+					order: true,
+				},
+			}),
+		]);
+
+		if (!profile) {
+			return { success: false, error: "Profile not found" };
+		}
+
+		return {
+			success: true,
+			range: {
+				startDate: toDateParam(startDate),
+				endDate: toDateParam(endDate),
+			},
+			data: {
+				profile: {
+					email: profile.email,
+					displayName: profile.displayName ?? "",
+					showWeekends: profile.showWeekends,
+					showEditorToolbar: Boolean(profile.showEditorToolbar),
+				},
+				activeWorkspaceId: workspace.id,
+				workspaces: workspaces.map((item) => ({
+					id: item.id,
+					name: item.name,
+					gradientPreset: isWorkspaceGradientPreset(item.gradientPreset) ? item.gradientPreset : "violet",
+					createdAt: item.createdAt.toISOString(),
+					updatedAt: item.updatedAt.toISOString(),
+				})),
+				notes: notes.map((note) => ({
+					date: note.date.toISOString(),
+					content: note.content as AppBootstrapPayload["notes"][number]["content"],
+				})),
+				todos: todos.map((todo) => ({
+					id: todo.id,
+					userId: todo.userId,
+					workspaceId: todo.workspaceId,
+					text: todo.text,
+					completed: todo.completed,
+					completedAt: todo.completedAt ? todo.completedAt.toISOString() : null,
+					createdAt: todo.createdAt.toISOString(),
+					updatedAt: todo.updatedAt.toISOString(),
+					order: todo.order,
+				})),
+			},
+		};
 	} catch (error) {
-		console.error("Error setting active workspace:", error);
-		return { success: false, error: "Failed to set active workspace" };
+		console.error("Error switching workspace with bootstrap:", error);
+		return { success: false, error: "Failed to switch workspace" };
 	}
 }
 
