@@ -155,9 +155,9 @@ export function LandingPage() {
 					animate="visible"
 					variants={navVariants}
 				>
-					<Link href="/" className={styles.logo}>
+					<div className={styles.logo}>
 						<Image src="/logo-mark.svg" alt="Planner7 logo" width={96} height={96} className={styles["logo-icon"]} />
-					</Link>
+					</div>
 					<div className={styles["nav-actions"]}>
 						<MagneticButton>
 							<Button href="/signup" variant="primary" fontWeight={700}>Get Started</Button>

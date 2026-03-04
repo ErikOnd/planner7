@@ -42,6 +42,7 @@ export function GeneralSettings({
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const [deleteConfirmationInput, setDeleteConfirmationInput] = useState("");
 	const [deleteError, setDeleteError] = useState<string | null>(null);
+	const [isLoggingOut, setIsLoggingOut] = useState(false);
 
 	const handleConfirmDelete = async () => {
 		if (deleteConfirmationInput.trim().toUpperCase() !== DELETE_CONFIRMATION_TEXT) {
@@ -59,6 +60,17 @@ export function GeneralSettings({
 			return;
 		}
 		setDeleteError(result.error || "Failed to delete account.");
+	};
+
+	const handleLogoutClick = async () => {
+		if (!handleLogout) return;
+
+		setIsLoggingOut(true);
+		try {
+			await handleLogout();
+		} finally {
+			setIsLoggingOut(false);
+		}
 	};
 
 	return (
@@ -189,8 +201,12 @@ export function GeneralSettings({
 					<h3 className={styles["section-heading"]}>Sign Out</h3>
 					<Text size="sm" variant="muted">Sign out of your account</Text>
 					<div>
-						<Button variant="secondary" onClick={handleLogout}>
-							Logout
+						<Button
+							variant="secondary"
+							disabled={isLoggingOut}
+							onClick={handleLogoutClick}
+						>
+							{isLoggingOut ? "Logging out..." : "Logout"}
 						</Button>
 					</div>
 				</section>
