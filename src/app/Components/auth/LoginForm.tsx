@@ -14,7 +14,8 @@ import { GoogleIdentityButton } from "./GoogleIdentityButton";
 import { PasswordField } from "./PasswordField";
 
 export function LoginForm() {
-	const { loading, logIn, sendResetPassword, signInWithGoogleIdToken, setErrorMsg, errorMsg, infoMsg } = useAuthActions();
+	const { loading, logIn, sendResetPassword, signInWithGoogleIdToken, setErrorMsg, errorMsg, infoMsg } =
+		useAuthActions();
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
