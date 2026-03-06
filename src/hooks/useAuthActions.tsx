@@ -1,9 +1,20 @@
 "use client";
 
-import { useAuth } from "@/contexts/AuthContext";
-import { mapAuthError } from "@utils/authErrors";
+import { useAuth, type AuthResult } from "@/contexts/AuthContext";
+import { getAuthCaptchaToken } from "@/lib/authCaptcha";
+import { mapAuthError, type AuthErrorContext } from "@utils/authErrors";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
+
+type CaptchaAction = Parameters<typeof getAuthCaptchaToken>[0];
+
+type RunAuthActionParams = {
+	context: AuthErrorContext;
+	captchaAction: CaptchaAction;
+	fallbackError: string;
+	execute: (captchaToken?: string) => Promise<AuthResult>;
+	onSuccess?: (result: AuthResult) => Promise<void> | void;
+};
 
 export function useAuthActions() {
 	const router = useRouter();
@@ -18,93 +29,102 @@ export function useAuthActions() {
 		setInfoMsg(null);
 	}, []);
 
-	const logIn = useCallback(async (email: string, password: string) => {
+	const setValidationError = useCallback((message: string) => {
 		clearMessages();
-		if (!email || !password) {
-			setErrorMsg("Please enter both email and password.");
-			return;
-		}
+		setErrorMsg(message);
+	}, [clearMessages]);
+
+	const runAuthAction = useCallback(async ({
+		context,
+		captchaAction,
+		fallbackError,
+		execute,
+		onSuccess,
+	}: RunAuthActionParams) => {
+		clearMessages();
 		setLoading(true);
 		try {
-			const result = await auth.logInWithPassword(email, password);
+			const captchaToken = await getAuthCaptchaToken(captchaAction);
+			const result = await execute(captchaToken);
 			if (!result.success) {
-				setErrorMsg(mapAuthError(result.error ?? "Failed to sign in", "sign_in"));
+				setErrorMsg(mapAuthError(result.error ?? fallbackError, context));
 				return;
 			}
-			router.push("/app");
+			await onSuccess?.(result);
 		} catch (err) {
-			setErrorMsg(mapAuthError(err, "sign_in"));
+			setErrorMsg(mapAuthError(err, context));
 		} finally {
 			setLoading(false);
 		}
-	}, [auth, clearMessages, router]);
+	}, [clearMessages]);
+
+	const logIn = useCallback(async (email: string, password: string) => {
+		if (!email || !password) {
+			setValidationError("Please enter both email and password.");
+			return;
+		}
+		await runAuthAction({
+			context: "sign_in",
+			captchaAction: "login",
+			fallbackError: "Failed to sign in",
+			execute: (captchaToken) => auth.logInWithPassword(email, password, captchaToken),
+			onSuccess: () => router.push("/app"),
+		});
+	}, [auth, router, runAuthAction, setValidationError]);
 
 	const signUp = useCallback(async (email: string, password: string, displayName?: string) => {
-		clearMessages();
 		if (!email || !password) {
-			setErrorMsg("Please enter both email and password.");
+			setValidationError("Please enter both email and password.");
 			return;
 		}
 		if (!displayName) {
-			setErrorMsg("Please enter your name.");
+			setValidationError("Please enter your name.");
 			return;
 		}
-		setLoading(true);
-		try {
-			const result = await auth.signUpWithPassword(email, password, displayName);
-			if (!result.success) {
-				setErrorMsg(mapAuthError(result.error ?? "Failed to sign up", "sign_up"));
-				return;
-			}
-			if (result.userNeedsConfirmation) {
-				setInfoMsg("Success! Please check your email to confirm your account.");
-				return;
-			}
-			router.push("/app");
-		} catch (err) {
-			setErrorMsg(mapAuthError(err, "sign_up"));
-		} finally {
-			setLoading(false);
+		if (password.length < 8) {
+			setValidationError("Password must be at least 8 characters.");
+			return;
 		}
-	}, [auth, clearMessages, router]);
+		await runAuthAction({
+			context: "sign_up",
+			captchaAction: "signup",
+			fallbackError: "Failed to sign up",
+			execute: (captchaToken) => auth.signUpWithPassword(email, password, displayName, captchaToken),
+			onSuccess: (result) => {
+				if (result.userNeedsConfirmation) {
+					setInfoMsg("If this email can sign up, check your inbox for next steps.");
+					return;
+				}
+				router.push("/app");
+			},
+		});
+	}, [auth, router, runAuthAction, setValidationError]);
 
 	const sendResetPassword = useCallback(async (email: string) => {
-		clearMessages();
 		if (!email) {
-			setErrorMsg("Enter your email first to receive a reset link.");
+			setValidationError("Enter your email first to receive a reset link.");
 			return;
 		}
-		setLoading(true);
-		try {
-			const result = await auth.sendResetPasswordEmail(email);
-			if (!result.success) {
-				setErrorMsg(mapAuthError(result.error ?? "Failed to send reset email", "reset"));
-				return;
-			}
-			setInfoMsg("Password reset email sent. Please check your inbox.");
-		} catch (err) {
-			setErrorMsg(mapAuthError(err, "reset"));
-		} finally {
-			setLoading(false);
-		}
-	}, [auth, clearMessages]);
+		await runAuthAction({
+			context: "reset",
+			captchaAction: "recover",
+			fallbackError: "Failed to send reset email",
+			execute: (captchaToken) => auth.sendResetPasswordEmail(email, captchaToken),
+			onSuccess: () => {
+				setInfoMsg("Password reset email sent. Please check your inbox.");
+			},
+		});
+	}, [auth, runAuthAction, setValidationError]);
 
-	const signInWithGoogleIdToken = useCallback(async (idToken: string) => {
-		clearMessages();
-		setLoading(true);
-		try {
-			const result = await auth.signInWithGoogleIdToken(idToken);
-			if (!result.success) {
-				setErrorMsg(mapAuthError(result.error ?? "Failed to sign in with Google", "sign_in"));
-				return;
-			}
-			router.push("/app");
-		} catch (err) {
-			setErrorMsg(mapAuthError(err, "sign_in"));
-		} finally {
-			setLoading(false);
-		}
-	}, [auth, clearMessages, router]);
+	const signInWithGoogleIdToken = useCallback(async (idToken: string, nonce?: string) => {
+		await runAuthAction({
+			context: "sign_in",
+			captchaAction: "google",
+			fallbackError: "Failed to sign in with Google",
+			execute: (captchaToken) => auth.signInWithGoogleIdToken(idToken, nonce, captchaToken),
+			onSuccess: () => router.push("/app"),
+		});
+	}, [auth, router, runAuthAction]);
 
 	return {
 		loading,
