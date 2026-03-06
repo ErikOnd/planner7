@@ -69,18 +69,30 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 	}, [refreshWorkspaces]);
 
 	const switchWorkspace = useCallback(async (workspaceId: string) => {
+		if (!workspaceId) {
+			return { success: false, error: "Workspace not found" };
+		}
+		if (workspaceId === activeWorkspaceId) {
+			return { success: true };
+		}
+
+		const previousWorkspaceId = activeWorkspaceId;
 		setIsSaving(true);
 		setError(null);
+		// Optimistic switch so cached notes/todos can render immediately.
+		setActiveWorkspaceId(workspaceId);
 
 		try {
 			const result = await switchWorkspaceWithBootstrap(workspaceId);
 			if (!result.success) {
 				setError(result.error ?? "Failed to switch workspace");
+				setActiveWorkspaceId(previousWorkspaceId);
 				return result;
 			}
 
 			if (!result.data) {
 				setError("Failed to switch workspace");
+				setActiveWorkspaceId(previousWorkspaceId);
 				return { success: false, error: "Failed to switch workspace" };
 			}
 
@@ -101,12 +113,13 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 			return result;
 		} catch (switchError) {
 			setError("Failed to switch workspace");
+			setActiveWorkspaceId(previousWorkspaceId);
 			console.error("Error switching workspace:", switchError);
 			return { success: false, error: "Failed to switch workspace" };
 		} finally {
 			setIsSaving(false);
 		}
-	}, []);
+	}, [activeWorkspaceId]);
 
 	const prefetchWorkspace = useCallback(async (workspaceId: string) => {
 		try {

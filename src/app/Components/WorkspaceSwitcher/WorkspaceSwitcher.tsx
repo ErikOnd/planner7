@@ -68,13 +68,15 @@ export function WorkspaceSwitcher({ compact = false, variant = "default" }: Work
 	const onQuickSwitchWorkspace = async (workspaceId: string) => {
 		setLocalError(null);
 		setSwitchingWorkspaceId(workspaceId);
+		// Close immediately so workspace switches feel instant.
+		setIsManageOpen(false);
 		const result = await switchWorkspace(workspaceId);
 		setSwitchingWorkspaceId(null);
 		if (!result.success) {
 			setLocalError(result.error ?? "Failed to switch workspace");
+			setIsManageOpen(true);
 			return;
 		}
-		setIsManageOpen(false);
 	};
 
 	const startEditingWorkspace = (workspaceId: string, name: string) => {
