@@ -1,8 +1,8 @@
 "use client";
 
-import { useAuth, type AuthResult } from "@/contexts/AuthContext";
+import { type AuthResult, useAuth } from "@/contexts/AuthContext";
 import { getAuthCaptchaToken } from "@/lib/authCaptcha";
-import { mapAuthError, type AuthErrorContext } from "@utils/authErrors";
+import { type AuthErrorContext, mapAuthError } from "@utils/authErrors";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
@@ -116,12 +116,12 @@ export function useAuthActions() {
 		});
 	}, [auth, runAuthAction, setValidationError]);
 
-	const signInWithGoogleIdToken = useCallback(async (idToken: string, nonce?: string) => {
+	const signInWithGoogleIdToken = useCallback(async (idToken: string) => {
 		await runAuthAction({
 			context: "sign_in",
 			captchaAction: "google",
 			fallbackError: "Failed to sign in with Google",
-			execute: (captchaToken) => auth.signInWithGoogleIdToken(idToken, nonce, captchaToken),
+			execute: (captchaToken) => auth.signInWithGoogleIdToken(idToken, captchaToken),
 			onSuccess: () => router.push("/app"),
 		});
 	}, [auth, router, runAuthAction]);

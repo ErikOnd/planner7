@@ -126,4 +126,3 @@ export async function getAuthCaptchaToken(action: CaptchaAction): Promise<string
 		}
 	});
 }
-

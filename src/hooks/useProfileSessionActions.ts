@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { clearAppBootstrapCache } from "@/lib/clientBootstrap";
 import { useRouter } from "next/navigation";
 
 export function useProfileSessionActions() {
@@ -9,11 +10,13 @@ export function useProfileSessionActions() {
 
 	const handleLogout = async () => {
 		await auth.signOut();
+		clearAppBootstrapCache();
 		router.push("/login");
 	};
 
 	const handleAccountDeleted = async () => {
 		await auth.signOut();
+		clearAppBootstrapCache();
 		router.push("/signup");
 	};
 

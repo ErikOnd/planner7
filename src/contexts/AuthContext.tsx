@@ -1,7 +1,8 @@
 "use client";
 
+import { clearAppBootstrapCache } from "@/lib/clientBootstrap";
 import { createClient } from "@utils/supabase/client";
-import { createContext, ReactNode, useContext, useMemo } from "react";
+import { createContext, ReactNode, useContext, useEffect, useMemo } from "react";
 import { checkUserExists } from "../app/actions/profile";
 
 export type AuthResult = {
@@ -19,7 +20,7 @@ type AuthContextValue = {
 		captchaToken?: string,
 	) => Promise<AuthResult>;
 	sendResetPasswordEmail: (email: string, captchaToken?: string) => Promise<AuthResult>;
-	signInWithGoogleIdToken: (idToken: string, nonce?: string, captchaToken?: string) => Promise<AuthResult>;
+	signInWithGoogleIdToken: (idToken: string, captchaToken?: string) => Promise<AuthResult>;
 	signOut: () => Promise<AuthResult>;
 	updatePassword: (password: string) => Promise<AuthResult>;
 };
@@ -44,6 +45,18 @@ function errorResult(error: { message: string }): AuthResult {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const supabase = useMemo(() => createClient(), []);
+
+	useEffect(() => {
+		const { data } = supabase.auth.onAuthStateChange((event) => {
+			if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+				clearAppBootstrapCache();
+			}
+		});
+
+		return () => {
+			data.subscription.unsubscribe();
+		};
+	}, [supabase]);
 
 	const value = useMemo<AuthContextValue>(() => {
 		const syncUserProfile = async (): Promise<AuthResult> => {
@@ -90,11 +103,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				if (error) return errorResult(error);
 				return successResult();
 			},
-			signInWithGoogleIdToken: async (idToken, nonce, captchaToken) => {
+			signInWithGoogleIdToken: async (idToken, captchaToken) => {
 				const { error } = await supabase.auth.signInWithIdToken({
 					provider: "google",
 					token: idToken,
-					nonce,
 					options: {
 						captchaToken,
 					},
@@ -105,6 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			signOut: async () => {
 				const { error } = await supabase.auth.signOut();
 				if (error) return errorResult(error);
+				clearAppBootstrapCache();
 				return successResult();
 			},
 			updatePassword: async (password) => {

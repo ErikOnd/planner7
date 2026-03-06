@@ -1,9 +1,8 @@
 import { getCurrentUser } from "@/lib/auth";
+import { buildAppBootstrapPayload, fetchWorkspaceNotes, fetchWorkspaceTodos } from "@/lib/bootstrapPayload";
 import prisma from "@/lib/prisma";
-import { isWorkspaceGradientPreset } from "@/lib/workspaceGradients";
 import { ensureWorkspaceSession } from "@/lib/workspaces";
 import { NextResponse } from "next/server";
-import type { AppBootstrapPayload } from "types/appBootstrap";
 
 export const runtime = "nodejs";
 
@@ -55,28 +54,15 @@ export async function GET(request: Request) {
 
 		if (mode === "notes") {
 			const notesStartedAt = performance.now();
-			const notes = await prisma.dailyNote.findMany({
-				where: {
-					userId: session.userId,
-					workspaceId: effectiveWorkspaceId,
-					date: {
-						gte: startDate,
-						lte: endDate,
-					},
-				},
-				select: {
-					date: true,
-					content: true,
-				},
+			const notes = await fetchWorkspaceNotes({
+				userId: session.userId,
+				workspaceId: effectiveWorkspaceId,
+				startDate,
+				endDate,
 			});
 
 			return NextResponse.json(
-				{
-					notes: notes.map((note) => ({
-						date: note.date.toISOString(),
-						content: note.content as AppBootstrapPayload["notes"][number]["content"],
-					})),
-				},
+				{ notes },
 				{
 					status: 200,
 					headers: {
@@ -93,39 +79,13 @@ export async function GET(request: Request) {
 
 		if (mode === "todos") {
 			const todosStartedAt = performance.now();
-			const todos = await prisma.generalTodo.findMany({
-				where: {
-					userId: session.userId,
-					workspaceId: effectiveWorkspaceId,
-				},
-				orderBy: { order: "asc" },
-				select: {
-					id: true,
-					userId: true,
-					workspaceId: true,
-					text: true,
-					completed: true,
-					completedAt: true,
-					createdAt: true,
-					updatedAt: true,
-					order: true,
-				},
+			const todos = await fetchWorkspaceTodos({
+				userId: session.userId,
+				workspaceId: effectiveWorkspaceId,
 			});
 
 			return NextResponse.json(
-				{
-					todos: todos.map((todo) => ({
-						id: todo.id,
-						userId: todo.userId,
-						workspaceId: todo.workspaceId,
-						text: todo.text,
-						completed: todo.completed,
-						completedAt: todo.completedAt ? todo.completedAt.toISOString() : null,
-						createdAt: todo.createdAt.toISOString(),
-						updatedAt: todo.updatedAt.toISOString(),
-						order: todo.order,
-					})),
-				},
+				{ todos },
 				{
 					status: 200,
 					headers: {
@@ -141,96 +101,17 @@ export async function GET(request: Request) {
 		}
 
 		const fullStartedAt = performance.now();
-		const [profile, workspaces, notes, todos] = await Promise.all([
-			prisma.profile.findUnique({
-				where: { id: session.userId },
-				select: {
-					email: true,
-					displayName: true,
-					showWeekends: true,
-					showEditorToolbar: true,
-				},
-			}),
-			prisma.workspace.findMany({
-				where: { userId: session.userId },
-				orderBy: [{ updatedAt: "desc" }, { createdAt: "asc" }],
-				select: {
-					id: true,
-					name: true,
-					gradientPreset: true,
-					createdAt: true,
-					updatedAt: true,
-				},
-			}),
-			prisma.dailyNote.findMany({
-				where: {
-					userId: session.userId,
-					workspaceId: effectiveWorkspaceId,
-					date: {
-						gte: startDate,
-						lte: endDate,
-					},
-				},
-				select: {
-					date: true,
-					content: true,
-				},
-			}),
-			prisma.generalTodo.findMany({
-				where: {
-					userId: session.userId,
-					workspaceId: effectiveWorkspaceId,
-				},
-				orderBy: { order: "asc" },
-				select: {
-					id: true,
-					userId: true,
-					workspaceId: true,
-					text: true,
-					completed: true,
-					completedAt: true,
-					createdAt: true,
-					updatedAt: true,
-					order: true,
-				},
-			}),
-		]);
+		const payload = await buildAppBootstrapPayload({
+			userId: session.userId,
+			workspaceId: effectiveWorkspaceId,
+			activeWorkspaceId: session.activeWorkspaceId,
+			startDate,
+			endDate,
+		});
 
-		if (!profile) {
+		if (!payload) {
 			return NextResponse.json({ success: false, error: "Profile not found." }, { status: 404 });
 		}
-
-		const payload: AppBootstrapPayload = {
-			profile: {
-				email: profile.email,
-				displayName: profile.displayName ?? "",
-				showWeekends: profile.showWeekends,
-				showEditorToolbar: Boolean(profile.showEditorToolbar),
-			},
-			activeWorkspaceId: session.activeWorkspaceId,
-			workspaces: workspaces.map((workspace) => ({
-				id: workspace.id,
-				name: workspace.name,
-				gradientPreset: isWorkspaceGradientPreset(workspace.gradientPreset) ? workspace.gradientPreset : "violet",
-				createdAt: workspace.createdAt.toISOString(),
-				updatedAt: workspace.updatedAt.toISOString(),
-			})),
-			notes: notes.map((note) => ({
-				date: note.date.toISOString(),
-				content: note.content as AppBootstrapPayload["notes"][number]["content"],
-			})),
-			todos: todos.map((todo) => ({
-				id: todo.id,
-				userId: todo.userId,
-				workspaceId: todo.workspaceId,
-				text: todo.text,
-				completed: todo.completed,
-				completedAt: todo.completedAt ? todo.completedAt.toISOString() : null,
-				createdAt: todo.createdAt.toISOString(),
-				updatedAt: todo.updatedAt.toISOString(),
-				order: todo.order,
-			})),
-		};
 
 		return NextResponse.json(payload, {
 			status: 200,

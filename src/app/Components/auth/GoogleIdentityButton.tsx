@@ -11,7 +11,6 @@ declare global {
 				id: {
 					initialize: (config: {
 						client_id: string;
-						nonce?: string;
 						callback: (response: { credential?: string }) => void;
 					}) => void;
 					renderButton: (
@@ -68,22 +67,12 @@ function loadGoogleIdentityScript(): Promise<void> {
 }
 
 type GoogleIdentityButtonProps = {
-	onCredential: (idToken: string, nonce?: string) => Promise<void>;
+	onCredential: (idToken: string) => Promise<void>;
 	onError: (message: string) => void;
 	text?: "continue_with" | "signup_with" | "signin_with" | "signin";
 	disabled?: boolean;
 	children: (props: { onClick: () => void; disabled: boolean }) => ReactNode;
 };
-
-function createNonce() {
-	if (typeof window === "undefined") return undefined;
-	if (!window.crypto?.getRandomValues) return undefined;
-
-	const bytes = new Uint8Array(16);
-	window.crypto.getRandomValues(bytes);
-	const binary = String.fromCharCode(...bytes);
-	return window.btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-}
 
 export function GoogleIdentityButton({
 	onCredential,
@@ -129,17 +118,15 @@ export function GoogleIdentityButton({
 					onError("Google sign-in is unavailable.");
 					return;
 				}
-				const nonce = createNonce();
 
 				googleIdentity.initialize({
 					client_id: googleClientId,
-					nonce,
 					callback: async ({ credential }) => {
 						if (!credential) {
 							onError("Google sign-in failed. Missing identity token.");
 							return;
 						}
-						await onCredential(credential, nonce);
+						await onCredential(credential);
 					},
 				});
 

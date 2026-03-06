@@ -1,5 +1,6 @@
 "use server";
 
+import { buildAppBootstrapPayload } from "@/lib/bootstrapPayload";
 import prisma from "@/lib/prisma";
 import { requireWorkspaceContext } from "@/lib/serverActionContext";
 import { isWorkspaceGradientPreset, type WorkspaceGradientPreset } from "@/lib/workspaceGradients";
@@ -99,62 +100,15 @@ export async function switchWorkspaceWithBootstrap(
 			data: { activeWorkspaceId: workspace.id },
 		});
 
-		const [profile, workspaces, notes, todos] = await Promise.all([
-			prisma.profile.findUnique({
-				where: { id: session.userId },
-				select: {
-					email: true,
-					displayName: true,
-					showWeekends: true,
-					showEditorToolbar: true,
-				},
-			}),
-			prisma.workspace.findMany({
-				where: { userId: session.userId },
-				orderBy: [{ updatedAt: "desc" }, { createdAt: "asc" }],
-				select: {
-					id: true,
-					name: true,
-					gradientPreset: true,
-					createdAt: true,
-					updatedAt: true,
-				},
-			}),
-			prisma.dailyNote.findMany({
-				where: {
-					userId: session.userId,
-					workspaceId: workspace.id,
-					date: {
-						gte: startDate,
-						lte: endDate,
-					},
-				},
-				select: {
-					date: true,
-					content: true,
-				},
-			}),
-			prisma.generalTodo.findMany({
-				where: {
-					userId: session.userId,
-					workspaceId: workspace.id,
-				},
-				orderBy: { order: "asc" },
-				select: {
-					id: true,
-					userId: true,
-					workspaceId: true,
-					text: true,
-					completed: true,
-					completedAt: true,
-					createdAt: true,
-					updatedAt: true,
-					order: true,
-				},
-			}),
-		]);
+		const data = await buildAppBootstrapPayload({
+			userId: session.userId,
+			workspaceId: workspace.id,
+			activeWorkspaceId: workspace.id,
+			startDate,
+			endDate,
+		});
 
-		if (!profile) {
+		if (!data) {
 			return { success: false, error: "Profile not found" };
 		}
 
@@ -164,37 +118,7 @@ export async function switchWorkspaceWithBootstrap(
 				startDate: toDateParam(startDate),
 				endDate: toDateParam(endDate),
 			},
-			data: {
-				profile: {
-					email: profile.email,
-					displayName: profile.displayName ?? "",
-					showWeekends: profile.showWeekends,
-					showEditorToolbar: Boolean(profile.showEditorToolbar),
-				},
-				activeWorkspaceId: workspace.id,
-				workspaces: workspaces.map((item) => ({
-					id: item.id,
-					name: item.name,
-					gradientPreset: isWorkspaceGradientPreset(item.gradientPreset) ? item.gradientPreset : "violet",
-					createdAt: item.createdAt.toISOString(),
-					updatedAt: item.updatedAt.toISOString(),
-				})),
-				notes: notes.map((note) => ({
-					date: note.date.toISOString(),
-					content: note.content as AppBootstrapPayload["notes"][number]["content"],
-				})),
-				todos: todos.map((todo) => ({
-					id: todo.id,
-					userId: todo.userId,
-					workspaceId: todo.workspaceId,
-					text: todo.text,
-					completed: todo.completed,
-					completedAt: todo.completedAt ? todo.completedAt.toISOString() : null,
-					createdAt: todo.createdAt.toISOString(),
-					updatedAt: todo.updatedAt.toISOString(),
-					order: todo.order,
-				})),
-			},
+			data,
 		};
 	} catch (error) {
 		console.error("Error switching workspace with bootstrap:", error);
