@@ -14,7 +14,7 @@ type AuthContextValue = {
 	logInWithPassword: (email: string, password: string) => Promise<AuthResult>;
 	signUpWithPassword: (email: string, password: string, displayName: string) => Promise<AuthResult>;
 	sendResetPasswordEmail: (email: string) => Promise<AuthResult>;
-	signInWithGoogle: () => Promise<AuthResult>;
+	signInWithGoogleIdToken: (idToken: string) => Promise<AuthResult>;
 	signOut: () => Promise<AuthResult>;
 	updatePassword: (password: string) => Promise<AuthResult>;
 };
@@ -63,16 +63,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			if (error) return { success: false, error: error.message };
 			return { success: true };
 		},
-		signInWithGoogle: async () => {
-			const { error } = await supabase.auth.signInWithOAuth({
+		signInWithGoogleIdToken: async (idToken) => {
+			const { error } = await supabase.auth.signInWithIdToken({
 				provider: "google",
-				options: {
-					redirectTo: typeof window !== "undefined"
-						? `${location.origin}/auth/callback`
-						: undefined,
-				},
+				token: idToken,
 			});
 			if (error) return { success: false, error: error.message };
+			await checkUserExists();
 			return { success: true };
 		},
 		signOut: async () => {

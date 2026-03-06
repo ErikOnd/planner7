@@ -1,14 +1,12 @@
 "use client";
 
-import { useProfile } from "@/contexts/ProfileContext";
 import { Button } from "@atoms/Button/Button";
 import { Text } from "@atoms/Text/Text";
 import { ImageLibraryDialog } from "@components/ImageLibraryDialog/ImageLibraryDialog";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import * as Switch from "@radix-ui/react-switch";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
-import { getDailyGreetingDisabledKey } from "../../constants/dailyGreeting";
+import { useState } from "react";
 
 type PreferencesSettingsProps = {
 	theme: "light" | "dark" | "system";
@@ -17,7 +15,6 @@ type PreferencesSettingsProps = {
 };
 
 export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSettingsProps) {
-	const { profile } = useProfile();
 	const {
 		showWeekends,
 		showEditorToolbar,
@@ -27,26 +24,7 @@ export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSett
 		setShowEditorToolbar,
 	} = useWeekDisplayPreference();
 	const isFiveDayWeek = !showWeekends;
-	const [showDailyVoiceWelcome, setShowDailyVoiceWelcome] = useState(true);
 	const [isImageLibraryOpen, setIsImageLibraryOpen] = useState(false);
-
-	useEffect(() => {
-		if (typeof window === "undefined" || !profile) return;
-		const disabledKey = getDailyGreetingDisabledKey(profile.email);
-		const isDisabled = window.localStorage.getItem(disabledKey) === "true";
-		setShowDailyVoiceWelcome(!isDisabled);
-	}, [profile]);
-
-	const handleDailyVoiceWelcomeToggle = (checked: boolean) => {
-		setShowDailyVoiceWelcome(checked);
-		if (typeof window === "undefined" || !profile) return;
-		const disabledKey = getDailyGreetingDisabledKey(profile.email);
-		if (checked) {
-			window.localStorage.removeItem(disabledKey);
-			return;
-		}
-		window.localStorage.setItem(disabledKey, "true");
-	};
 
 	return (
 		<div className={styles["tab-content"]}>
@@ -122,22 +100,6 @@ export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSett
 						onCheckedChange={setShowEditorToolbar}
 						disabled={isLoading || isSaving}
 						aria-label="Show rich text toolbar"
-					>
-						<Switch.Thumb className={styles["switch-thumb"]} />
-					</Switch.Root>
-				</div>
-				<div className={styles["notification-item"]}>
-					<div className={styles["notification-info"]}>
-						<span className={styles["notification-label"]}>Show daily voice welcome</span>
-						<span className={styles["notification-description"]}>
-							Show the morning/afternoon voice-notes popup when opening Planner
-						</span>
-					</div>
-					<Switch.Root
-						className={styles["switch"]}
-						checked={showDailyVoiceWelcome}
-						onCheckedChange={handleDailyVoiceWelcomeToggle}
-						aria-label="Show daily voice welcome popup"
 					>
 						<Switch.Thumb className={styles["switch-thumb"]} />
 					</Switch.Root>

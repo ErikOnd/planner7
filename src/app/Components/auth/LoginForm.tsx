@@ -10,10 +10,11 @@ import { Text } from "@atoms/Text/Text";
 import { useAuthActions } from "@hooks/useAuthActions";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { GoogleIdentityButton } from "./GoogleIdentityButton";
 import { PasswordField } from "./PasswordField";
 
 export function LoginForm() {
-	const { loading, logIn, sendResetPassword, signInWithGoogle, errorMsg, infoMsg } = useAuthActions();
+	const { loading, logIn, sendResetPassword, signInWithGoogleIdToken, setErrorMsg, errorMsg, infoMsg } = useAuthActions();
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -71,19 +72,28 @@ export function LoginForm() {
 				<span>or</span>
 			</div>
 			<div className={styles.socialAuth}>
-				<Button
-					type="button"
-					variant="secondary"
+				<GoogleIdentityButton
+					text="continue_with"
+					onError={setErrorMsg}
+					onCredential={signInWithGoogleIdToken}
 					disabled={loading}
-					onClick={signInWithGoogle}
-					wrapText={false}
-					className={styles.googleButton}
 				>
-					<div className={styles.googleButtonContent}>
-						<Icon name="google" size={20} />
-						<Text size="sm" fontWeight={600}>Continue with Google</Text>
-					</div>
-				</Button>
+					{({ onClick, disabled }) => (
+						<Button
+							type="button"
+							variant="secondary"
+							disabled={disabled}
+							onClick={onClick}
+							wrapText={false}
+							className={styles.googleButton}
+						>
+							<div className={styles.googleButtonContent}>
+								<Icon name="google" size={20} />
+								<Text size="sm" fontWeight={600}>Continue with Google</Text>
+							</div>
+						</Button>
+					)}
+				</GoogleIdentityButton>
 			</div>
 			<Text size="xs" className={styles["legal-note"]}>
 				By continuing, you agree to our <Link href="/terms" className={styles["legal-link"]}>Terms of Service</Link> and

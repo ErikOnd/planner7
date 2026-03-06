@@ -89,20 +89,32 @@ export function useAuthActions() {
 		}
 	}, [auth, clearMessages]);
 
-	const signInWithGoogle = useCallback(async () => {
+	const signInWithGoogleIdToken = useCallback(async (idToken: string) => {
 		clearMessages();
 		setLoading(true);
 		try {
-			const result = await auth.signInWithGoogle();
+			const result = await auth.signInWithGoogleIdToken(idToken);
 			if (!result.success) {
 				setErrorMsg(mapAuthError(result.error ?? "Failed to sign in with Google", "sign_in"));
-				setLoading(false);
+				return;
 			}
+			router.push("/app");
 		} catch (err) {
 			setErrorMsg(mapAuthError(err, "sign_in"));
+		} finally {
 			setLoading(false);
 		}
-	}, [auth, clearMessages]);
+	}, [auth, clearMessages, router]);
 
-	return { loading, errorMsg, infoMsg, setErrorMsg, setInfoMsg, logIn, signUp, sendResetPassword, signInWithGoogle };
+	return {
+		loading,
+		errorMsg,
+		infoMsg,
+		setErrorMsg,
+		setInfoMsg,
+		logIn,
+		signUp,
+		sendResetPassword,
+		signInWithGoogleIdToken,
+	};
 }

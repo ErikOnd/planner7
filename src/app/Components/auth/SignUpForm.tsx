@@ -10,10 +10,11 @@ import { Text } from "@atoms/Text/Text";
 import { useAuthActions } from "@hooks/useAuthActions";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { GoogleIdentityButton } from "./GoogleIdentityButton";
 import { PasswordField } from "./PasswordField";
 
 export function SignUpForm() {
-	const { loading, signUp, signInWithGoogle, errorMsg, infoMsg } = useAuthActions();
+	const { loading, signUp, signInWithGoogleIdToken, setErrorMsg, errorMsg, infoMsg } = useAuthActions();
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -99,19 +100,28 @@ export function SignUpForm() {
 				<span>or</span>
 			</div>
 			<div className={styles.socialAuth}>
-				<Button
-					type="button"
-					variant="secondary"
+				<GoogleIdentityButton
+					text="continue_with"
+					onError={setErrorMsg}
+					onCredential={signInWithGoogleIdToken}
 					disabled={loading || !acceptedTerms}
-					onClick={signInWithGoogle}
-					wrapText={false}
-					className={styles.googleButton}
 				>
-					<div className={styles.googleButtonContent}>
-						<Icon name="google" size={20} />
-						<Text size="sm" fontWeight={600}>Continue with Google</Text>
-					</div>
-				</Button>
+					{({ onClick, disabled }) => (
+						<Button
+							type="button"
+							variant="secondary"
+							disabled={disabled}
+							onClick={onClick}
+							wrapText={false}
+							className={styles.googleButton}
+						>
+							<div className={styles.googleButtonContent}>
+								<Icon name="google" size={20} />
+								<Text size="sm" fontWeight={600}>Continue with Google</Text>
+							</div>
+						</Button>
+					)}
+				</GoogleIdentityButton>
 			</div>
 		</form>
 	);
