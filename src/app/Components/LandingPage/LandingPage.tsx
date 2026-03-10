@@ -156,7 +156,8 @@ export function LandingPage() {
 					variants={navVariants}
 				>
 					<div className={styles.logo}>
-						<Image src="/logo-mark.svg" alt="Planner7 logo" width={96} height={96} className={styles["logo-icon"]} />
+						<Image src="/logo-full.svg" alt="Planner7 logo" width={272} height={50} className={styles["logo-icon-light"]} />
+						<Image src="/logo-full-dark.svg" alt="Planner7 logo" width={272} height={50} className={styles["logo-icon-dark"]} />
 					</div>
 					<div className={styles["nav-actions"]}>
 						<MagneticButton>
