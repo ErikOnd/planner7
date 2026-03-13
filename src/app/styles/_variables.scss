@@ -1,47 +1,47 @@
-$color-text: #1a1612;
-$color-text-muted: #35312a;
-$color-text-light: #4a4538;
-$color-text-placeholder: #9a9488;
-$color-text-secondary: #2a2621;
+$color-text: #f0ede8;
+$color-text-muted: #9a9488;
+$color-text-light: #a39d92;
+$color-text-placeholder: #7a7368;
+$color-text-secondary: #d4cfc7;
 
-$color-background: #f5f1e8;
-$color-surface: #fdfcf8;
-$color-surface-elevated: #fdfcf8;
+$color-background: #1a1a1a;
+$color-surface: #252525;
+$color-surface-elevated: #2d2d2d;
 
-$color-border: #bfc5cf;
-$color-border-light: #d6d6d6;
-$color-border-focus: #f59e0b;
+$color-border: #575757;
+$color-border-light: #4a4a4a;
+$color-border-focus: #fbbf24;
 
-$color-primary: #f59e0b;
-$color-primary-dark: #d97706;
-$color-primary-light: #fbbf24;
-$color-primary-subtle: #fef3c7;
-$color-primary-ink: #f59e0b;
-$color-on-primary: #1a1612;
+$color-primary: #fbbf24;
+$color-primary-dark: #f59e0b;
+$color-primary-light: #fcd34d;
+$color-primary-subtle: #3a3a3a;
+$color-primary-ink: #fcd34d;
+$color-on-primary: #1a1a1a;
 
-$color-gray-light: #fdfcf8;
-$color-gray-medium: #f5f1e8;
+$color-gray-light: #252525;
+$color-gray-medium: #2d2d2d;
 
-$color-error: #dc2626;
-$color-error-background: #fef2f2;
-$color-error-border: #fecaca;
+$color-error: #c73b3b;
+$color-error-background: #3f1f1f;
+$color-error-border: #5e2a2a;
 
-$color-info: #1d4ed8;
-$color-info-background: #eff6ff;
-$color-info-border: #bfdbfe;
+$color-info: #93c5fd;
+$color-info-background: #1e3a5f;
+$color-info-border: #2d5a8f;
 
-$color-success: #059669;
-$color-success-background: #f0fdf4;
-$color-success-border: #a7f3d0;
+$color-success: #86efac;
+$color-success-background: #1f3f2f;
+$color-success-border: #2d5e3f;
 
-$color-overlay: rgba(15, 23, 42, 0.5);
+$color-overlay: rgba(0, 0, 0, 0.6);
 
-$shadow-color-sm: rgba(15, 23, 42, 0.04);
-$shadow-color-md: rgba(15, 23, 42, 0.08);
-$shadow-color-lg: rgba(15, 23, 42, 0.12);
-$shadow-color-xl: rgba(15, 23, 42, 0.16);
+$shadow-color-sm: rgba(0, 0, 0, 0.2);
+$shadow-color-md: rgba(0, 0, 0, 0.3);
+$shadow-color-lg: rgba(0, 0, 0, 0.4);
+$shadow-color-xl: rgba(0, 0, 0, 0.5);
 
-$shadow-primary-sm: rgba(245, 158, 11, 0.08);
+$shadow-primary-sm: rgba(251, 191, 36, 0.15);
 
 $radius-xs: 0.38rem;
 $radius-sm: 0.5rem;
@@ -58,48 +58,3 @@ $transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 $transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 
 $desktop-navi-height: 5rem;
-
-$color-text-dark: #f0ede8;
-$color-text-muted-dark: #9a9488;
-$color-text-light-dark: #a39d92;
-$color-text-placeholder-dark: #7a7368;
-$color-text-secondary-dark: #d4cfc7;
-
-$color-background-dark: #1a1a1a;
-$color-surface-dark: #252525;
-$color-surface-elevated-dark: #2d2d2d;
-
-$color-border-dark: #575757;
-$color-border-light-dark: #4a4a4a;
-$color-border-focus-dark: #fbbf24;
-
-$color-primary-dark-theme: #fbbf24;
-$color-primary-dark-dark-theme: #f59e0b;
-$color-primary-light-dark-theme: #fcd34d;
-$color-primary-subtle-dark-theme: #3a3a3a;
-$color-primary-ink-dark-theme: #fcd34d;
-$color-on-primary-dark-theme: #1a1a1a;
-
-$color-gray-light-dark: #252525;
-$color-gray-medium-dark: #2d2d2d;
-
-$color-error-dark-theme: #c73b3b;
-$color-error-background-dark: #3f1f1f;
-$color-error-border-dark: #5e2a2a;
-
-$color-info-dark-theme: #93c5fd;
-$color-info-background-dark: #1e3a5f;
-$color-info-border-dark: #2d5a8f;
-
-$color-success-dark-theme: #86efac;
-$color-success-background-dark: #1f3f2f;
-$color-success-border-dark: #2d5e3f;
-
-$color-overlay-dark: rgba(0, 0, 0, 0.6);
-
-$shadow-color-sm-dark: rgba(0, 0, 0, 0.2);
-$shadow-color-md-dark: rgba(0, 0, 0, 0.3);
-$shadow-color-lg-dark: rgba(0, 0, 0, 0.4);
-$shadow-color-xl-dark: rgba(0, 0, 0, 0.5);
-
-$shadow-primary-sm-dark: rgba(251, 191, 36, 0.15);

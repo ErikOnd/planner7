@@ -2,8 +2,8 @@
 
 import styles from "./SmartEditor.module.scss";
 
-import { useTheme } from "@/contexts/ThemeContext";
 import { ImageLibraryDialog } from "@components/ImageLibraryDialog/ImageLibraryDialog";
+import { useMounted } from "@hooks/useMounted";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
@@ -127,7 +127,7 @@ function EditorStateSyncPlugin({ serializedEditorState }: { serializedEditorStat
 }
 
 export default function SmartEditor({ initialContent, onChange, ariaLabel, editorId }: SmartEditorProps) {
-	const { mounted } = useTheme();
+	const mounted = useMounted();
 	const { showEditorToolbar } = useWeekDisplayPreference();
 	const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
 	const [isFocused, setIsFocused] = useState(false);

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.scss";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import React, { ReactNode } from "react";
 import ToastProvider from "./Providers/ToastProvider";
@@ -53,28 +52,12 @@ export default function RootLayout({ children }: Readonly<{
 	children: ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html lang="en" data-theme="dark">
 			<body>
-				<script
-					dangerouslySetInnerHTML={{
-						__html: `
-							(function() {
-								try {
-									const stored = localStorage.getItem('planner7-theme') || 'system';
-									const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-									const theme = stored === 'system' ? systemTheme : stored;
-									document.documentElement.setAttribute('data-theme', theme);
-								} catch (e) {}
-							})();
-						`,
-					}}
-				/>
-				<ThemeProvider>
-					<AuthProvider>
-						<ToastProvider />
-						{children}
-					</AuthProvider>
-				</ThemeProvider>
+				<AuthProvider>
+					<ToastProvider />
+					{children}
+				</AuthProvider>
 				<SpeedInsights />
 			</body>
 		</html>

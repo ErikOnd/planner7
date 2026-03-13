@@ -1,14 +1,9 @@
 "use client";
 
-import { useTheme } from "@/contexts/ThemeContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function ToastProvider() {
-	const { effectiveTheme, mounted } = useTheme();
-
-	if (!mounted) return null;
-
 	return (
 		<ToastContainer
 			position="bottom-right"
@@ -19,7 +14,7 @@ export default function ToastProvider() {
 			pauseOnFocusLoss={true}
 			draggable={true}
 			pauseOnHover={true}
-			theme={effectiveTheme}
+			theme="dark"
 		/>
 	);
 }

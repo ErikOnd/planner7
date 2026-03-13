@@ -1,6 +1,5 @@
 "use client";
 
-import { useTheme } from "@/contexts/ThemeContext";
 import {
 	Messages,
 	PasswordFormData,
@@ -44,7 +43,6 @@ export function ProfileSettingsContent({
 	navigationLayout = "side-menu",
 }: ProfileSettingsContentProps) {
 	const [selectedTab, setSelectedTab] = useState<TabType>("general");
-	const { theme, setTheme } = useTheme();
 
 	const renderTabContent = () => {
 		switch (selectedTab) {
@@ -63,7 +61,7 @@ export function ProfileSettingsContent({
 					/>
 				);
 			case "preferences":
-				return <PreferencesSettings theme={theme} setTheme={setTheme} styles={styles} />;
+				return <PreferencesSettings styles={styles} />;
 			case "connectors":
 				return <ConnectorsSettings styles={styles} />;
 			default:

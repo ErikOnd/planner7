@@ -5,16 +5,13 @@ import { Text } from "@atoms/Text/Text";
 import { ImageLibraryDialog } from "@components/ImageLibraryDialog/ImageLibraryDialog";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import * as Switch from "@radix-ui/react-switch";
-import clsx from "clsx";
 import { useState } from "react";
 
 type PreferencesSettingsProps = {
-	theme: "light" | "dark" | "system";
-	setTheme: (theme: "light" | "dark" | "system") => void;
 	styles: Record<string, string>;
 };
 
-export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSettingsProps) {
+export function PreferencesSettings({ styles }: PreferencesSettingsProps) {
 	const {
 		showWeekends,
 		showEditorToolbar,
@@ -28,40 +25,6 @@ export function PreferencesSettings({ theme, setTheme, styles }: PreferencesSett
 
 	return (
 		<div className={styles["tab-content"]}>
-			<section className={styles["settings-section"]}>
-				<h3 className={styles["section-heading"]}>Appearance</h3>
-				<Text size="sm" variant="muted">Color mode</Text>
-				<div className={styles["theme-selector"]}>
-					<button
-						className={clsx(styles["theme-card"], theme === "light" && styles["theme-card--active"])}
-						onClick={() => setTheme("light")}
-					>
-						<div className={styles["theme-preview"]}>
-							<div className={styles["theme-preview-light"]}></div>
-						</div>
-						<span className={styles["theme-label"]}>Light</span>
-					</button>
-					<button
-						className={clsx(styles["theme-card"], theme === "system" && styles["theme-card--active"])}
-						onClick={() => setTheme("system")}
-					>
-						<div className={styles["theme-preview"]}>
-							<div className={styles["theme-preview-system"]}></div>
-						</div>
-						<span className={styles["theme-label"]}>Match system</span>
-					</button>
-					<button
-						className={clsx(styles["theme-card"], theme === "dark" && styles["theme-card--active"])}
-						onClick={() => setTheme("dark")}
-					>
-						<div className={styles["theme-preview"]}>
-							<div className={styles["theme-preview-dark"]}></div>
-						</div>
-						<span className={styles["theme-label"]}>Dark</span>
-					</button>
-				</div>
-			</section>
-
 			<section className={styles["settings-section"]}>
 				<div className={styles["section-header"]}>
 					<h3 className={styles["section-heading"]}>Week Display</h3>
