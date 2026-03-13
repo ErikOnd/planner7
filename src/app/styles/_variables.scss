@@ -1,54 +1,38 @@
-$color-text: #f0ede8;
-$color-text-muted: #9a9488;
-$color-text-light: #a39d92;
-$color-text-placeholder: #7a7368;
-$color-text-secondary: #d4cfc7;
+$color-bg-main: #f4f5ef;
+$color-bg-surface: #fcfcf8;
+$color-bg-sidebar: #3a3b39;
 
-$color-background: #1a1a1a;
-$color-surface: #252525;
-$color-surface-elevated: #2d2d2d;
+$color-primary: #d2eb74;
+$color-primary-hover: #c3e060;
+$color-primary-soft: #eef6cf;
 
-$color-border: #575757;
-$color-border-light: #4a4a4a;
-$color-border-focus: #fbbf24;
+$color-text-primary: #22241f;
+$color-text-secondary: #5f645a;
+$color-text-muted: #8f948a;
+$color-text-inverse: #f3f4ee;
 
-$color-primary: #fbbf24;
-$color-primary-dark: #f59e0b;
-$color-primary-light: #fcd34d;
-$color-primary-subtle: #3a3a3a;
-$color-primary-ink: #fcd34d;
-$color-on-primary: #1a1a1a;
+$color-border: #e2e5dc;
+$color-icon: #6c7168;
+$color-success: #d2eb74;
 
-$color-gray-light: #252525;
-$color-gray-medium: #2d2d2d;
+$color-disabled-bg: #e7e9e2;
+$color-disabled-text: #a7aca1;
 
-$color-error: #c73b3b;
-$color-error-background: #3f1f1f;
-$color-error-border: #5e2a2a;
+$color-overlay: rgba(51, 53, 47, 0.32);
 
-$color-info: #93c5fd;
-$color-info-background: #1e3a5f;
-$color-info-border: #2d5a8f;
+$shadow-color-sm: rgba(34, 36, 31, 0.06);
+$shadow-color-md: rgba(34, 36, 31, 0.1);
+$shadow-color-lg: rgba(34, 36, 31, 0.14);
+$shadow-color-xl: rgba(34, 36, 31, 0.18);
 
-$color-success: #86efac;
-$color-success-background: #1f3f2f;
-$color-success-border: #2d5e3f;
+$shadow-primary-sm: rgba(210, 235, 116, 0.32);
 
-$color-overlay: rgba(0, 0, 0, 0.6);
-
-$shadow-color-sm: rgba(0, 0, 0, 0.2);
-$shadow-color-md: rgba(0, 0, 0, 0.3);
-$shadow-color-lg: rgba(0, 0, 0, 0.4);
-$shadow-color-xl: rgba(0, 0, 0, 0.5);
-
-$shadow-primary-sm: rgba(251, 191, 36, 0.15);
-
-$radius-xs: 0.38rem;
-$radius-sm: 0.5rem;
-$radius-md: 0.75rem;
-$radius-lg: 1rem;
-$radius-xl: 1.25rem;
-$radius-2xl: 1.5rem;
+$radius-xs: 0.25rem;
+$radius-sm: 0.375rem;
+$radius-md: 0.5rem;
+$radius-lg: 0.75rem;
+$radius-xl: 1rem;
+$radius-2xl: 1.25rem;
 $radius-pill: 999px;
 $radius-rounded: 50%;
 
@@ -56,5 +40,8 @@ $transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
 $transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 $transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 $transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+
+$space-layout-gap: 0.95rem;
+$space-layout-pad: 1.5rem;
 
 $desktop-navi-height: 5rem;

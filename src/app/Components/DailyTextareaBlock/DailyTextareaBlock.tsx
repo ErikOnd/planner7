@@ -33,6 +33,9 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 		lazyMountOnIdle = false,
 	} = props;
 	const { weekday, date } = formatToDayLabel(textareaDate);
+	const monthLabel = textareaDate.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
+	const dayNumber = String(textareaDate.getDate()).padStart(2, "0");
+	const weekdayName = textareaDate.toLocaleDateString("en-US", { weekday: "long" });
 	const isToday = textareaDate.toDateString() === new Date().toDateString();
 	const textareaBlock = useRef<HTMLDivElement | null>(null);
 	const editorContainerRef = useRef<HTMLDivElement | null>(null);
@@ -185,8 +188,14 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	return (
 		<div ref={textareaBlock} className={DailyTextareaBlockClass} id={`daily-note-${dateKey}`} data-note-date={dateKey}>
 			<div className={styles["date"]}>
-				<Text className={styles["day-batch"]}>{weekday}</Text>
-				<Text className={styles["month-and-day"]}>{date}</Text>
+				<div className={styles["date-content"]}>
+					<div className={styles["day-batch"]} aria-hidden="true">
+						<span className={styles["month-label"]}>{monthLabel}</span>
+						<span className={styles["day-number"]}>{dayNumber}</span>
+					</div>
+					<span className={styles["date-divider"]} aria-hidden="true" />
+					<Text className={styles["month-and-day"]}>{weekdayName}</Text>
+				</div>
 			</div>
 			<div
 				ref={editorContainerRef}
@@ -209,7 +218,6 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 						initialContent={content}
 						onChange={handleChange}
 						ariaLabel={`Notes for ${weekday}, ${date}`}
-						editorId={dateKey}
 					/>
 				)}
 			</div>

@@ -52,7 +52,7 @@ export default function RootLayout({ children }: Readonly<{
 	children: ReactNode;
 }>) {
 	return (
-		<html lang="en" data-theme="dark">
+		<html lang="en">
 			<body>
 				<AuthProvider>
 					<ToastProvider />

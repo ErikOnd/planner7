@@ -16,14 +16,16 @@
 	transform: translate(-50%, -50%);
 	background-color: var(--color-surface-elevated);
 	border: .1rem solid var(--color-border);
-	border-radius: variables.$radius-lg;
+	border-radius: variables.$radius-2xl;
 	box-shadow:
 		0 1rem 3rem var(--shadow-xl),
 		0 0.5rem 1.5rem var(--shadow-lg);
-	padding: var(--space-lg);
-	min-width: 56rem;
-	max-width: 64rem;
-	max-height: 85vh;
+	padding: 0;
+	width: min(92vw, 76rem);
+	height: min(88vh, 58rem);
+	min-width: 0;
+	max-width: 76rem;
+	max-height: min(88vh, 58rem);
 	overflow: hidden;
 	animation: content-show variables.$transition-fast;
 	z-index: var(--z-modal);
@@ -33,32 +35,69 @@
 
 .dialog-header {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: space-between;
-	margin-bottom: var(--space-md);
+	gap: var(--space-md);
+	padding: 1.45rem 1.6rem 1.2rem;
+	border-bottom: 0.1rem solid color-mix(in srgb, var(--color-border) 92%, transparent);
+	background: color-mix(in srgb, var(--color-surface) 96%, var(--color-background));
+}
+
+.dialog-heading {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	min-width: 0;
 }
 
 .dialog-title {
 	@include typography.text-xl;
 	color: var(--color-text);
+	font-weight: 800;
+	line-height: 1.1;
 }
 
-.close-button {
-	width: 3.2rem;
-	height: 3.2rem;
-	min-width: 3.2rem;
-	min-height: 3.2rem;
+.dialog-description {
+	@include typography.text-sm;
+	margin: 0;
+	color: var(--color-text-muted);
+}
+
+.close-button.close-button {
+	width: 2.9rem;
+	height: 2.9rem;
+	min-width: 2.9rem;
+	min-height: 2.9rem;
 	padding: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	border-radius: variables.$radius-md;
+	border: 0.1rem solid transparent;
+	background: transparent;
+	color: var(--color-text-muted);
+
+	&:hover:not(:disabled),
+	&:focus-visible:not(:disabled) {
+		background: color-mix(in srgb, var(--color-primary-soft) 20%, var(--color-surface));
+		border-color: color-mix(in srgb, var(--color-border) 88%, transparent);
+		color: var(--color-text-primary);
+		outline: none;
+	}
 }
 
 .dialog-body {
 	display: flex;
-	gap: var(--space-lg);
 	color: var(--color-text);
 	flex: 1;
+	min-height: 0;
+	padding: 1.4rem 1.5rem 1.5rem;
+	overflow: hidden;
+}
+
+.dialog-body > * {
+	flex: 1;
+	min-width: 0;
 	min-height: 0;
 }
 
@@ -91,11 +130,13 @@
 		max-width: none;
 		min-width: 0;
 		max-height: calc(100vh - 2rem);
-		padding: var(--space-md);
 	}
 
 	.dialog-body {
-		flex-direction: column;
-		gap: var(--space-md);
+		padding: 1rem;
+	}
+
+	.dialog-header {
+		padding: 1.1rem 1rem 0.95rem;
 	}
 }

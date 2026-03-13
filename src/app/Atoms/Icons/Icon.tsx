@@ -1,30 +1,39 @@
-import AiSparkles from "@assets/icons/ai-sparkles.svg";
+import Appearance from "@assets/icons/appearance.svg";
 import ArrowDownRight from "@assets/icons/arrow-down-right.svg";
 import Calendar from "@assets/icons/calendar.svg";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import ChevronRight from "@assets/icons/chevron-right.svg";
 import Close from "@assets/icons/close.svg";
 import ClosedEye from "@assets/icons/closed-eye.svg";
+import Connectors from "@assets/icons/connectors.svg";
 import DoubleChevronLeft from "@assets/icons/double-chevron-left.svg";
 import DoubleChevronRight from "@assets/icons/double-chevron-right.svg";
+import Editor from "@assets/icons/editor.svg";
 import Eye from "@assets/icons/eye.svg";
 import Google from "@assets/icons/google.svg";
 import Megaphone from "@assets/icons/megaphone.svg";
-import Microphone from "@assets/icons/microphone.svg";
 import Moon from "@assets/icons/moon.svg";
+import Notifications from "@assets/icons/notifications.svg";
+import Password from "@assets/icons/password.svg";
 import Pencil from "@assets/icons/pencil.svg";
 import Plus from "@assets/icons/plus.svg";
+import Preferences from "@assets/icons/preferences.svg";
+import Profile from "@assets/icons/profile.svg";
 import Questionmark from "@assets/icons/questionmark.svg";
 import Settings from "@assets/icons/settings.svg";
 import SignOut from "@assets/icons/sign-out.svg";
+import SignOutSettings from "@assets/icons/signout-settings.svg";
 import Star from "@assets/icons/star.svg";
+import Storage from "@assets/icons/storage.svg";
 import Sun from "@assets/icons/sun.svg";
 import Trash from "@assets/icons/trash.svg";
 import User from "@assets/icons/user.svg";
+import Week from "@assets/icons/week.svg";
 
 import clsx from "clsx";
 
 const icons = {
+	"appearance": Appearance,
 	"chevron-left": ChevronLeft,
 	"chevron-right": ChevronRight,
 	"plus": Plus,
@@ -38,16 +47,25 @@ const icons = {
 	"sun": Sun,
 	"moon": Moon,
 	"user": User,
+	"profile": Profile,
+	"general": Profile,
 	"close": Close,
 	"trash": Trash,
+	"danger": Trash,
 	"calendar": Calendar,
 	"double-chevron-left": DoubleChevronLeft,
 	"double-chevron-right": DoubleChevronRight,
 	"google": Google,
 	"Megaphone": Megaphone,
-	"Microphone": Microphone,
 	"arrow-down-right": ArrowDownRight,
-	"ai-sparkles": AiSparkles,
+	"preferences": Preferences,
+	"connectors": Connectors,
+	"password": Password,
+	"notifications": Notifications,
+	"week": Week,
+	"editor": Editor,
+	"storage": Storage,
+	"signout": SignOutSettings,
 };
 
 export type IconName = keyof typeof icons;

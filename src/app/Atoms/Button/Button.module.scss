@@ -110,14 +110,17 @@
 .ai {
 	position: relative;
 	border: 0.1rem solid transparent;
-	color: #f3f8ff;
+	color: var(--color-text-inverse);
 	background:
-		linear-gradient(135deg, rgba(14, 18, 31, 0.96), rgba(26, 31, 46, 0.94)) padding-box,
-		linear-gradient(90deg, #29e7d6, #3a9dff 45%, #7c5cff 75%, #d24dff) border-box;
+		linear-gradient(
+			135deg,
+			color-mix(in srgb, var(--color-bg-sidebar) 96%, transparent),
+			color-mix(in srgb, var(--color-bg-sidebar) 88%, var(--color-bg-main))
+		) padding-box,
+		linear-gradient(90deg, var(--color-primary), var(--color-primary-hover)) border-box;
 	box-shadow:
-		0 0.5rem 1.2rem rgba(23, 31, 54, 0.48),
-		0 0 1.1rem rgba(58, 157, 255, 0.3),
-		0 0 1.4rem rgba(210, 77, 255, 0.22);
+		0 0.5rem 1.2rem var(--shadow-lg),
+		0 0 1rem color-mix(in srgb, var(--color-primary) 24%, transparent);
 	animation: ai-button-glow 2.6s ease-in-out infinite;
 	isolation: isolate;
 
@@ -126,7 +129,7 @@
 		position: absolute;
 		inset: 0;
 		border-radius: inherit;
-		background: linear-gradient(115deg, transparent 18%, rgba(255, 255, 255, 0.45) 50%, transparent 82%);
+		background: linear-gradient(115deg, transparent 18%, rgba(252, 252, 248, 0.45) 50%, transparent 82%);
 		transform: translateX(-125%);
 		animation: ai-button-shine 2.8s cubic-bezier(0.19, 1, 0.22, 1) infinite;
 		pointer-events: none;
@@ -140,15 +143,13 @@
 
 	&:hover:not(:disabled) {
 		transform: translateY(-1px);
-		filter: saturate(1.12);
 		box-shadow:
-			0 0.7rem 1.5rem rgba(20, 25, 42, 0.6),
-			0 0 1.25rem rgba(58, 157, 255, 0.42),
-			0 0 1.8rem rgba(210, 77, 255, 0.34);
+			0 0.7rem 1.5rem var(--shadow-xl),
+			0 0 1.25rem color-mix(in srgb, var(--color-primary) 32%, transparent);
 	}
 
 	&:focus-visible {
-		outline: 0.12rem solid #8ec5ff;
+		outline: 0.12rem solid var(--color-primary);
 		outline-offset: 0.14rem;
 	}
 
@@ -178,15 +179,13 @@
 	0%,
 	100% {
 		box-shadow:
-			0 0.5rem 1.2rem rgba(23, 31, 54, 0.48),
-			0 0 1.1rem rgba(58, 157, 255, 0.3),
-			0 0 1.4rem rgba(210, 77, 255, 0.22);
+			0 0.5rem 1.2rem var(--shadow-lg),
+			0 0 1rem color-mix(in srgb, var(--color-primary) 24%, transparent);
 	}
 	50% {
 		box-shadow:
-			0 0.7rem 1.6rem rgba(18, 24, 43, 0.64),
-			0 0 1.35rem rgba(58, 157, 255, 0.42),
-			0 0 1.9rem rgba(210, 77, 255, 0.34);
+			0 0.7rem 1.6rem var(--shadow-xl),
+			0 0 1.35rem color-mix(in srgb, var(--color-primary) 34%, transparent);
 	}
 }
 

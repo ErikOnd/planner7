@@ -1,10 +1,12 @@
 "use client";
 
+import { Badge } from "@atoms/Badge/Badge";
 import { Button } from "@atoms/Button/Button";
-import { Text } from "@atoms/Text/Text";
+import { Icon } from "@atoms/Icons/Icon";
 import { ImageLibraryDialog } from "@components/ImageLibraryDialog/ImageLibraryDialog";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import * as Switch from "@radix-ui/react-switch";
+import clsx from "clsx";
 import { useState } from "react";
 
 type PreferencesSettingsProps = {
@@ -12,6 +14,8 @@ type PreferencesSettingsProps = {
 };
 
 export function PreferencesSettings({ styles }: PreferencesSettingsProps) {
+	const sectionIconSize = 24;
+
 	const {
 		showWeekends,
 		showEditorToolbar,
@@ -22,69 +26,148 @@ export function PreferencesSettings({ styles }: PreferencesSettingsProps) {
 	} = useWeekDisplayPreference();
 	const isFiveDayWeek = !showWeekends;
 	const [isImageLibraryOpen, setIsImageLibraryOpen] = useState(false);
+	const appearanceOptions = [
+		{ id: "light", label: "Light", isSelected: true, showPanel: true, showSecondaryBar: false },
+		{ id: "system", label: "System", isSelected: false, showPanel: true, showSecondaryBar: true },
+		{ id: "dark", label: "Dark", isSelected: false, showPanel: true, showSecondaryBar: false },
+	] as const;
 
 	return (
-		<div className={styles["tab-content"]}>
-			<section className={styles["settings-section"]}>
+		<div className={clsx(styles["tab-content"], styles["preferences-layout"])}>
+			<section className={clsx(styles["settings-section"], styles["preference-feature-card"])}>
 				<div className={styles["section-header"]}>
-					<h3 className={styles["section-heading"]}>Week Display</h3>
-				</div>
-				<Text size="sm" variant="muted">Choose which days to display in your weekly planner</Text>
-				<div className={styles["notification-item"]}>
-					<div className={styles["notification-info"]}>
-						<span className={styles["notification-label"]}>5-day week (Mon-Fri)</span>
-						<span className={styles["notification-description"]}>Show only weekdays</span>
+					<div className={styles["section-title-group"]}>
+						<span className={styles["section-icon"]}>
+							<Icon name="appearance" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+						</span>
+						<div className={styles["section-title-stack"]}>
+							<h3 className={styles["section-heading"]}>Appearance</h3>
+							<p className={styles["section-description"]}>
+								Preview the available color modes for Planner7.
+							</p>
+						</div>
 					</div>
-					<Switch.Root
-						className={styles["switch"]}
-						checked={isFiveDayWeek}
-						onCheckedChange={(checked) => setShowWeekends(!checked)}
-						disabled={isLoading || isSaving}
-						aria-label="5-day week"
-					>
-						<Switch.Thumb className={styles["switch-thumb"]} />
-					</Switch.Root>
+					<Badge variant="coming-soon">Coming soon</Badge>
+				</div>
+				<div className={styles["section-content"]}>
+					<span className={styles["preference-group-label"]}>Color mode</span>
+					<div className={styles["appearance-options"]} role="list" aria-label="Appearance mode previews">
+						{appearanceOptions.map((option) => (
+							<div
+								key={option.id}
+								role="listitem"
+								className={clsx(
+									styles["appearance-option"],
+									option.isSelected && styles["appearance-option--selected"],
+								)}
+								aria-current={option.isSelected ? "true" : undefined}
+							>
+								<div
+									className={clsx(
+										styles["appearance-preview"],
+										styles[`appearance-preview--${option.id}`],
+									)}
+									aria-hidden="true"
+								>
+									<span className={styles["appearance-preview-bar"]} />
+									{option.showSecondaryBar && (
+										<span
+											className={clsx(
+												styles["appearance-preview-bar"],
+												styles["appearance-preview-bar--secondary"],
+											)}
+										/>
+									)}
+									{option.showPanel && <span className={styles["appearance-preview-panel"]} />}
+								</div>
+								<span className={styles["appearance-option-label"]}>{option.label}</span>
+							</div>
+						))}
+					</div>
 				</div>
 			</section>
 
-			<section className={styles["settings-section"]}>
-				<div className={styles["section-header"]}>
-					<h3 className={styles["section-heading"]}>Rich Text Editor</h3>
-				</div>
-				<Text size="sm" variant="muted">Customize your text editor experience</Text>
-				<div className={styles["notification-item"]}>
-					<div className={styles["notification-info"]}>
-						<span className={styles["notification-label"]}>Show toolbar</span>
-						<span className={styles["notification-description"]}>Display formatting controls above notes</span>
+			<div className={styles["preferences-card-grid"]}>
+				<section className={clsx(styles["settings-section"], styles["preference-option-card"])}>
+					<div className={styles["preference-option-card-body"]}>
+						<span className={styles["preference-card-icon"]}>
+							<Icon name="week" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+						</span>
+						<div className={styles["preference-option-copy"]}>
+							<h3 className={styles["section-heading"]}>Week Display</h3>
+							<p className={styles["section-description"]}>
+								Show only weekdays (Mon-Fri) in your weekly planner.
+							</p>
+						</div>
+						<div className={styles["preference-toggle-stack"]}>
+							<Switch.Root
+								className={styles["switch"]}
+								checked={isFiveDayWeek}
+								onCheckedChange={(checked) => setShowWeekends(!checked)}
+								disabled={isLoading || isSaving}
+								aria-label="5-day week"
+							>
+								<Switch.Thumb className={styles["switch-thumb"]} />
+							</Switch.Root>
+							<span className={styles["preference-toggle-label"]}>5-day week</span>
+						</div>
 					</div>
-					<Switch.Root
-						className={styles["switch"]}
-						checked={showEditorToolbar}
-						onCheckedChange={setShowEditorToolbar}
-						disabled={isLoading || isSaving}
-						aria-label="Show rich text toolbar"
-					>
-						<Switch.Thumb className={styles["switch-thumb"]} />
-					</Switch.Root>
-				</div>
-			</section>
+				</section>
+
+				<section className={clsx(styles["settings-section"], styles["preference-option-card"])}>
+					<div className={styles["preference-option-card-body"]}>
+						<span className={styles["preference-card-icon"]}>
+							<Icon name="editor" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+						</span>
+						<div className={styles["preference-option-copy"]}>
+							<h3 className={styles["section-heading"]}>Rich Text Editor</h3>
+							<p className={styles["section-description"]}>
+								Display formatting controls above your notes.
+							</p>
+						</div>
+						<div className={styles["preference-toggle-stack"]}>
+							<Switch.Root
+								className={styles["switch"]}
+								checked={showEditorToolbar}
+								onCheckedChange={setShowEditorToolbar}
+								disabled={isLoading || isSaving}
+								aria-label="Show rich text toolbar"
+							>
+								<Switch.Thumb className={styles["switch-thumb"]} />
+							</Switch.Root>
+							<span className={styles["preference-toggle-label"]}>Show toolbar</span>
+						</div>
+					</div>
+				</section>
+			</div>
 
 			<section className={styles["settings-section"]}>
-				<div className={styles["section-header"]}>
-					<h3 className={styles["section-heading"]}>Image Storage</h3>
+				<div className={styles["section-card-header"]}>
+					<div className={styles["section-title-group"]}>
+						<span className={styles["section-icon"]}>
+							<Icon name="storage" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+						</span>
+						<div className={styles["section-title-stack"]}>
+							<h3 className={styles["section-heading"]}>Image Storage</h3>
+							<p className={styles["section-description"]}>
+								View uploaded images and free storage by removing what you no longer need.
+							</p>
+						</div>
+					</div>
 				</div>
-				<Text size="sm" variant="muted">
-					View all uploaded images and delete any image to free storage space.
-				</Text>
-				<Button
-					type="button"
-					variant="secondary"
-					icon="settings"
-					iconSize={16}
-					onClick={() => setIsImageLibraryOpen(true)}
-				>
-					Manage uploaded images
-				</Button>
+				<div className={styles["section-content"]}>
+					<div className={`${styles["form-actions"]} ${styles["form-actions--start"]}`}>
+						<Button
+							type="button"
+							variant="secondary"
+							icon="settings"
+							iconSize={16}
+							onClick={() => setIsImageLibraryOpen(true)}
+						>
+							Manage uploaded images
+						</Button>
+					</div>
+				</div>
 			</section>
 
 			<ImageLibraryDialog

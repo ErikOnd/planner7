@@ -44,42 +44,71 @@
 :root {
 	--font-inter: 'Inter', sans-serif;
 
-	--color-text: #{variables.$color-text};
-	--color-text-muted: #{variables.$color-text-muted};
-	--color-text-light: #{variables.$color-text-light};
-	--color-text-placeholder: #{variables.$color-text-placeholder};
-	--color-text-secondary: #{variables.$color-text-secondary};
-
-	--color-background: #{variables.$color-background};
-	--color-surface: #{variables.$color-surface};
-	--color-surface-elevated: #{variables.$color-surface-elevated};
-
-	--color-border: #{variables.$color-border};
-	--color-border-light: #{variables.$color-border-light};
-	--color-border-focus: #{variables.$color-border-focus};
+	--color-bg-main: #{variables.$color-bg-main};
+	--color-bg-surface: #{variables.$color-bg-surface};
+	--color-bg-sidebar: #{variables.$color-bg-sidebar};
 
 	--color-primary: #{variables.$color-primary};
-	--color-primary-dark: #{variables.$color-primary-dark};
-	--color-primary-light: #{variables.$color-primary-light};
-	--color-primary-subtle: #{variables.$color-primary-subtle};
-	--color-primary-ink: #{variables.$color-primary-ink};
-	--color-on-primary: #{variables.$color-on-primary};
+	--color-primary-hover: #{variables.$color-primary-hover};
+	--color-primary-soft: #{variables.$color-primary-soft};
 
-	--color-gray-light: #{variables.$color-gray-light};
-	--color-gray-medium: #{variables.$color-gray-medium};
+	--color-text-primary: #{variables.$color-text-primary};
+	--color-text-secondary: #{variables.$color-text-secondary};
+	--color-text-muted: #{variables.$color-text-muted};
+	--color-text-inverse: #{variables.$color-text-inverse};
 
-	--color-error: #{variables.$color-error};
-	--color-error-background: #{variables.$color-error-background};
-	--color-error-border: #{variables.$color-error-border};
+	--color-border: #{variables.$color-border};
+	--color-separator: #{variables.$color-border};
 
-	--color-info: #{variables.$color-info};
-	--color-info-background: #{variables.$color-info-background};
-	--color-info-border: #{variables.$color-info-border};
+	--color-icon: #{variables.$color-icon};
+	--color-icon-inverse: #{variables.$color-text-inverse};
 
 	--color-success: #{variables.$color-success};
-	--color-success-background: #{variables.$color-success-background};
-	--color-success-border: #{variables.$color-success-border};
 
+	--color-disabled-bg: #{variables.$color-disabled-bg};
+	--color-disabled-text: #{variables.$color-disabled-text};
+
+	/* Compatibility aliases for existing components */
+	--color-background: var(--color-bg-main);
+	--color-surface: var(--color-bg-surface);
+	--color-surface-elevated: var(--color-bg-surface);
+	--color-sidebar-background: var(--color-bg-sidebar);
+
+	--color-text: var(--color-text-primary);
+	--color-text-light: var(--color-text-secondary);
+	--color-text-subtle: var(--color-text-muted);
+	--color-text-placeholder: var(--color-disabled-text);
+
+	--color-border-light: var(--color-border);
+	--color-border-focus: var(--color-primary);
+
+	--color-primary-dark: var(--color-primary-hover);
+	--color-primary-light: var(--color-primary-soft);
+	--color-primary-subtle: var(--color-primary-soft);
+	--color-primary-ink: var(--color-primary-hover);
+	--color-on-primary: var(--color-text-primary);
+
+	--color-gray-light: var(--color-disabled-bg);
+	--color-gray-medium: var(--color-disabled-bg);
+
+	--color-info: var(--color-text-secondary);
+	--color-info-background: var(--color-disabled-bg);
+	--color-info-border: var(--color-border);
+
+	--color-error: var(--color-bg-sidebar);
+	--color-error-background: var(--color-disabled-bg);
+	--color-error-border: var(--color-border);
+	--color-warning: var(--color-primary-hover);
+
+	--color-success-background: var(--color-primary-soft);
+	--color-success-border: var(--color-primary);
+
+	--surface-1: var(--color-bg-surface);
+	--surface-2: var(--color-bg-surface);
+	--surface-border: var(--color-border);
+	--surface-border-strong: var(--color-border);
+
+	--ring-focus: 0 0 0 .2rem var(--shadow-primary-sm);
 	--color-overlay: #{variables.$color-overlay};
 
 	--shadow-sm: #{variables.$shadow-color-sm};
@@ -87,6 +116,8 @@
 	--shadow-lg: #{variables.$shadow-color-lg};
 	--shadow-xl: #{variables.$shadow-color-xl};
 	--shadow-primary-sm: #{variables.$shadow-primary-sm};
+	--color-shadow-sm: var(--shadow-sm);
+	--color-shadow-lg: var(--shadow-lg);
 
 	--space-xs: #{mixins.clamp-builder(0.4, 0.6)};
 	--space-sm: #{mixins.clamp-builder(0.6, 0.8)};
@@ -94,6 +125,8 @@
 	--space-lg: #{mixins.clamp-builder(1.2, 1.6)};
 	--space-xl: #{mixins.clamp-builder(1.6, 2.0)};
 	--space-2xl: #{mixins.clamp-builder(2.0, 2.4)};
+	--space-layout-gap: #{variables.$space-layout-gap};
+	--space-layout-pad: #{variables.$space-layout-pad};
 
 	--content-spacing: #{mixins.clamp-builder(1.6, 4.8)};
 
@@ -118,10 +151,9 @@
 	/* Component-local stacking */
 	--z-editor-toolbar: 2;
 	--z-editor-drag: 3;
-	--z-editor-mic: 5;
 	--z-editor-menu: 30;
 
-	color-scheme: dark;
+	color-scheme: light;
 }
 
 html {

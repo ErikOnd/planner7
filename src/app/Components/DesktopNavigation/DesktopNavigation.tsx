@@ -32,42 +32,51 @@ export function DesktopNavigation({
 		<nav className={styles["desktop-navigation"]}>
 			<div className={styles["date-section"]}>
 				<Button
-					variant="secondary"
+					variant="ghost"
 					icon="chevron-left"
-					className={styles["nav-control"]}
+					iconSize={28}
+					className={`${styles["nav-control"]} ${styles["nav-arrow"]}`}
 					aria-label="Previous week"
 					onClick={() => handleWeekChange(-1)}
+				/>
+				<Button
+					variant="ghost"
+					icon="chevron-right"
+					iconSize={28}
+					className={`${styles["nav-control"]} ${styles["nav-arrow"]}`}
+					aria-label="Next week"
+					onClick={() => handleWeekChange(1)}
 				/>
 				<div className={styles["date-info"]}>
 					<div className={styles["date-row"]}>
 						<Text size="xl" className={styles["date-range"]}>{rangeLabel}</Text>
 					</div>
 				</div>
-				<Button
-					variant="secondary"
-					icon="chevron-right"
-					className={styles["nav-control"]}
-					aria-label="Next week"
-					onClick={() => handleWeekChange(1)}
-				/>
 			</div>
 			<div className={styles["actions-section"]}>
-				<CalendarOverlay onDateSelect={onDateSelect} showWeekends={showWeekends}>
-					<Button variant="secondary" icon="calendar" className={styles["nav-control"]} aria-label="Open calendar" />
-				</CalendarOverlay>
 				<Button
 					href="/feedback"
-					variant="secondary"
+					variant="ghost"
 					icon="Megaphone"
-					className={styles["nav-control"]}
+					iconSize={28}
+					className={`${styles["nav-control"]} ${styles["nav-action"]}`}
 					aria-label="Send feedback"
 				/>
+				<CalendarOverlay onDateSelect={onDateSelect} showWeekends={showWeekends}>
+					<Button
+						variant="ghost"
+						icon="calendar"
+						iconSize={28}
+						className={`${styles["nav-control"]} ${styles["nav-action"]}`}
+						aria-label="Open calendar"
+					/>
+				</CalendarOverlay>
 				<ProfileDialog>
 					<Button
-						variant="secondary"
-						icon="user"
-						iconSize={36}
-						className={styles["nav-control"]}
+						variant="ghost"
+						icon="settings"
+						iconSize={28}
+						className={`${styles["nav-control"]} ${styles["nav-action"]}`}
 						aria-label="Open profile menu"
 					/>
 				</ProfileDialog>

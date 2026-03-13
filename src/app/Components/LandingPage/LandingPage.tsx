@@ -10,8 +10,6 @@ import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import type { StructuredNotesResponse } from "../../actions/aiNotes";
-import { LexicalPreview } from "./LexicalPreview";
 import { MagneticButton } from "./MagneticButton";
 import { TypingAnimation } from "./TypingAnimation";
 
@@ -23,10 +21,10 @@ const features = [
 			"Each day gives you a rich planning area to think clearly, capture context, and shape real execution plans.",
 	},
 	{
-		icon: "ai-sparkles" as const,
-		title: "AI Voice Structuring",
+		icon: "star" as const,
+		title: "Backlog That Stays Usable",
 		description:
-			"Speak naturally and get structured notes with headings, bullets, and checkboxes while preserving key details.",
+			"Capture tasks quickly, keep them organized, and pull the right work into your week when it matters.",
 	},
 	{
 		icon: "calendar" as const,
@@ -41,49 +39,12 @@ const steps = [
 		description: "Sign up in seconds and open your weekly workspace instantly.",
 	},
 	{
-		title: "Tap the AI mic",
-		description: "Record your thoughts naturally in any language, just like speaking in a meeting.",
+		title: "Add your tasks",
+		description: "Keep important work in your backlog so it is always visible when you plan your week.",
 	},
 	{
 		title: "Review and ship your day",
-		description: "Your transcript becomes structured notes you can edit, prioritize, and execute.",
-	},
-];
-
-const transcriptBefore = [
-	"okay quick update i have meeting with northstar labs at 14:30",
-	"need to finish ORBIT-512 and ORBIT-513 today",
-	"blocker: api auth for exports still failing",
-	"ask anna for qa signoff before friday",
-];
-
-const transcriptAfter: StructuredNotesResponse["blocks"] = [
-	{
-		type: "heading2",
-		segments: [{ text: "Today" }],
-	},
-	{
-		type: "bulleted_list",
-		items: [
-			{ segments: [{ text: "Meeting: Northstar Labs sync (14:30)" }] },
-			{ segments: [{ text: "Tickets: ORBIT-512, ORBIT-513" }] },
-		],
-	},
-	{
-		type: "heading2",
-		segments: [{ text: "Blockers" }],
-	},
-	{
-		type: "bulleted_list",
-		items: [{ segments: [{ text: "API auth for exports is still failing" }] }],
-	},
-	{
-		type: "heading2",
-		segments: [{ text: "Next actions" }],
-	},
-	{
-		type: "checklist",
-		items: [{ checked: false, segments: [{ text: "Ask Anna for QA signoff before Friday" }] }],
+		description: "Use rich daily notes to think clearly, prioritize execution, and move through the week with context.",
 	},
 ];
 
@@ -181,8 +142,8 @@ export function LandingPage() {
 					</motion.div>
 					<motion.div variants={heroItemVariants}>
 						<Text size="lg" className={styles["hero-subtitle"]}>
-							Planner7 gives every day a rich planning area for real thinking, not just checkboxes. AI voice notes are
-							built in, so you can speak your thoughts and instantly get a structured plan.
+							Planner7 gives every day a rich planning area for real thinking, not just checkboxes. Plan your week,
+							manage your backlog, and keep real context attached to the work you need to ship.
 						</Text>
 					</motion.div>
 				</motion.section>
@@ -200,56 +161,13 @@ export function LandingPage() {
 					>
 						{features.map((feature) => (
 							<motion.div key={feature.title} className={styles["feature-card"]} variants={cardVariants}>
-								<div className={styles["feature-icon"]}>
-									<Icon
-										name={feature.icon}
-										size={feature.title === "AI Voice Structuring" ? 40 : 22}
-									/>
-								</div>
+									<div className={styles["feature-icon"]}>
+										<Icon name={feature.icon} size={22} />
+									</div>
 								<Text size="base" fontWeight={600} className={styles["feature-title"]}>{feature.title}</Text>
 								<Text size="sm" className={styles["feature-description"]}>{feature.description}</Text>
 							</motion.div>
 						))}
-					</motion.div>
-				</section>
-
-				<section className={styles["voice-showcase"]}>
-					<Text size="sm" fontWeight={700} className={styles["section-label"]}>AI workflow</Text>
-					<Headline as="h2" className={styles["section-title"]}>
-						How voice becomes structured notes
-					</Headline>
-					<motion.div
-						className={styles["transcript-demo"]}
-						initial={{ opacity: 0, y: 22 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true, amount: 0.35 }}
-						transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-					>
-						<div className={styles["transcript-panel"]}>
-							<span className={styles["transcript-chip"]}>Before</span>
-							<Text size="sm" className={styles["transcript-heading"]}>Raw voice transcript</Text>
-							<motion.div
-								initial={{ opacity: 0, x: -10 }}
-								whileInView={{ opacity: 1, x: 0 }}
-								viewport={{ once: true }}
-								transition={{ duration: 0.35 }}
-							>
-								<LexicalPreview plainLines={transcriptBefore} />
-							</motion.div>
-						</div>
-						<div className={styles["transcript-arrow"]} aria-hidden="true">→</div>
-						<div className={`${styles["transcript-panel"]} ${styles["transcript-panel--after"]}`}>
-							<span className={styles["transcript-chip"]}>After</span>
-							<Text size="sm" className={styles["transcript-heading"]}>Planner7 AI output</Text>
-							<motion.div
-								initial={{ opacity: 0, x: 10 }}
-								whileInView={{ opacity: 1, x: 0 }}
-								viewport={{ once: true }}
-								transition={{ duration: 0.35, delay: 0.08 }}
-							>
-								<LexicalPreview structuredData={{ blocks: transcriptAfter }} />
-							</motion.div>
-						</div>
 					</motion.div>
 				</section>
 
@@ -293,7 +211,7 @@ export function LandingPage() {
 							Ready to plan at the speed of thought?
 						</Headline>
 						<Text size="base" className={styles["cta-subtitle"]}>
-							Use AI voice notes to capture faster, structure better, and execute your week with less friction.
+							Build a planning habit with a cleaner weekly view, better daily notes, and a backlog that stays actionable.
 						</Text>
 						<div className={styles["cta-button"]}>
 							<MagneticButton>

@@ -33,7 +33,6 @@ import { ImageNode } from "./nodes/ImageNode";
 import CodeHighlightingPlugin from "./plugins/CodeHighlightingPlugin";
 import ImageUploadDropPlugin from "./plugins/ImageUploadDropPlugin";
 import SlashCommandPlugin from "./plugins/SlashCommandPlugin";
-import SpeechToTextButtonPlugin from "./plugins/SpeechToTextButtonPlugin";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
 import { blockNoteToMarkdown, emptyState, hasNonEmptyRoot, isLexicalEditorState } from "./utils/content";
 import { LINK_MATCHERS } from "./utils/linkMatchers";
@@ -42,7 +41,6 @@ type SmartEditorProps = {
 	initialContent?: NoteContent;
 	onChange?: (content: NoteContent) => void;
 	ariaLabel?: string;
-	editorId?: string;
 };
 
 function createParagraphNodeJSON(line: string) {
@@ -126,7 +124,7 @@ function EditorStateSyncPlugin({ serializedEditorState }: { serializedEditorStat
 	return null;
 }
 
-export default function SmartEditor({ initialContent, onChange, ariaLabel, editorId }: SmartEditorProps) {
+export default function SmartEditor({ initialContent, onChange, ariaLabel }: SmartEditorProps) {
 	const mounted = useMounted();
 	const { showEditorToolbar } = useWeekDisplayPreference();
 	const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
@@ -299,7 +297,6 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel, edito
 						}
 					}}
 				/>
-				<SpeechToTextButtonPlugin editorId={editorId} />
 				{isFocused && floatingAnchorElem && (
 					<DraggableBlockPlugin_EXPERIMENTAL
 						anchorElem={floatingAnchorElem}

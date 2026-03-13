@@ -2,7 +2,6 @@
 
 import { useBacklog } from "@/contexts/BacklogContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
-import { getRandomTodoGreeting } from "@/lib/greetings";
 import { Button } from "@atoms/Button/Button";
 import Checkbox from "@atoms/Checkbox/Checkbox";
 import { Icon } from "@atoms/Icons/Icon";
@@ -14,18 +13,15 @@ import { WorkspaceSwitcher } from "@components/WorkspaceSwitcher/WorkspaceSwitch
 import { closestCenter, DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useBacklogController } from "@hooks/useBacklogController";
-import { useDisplayName } from "@hooks/useDisplayName";
 import { useKeyboardShortcut } from "@hooks/useKeyboardShortcut";
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
-import { useMemo } from "react";
 import styles from "./Sidebar.module.scss";
 
 export function Sidebar() {
 	const todosState = useBacklog();
 	const { addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
 	const { activeWorkspaceId } = useWorkspace();
-	const { displayName, isResolved: isDisplayNameResolved } = useDisplayName("Planner");
 	const {
 		isAddOpen,
 		setIsAddOpen,
@@ -47,7 +43,6 @@ export function Sidebar() {
 		handleModalChange,
 		handleDelete,
 	} = useBacklogController(todosState, activeWorkspaceId);
-	const greeting = useMemo(() => getRandomTodoGreeting(), []);
 
 	useKeyboardShortcut({
 		key: "k",
@@ -59,13 +54,14 @@ export function Sidebar() {
 			<div className={styles["sticky-section"]}>
 				<div className={styles["sidebar-header"]}>
 					<div className={styles["brand"]}>
-						<Image src="/logo-mark.svg" alt="Planner7 logo" width={48} height={48} className={styles["brand-logo"]} />
-						{isDisplayNameResolved && (
-							<div className={styles["brand-greeting"]}>
-								<span className={styles["brand-greeting-title"]}>{greeting.headline}, {displayName}</span>
-								<span className={styles["brand-greeting-subtitle"]}>{greeting.subline}</span>
-							</div>
-						)}
+						<Image src="/logo-mark.svg" alt="Planner7 logo" width={40} height={40} className={styles["brand-logo"]} priority />
+						<div className={styles["brand-greeting"]}>
+							<span className={styles["brand-greeting-title"]}>
+								<span className={styles["brand-wordmark"]}>planner</span>
+								<span className={styles["brand-accent"]}>7</span>
+							</span>
+							<span className={styles["brand-greeting-subtitle"]}>INTELLIGENT PLANNING</span>
+						</div>
 					</div>
 				</div>
 
@@ -84,7 +80,7 @@ export function Sidebar() {
 					wrapText={false}
 				>
 					<Icon name="plus" size={20} className={styles["quick-add-plus"]} />
-					<span className={styles["quick-add-text"]}>Add task</span>
+					<span className={styles["quick-add-text"]}>Add Task</span>
 				</Button>
 
 				<div className={styles["backlog-header"]}>
@@ -144,8 +140,10 @@ export function Sidebar() {
 						className={styles["completed-link"]}
 						onClick={() => setIsCompletedOpen(true)}
 						fontWeight={600}
+						wrapText={false}
 					>
-						Completed ({completedTodos.length})
+						<span className={styles["completed-link-icon"]} aria-hidden="true" />
+						<span className={styles["completed-link-text"]}>Completed</span>
 					</Button>
 				</div>
 			</div>

@@ -1,93 +1,121 @@
-@use "../../styles/mixins" as mixins;
-@use "../../styles/typography" as typography;
 @use "../../styles/variables" as variables;
 
 .desktop-navigation {
 	position: sticky;
 	top: 0;
 	z-index: var(--z-sticky);
-	display: grid;
-	grid-template-columns: 1fr auto 1fr;
+	display: flex;
 	align-items: center;
-	border-bottom: .1rem solid var(--color-border);
-	background-color: var(--color-surface);
-	height: variables.$desktop-navi-height;
-	backdrop-filter: blur(10px);
-	box-shadow:
-		0 .1rem .3rem rgba(0, 0, 0, 0.05),
-		0 0 0 .06rem color-mix(in srgb, var(--color-border-light) 68%, transparent) inset;
+	justify-content: space-between;
+	min-height: variables.$desktop-navi-height;
 	width: 100%;
+	padding-inline: clamp(1.5rem, 2.5vw, 2.75rem);
+	background-color: var(--color-bg-surface);
+	border-bottom: 0.1rem solid color-mix(in srgb, var(--color-border) 88%, transparent);
 	color: var(--color-text);
 
 	.date-section {
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		gap: var(--space-lg);
-		padding-inline: var(--space-lg);
-		padding-block: 0;
-		grid-column: 2;
-		justify-self: center;
-		align-self: center;
+		flex: 1 1 auto;
+		min-width: 0;
+		gap: 0.3rem;
 	}
 
 	.date-info {
 		display: flex;
-		flex-direction: column;
 		align-items: center;
-		text-align: center;
-		gap: 0.25rem;
-		justify-content: center;
-		height: 3.2rem;
-		padding: 0 0.9rem;
-		border-radius: variables.$radius-sm;
-		background: color-mix(in srgb, var(--color-surface-elevated) 84%, transparent);
-		border: 0.06rem solid color-mix(in srgb, var(--color-border-light) 70%, transparent);
-		box-shadow: 0 0.2rem 0.75rem var(--shadow-sm);
-	}
-
-	.date-range {
-		font-weight: 600;
+		min-width: 0;
+		margin-left: clamp(0.8rem, 1.35vw, 1.35rem);
 	}
 
 	.date-row {
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		gap: var(--space-sm);
+		min-width: 0;
+	}
+
+	.date-range {
+		font-size: clamp(1.6rem, 2vw, 2.05rem);
+		line-height: 1.05;
+		font-weight: 800;
+		letter-spacing: -0.03em;
+		color: var(--color-text-primary);
+		white-space: nowrap;
 	}
 
 	.actions-section {
 		display: flex;
 		align-items: center;
-		gap: var(--space-md);
-		padding-inline: var(--space-lg);
-		padding-block: 0;
 		justify-content: flex-end;
-		grid-column: 3;
-		align-self: center;
+		flex: 0 0 auto;
+		gap: clamp(0.95rem, 1.45vw, 1.35rem);
+		margin-left: var(--space-xl);
 	}
 }
 
 .nav-control {
-	position: relative;
-	border-radius: variables.$radius-md;
-	box-shadow: 0 0.1rem 0.45rem var(--shadow-sm);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.45rem;
+	height: 2.45rem;
+	min-width: 2.45rem;
+	min-height: 2.45rem;
+	padding: 0;
+	border: 0.1rem solid transparent;
+	border-radius: variables.$radius-sm;
+	background: transparent;
+	box-shadow: none;
+	color: var(--color-icon);
+	overflow: visible;
 	transition:
-		transform variables.$transition-fast,
-		box-shadow variables.$transition-base,
+		color variables.$transition-base,
+		opacity variables.$transition-base,
 		background-color variables.$transition-base,
 		border-color variables.$transition-base;
 
 	&:hover:not(:disabled) {
-		transform: translateY(-1px);
-		box-shadow:
-			0 0.55rem 1rem var(--shadow-md),
-			0 0 0 0.06rem color-mix(in srgb, var(--color-border-light) 68%, transparent) inset;
+		background: color-mix(in srgb, var(--color-primary-hover) 20%, var(--color-bg-surface));
+		border-color: color-mix(in srgb, var(--color-primary-hover) 42%, transparent);
+		box-shadow: none;
+		transform: none;
 	}
 
 	&:active:not(:disabled) {
-		transform: translateY(0);
-		box-shadow: 0 0.2rem 0.6rem var(--shadow-sm);
+		background: color-mix(in srgb, var(--color-primary-hover) 28%, var(--color-bg-surface));
+		border-color: color-mix(in srgb, var(--color-primary-hover) 52%, transparent);
+		box-shadow: none;
+		transform: none;
+	}
+
+	&:focus-visible {
+		outline: 0.12rem solid color-mix(in srgb, var(--color-primary-hover) 58%, transparent);
+		outline-offset: 0.08rem;
+		background: color-mix(in srgb, var(--color-primary-hover) 24%, var(--color-bg-surface));
+		border-color: color-mix(in srgb, var(--color-primary-hover) 48%, transparent);
+		box-shadow: none;
+	}
+
+	svg {
+		display: block;
+	}
+}
+
+.nav-control.nav-arrow {
+	color: var(--color-text-primary);
+
+	&:hover:not(:disabled),
+	&:focus-visible {
+		color: color-mix(in srgb, var(--color-text-primary) 72%, var(--color-primary-hover));
+	}
+}
+
+.nav-control.nav-action {
+	color: color-mix(in srgb, var(--color-icon) 92%, var(--color-text-secondary));
+
+	&:hover:not(:disabled),
+	&:focus-visible {
+		color: color-mix(in srgb, var(--color-text-secondary) 62%, var(--color-primary-hover));
 	}
 }

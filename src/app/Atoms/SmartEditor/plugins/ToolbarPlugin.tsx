@@ -111,24 +111,6 @@ export default function ToolbarPlugin() {
 			<button
 				type="button"
 				className={styles["smart-editor__toolbar-btn"]}
-				onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
-				disabled={!canUndo}
-				aria-label="Undo"
-			>
-				Undo
-			</button>
-			<button
-				type="button"
-				className={styles["smart-editor__toolbar-btn"]}
-				onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
-				disabled={!canRedo}
-				aria-label="Redo"
-			>
-				Redo
-			</button>
-			<button
-				type="button"
-				className={styles["smart-editor__toolbar-btn"]}
 				onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold")}
 				data-active={isBold}
 				aria-label="Bold"
@@ -216,6 +198,30 @@ export default function ToolbarPlugin() {
 				aria-label="Insert link"
 			>
 				Link
+			</button>
+			<button
+				type="button"
+				className={`${styles["smart-editor__toolbar-btn"]} ${styles["smart-editor__toolbar-btn--spacer"]}`}
+				onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
+				disabled={!canUndo}
+				aria-label="Undo"
+			>
+				<svg viewBox="0 0 20 20" className={styles["smart-editor__toolbar-icon"]} aria-hidden="true">
+					<path d="M8.5 6.5H13.25C15.0449 6.5 16.5 7.95507 16.5 9.75C16.5 11.5449 15.0449 13 13.25 13H7.25" />
+					<path d="M9.75 3.75L6.5 7L9.75 10.25" />
+				</svg>
+			</button>
+			<button
+				type="button"
+				className={styles["smart-editor__toolbar-btn"]}
+				onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
+				disabled={!canRedo}
+				aria-label="Redo"
+			>
+				<svg viewBox="0 0 20 20" className={styles["smart-editor__toolbar-icon"]} aria-hidden="true">
+					<path d="M11.5 6.5H6.75C4.95508 6.5 3.5 7.95507 3.5 9.75C3.5 11.5449 4.95508 13 6.75 13H12.75" />
+					<path d="M10.25 3.75L13.5 7L10.25 10.25" />
+				</svg>
 			</button>
 		</div>
 	);

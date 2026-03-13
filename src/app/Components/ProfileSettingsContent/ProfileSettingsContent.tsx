@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@atoms/Icons/Icon";
 import {
 	Messages,
 	PasswordFormData,
@@ -43,6 +44,13 @@ export function ProfileSettingsContent({
 	navigationLayout = "side-menu",
 }: ProfileSettingsContentProps) {
 	const [selectedTab, setSelectedTab] = useState<TabType>("general");
+	const tabIconSize = 24;
+
+	const tabs: { id: TabType; label: string; icon: "general" | "preferences" | "connectors" }[] = [
+		{ id: "general", label: "General", icon: "general" },
+		{ id: "preferences", label: "Preferences", icon: "preferences" },
+		{ id: "connectors", label: "Connectors", icon: "connectors" },
+	];
 
 	const renderTabContent = () => {
 		switch (selectedTab) {
@@ -69,31 +77,46 @@ export function ProfileSettingsContent({
 		}
 	};
 
+	const navigation = (
+		<nav className={styles[navigationLayout]} aria-label="Settings sections">
+			{tabs.map((tab) => {
+				const isActive = selectedTab === tab.id;
+				return (
+					<button
+						key={tab.id}
+						type="button"
+						className={clsx(styles["tab-button"], isActive && styles["tab-button--active"])}
+						onClick={() => setSelectedTab(tab.id)}
+					>
+						<span className={styles["tab-button-icon"]}>
+							<Icon name={tab.icon} size={tabIconSize} className={styles["tab-icon-glyph"]} />
+						</span>
+						<span className={styles["tab-button-label"]}>{tab.label}</span>
+					</button>
+				);
+			})}
+		</nav>
+	);
+
+	if (navigationLayout === "tab-navigation") {
+		return (
+			<div className={styles["settings-layout--stacked"]}>
+				{navigation}
+				<div className={styles["content-area"]}>
+					{renderTabContent()}
+				</div>
+			</div>
+		);
+	}
+
 	return (
-		<>
-			<nav className={styles[navigationLayout]}>
-				<button
-					className={clsx(styles["tab-button"], selectedTab === "general" && styles["tab-button--active"])}
-					onClick={() => setSelectedTab("general")}
-				>
-					General
-				</button>
-				<button
-					className={clsx(styles["tab-button"], selectedTab === "preferences" && styles["tab-button--active"])}
-					onClick={() => setSelectedTab("preferences")}
-				>
-					Preferences
-				</button>
-				<button
-					className={clsx(styles["tab-button"], selectedTab === "connectors" && styles["tab-button--active"])}
-					onClick={() => setSelectedTab("connectors")}
-				>
-					Connectors
-				</button>
-			</nav>
+		<div className={styles["settings-layout"]}>
+			<aside className={styles["settings-sidebar"]}>
+				{navigation}
+			</aside>
 			<div className={styles["content-area"]}>
 				{renderTabContent()}
 			</div>
-		</>
+		</div>
 	);
 }

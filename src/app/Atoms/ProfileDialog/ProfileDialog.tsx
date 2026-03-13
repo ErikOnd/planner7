@@ -20,7 +20,12 @@ export function ProfileDialog({ children }: ProfileDialogProps) {
 				<Dialog.Overlay className={styles["dialog-overlay"]} />
 				<Dialog.Content className={styles["dialog-content"]}>
 					<div className={styles["dialog-header"]}>
-						<Dialog.Title className={styles["dialog-title"]}>Profile</Dialog.Title>
+						<div className={styles["dialog-heading"]}>
+							<Dialog.Title className={styles["dialog-title"]}>Settings</Dialog.Title>
+							<Dialog.Description className={styles["dialog-description"]}>
+								Manage your account preferences and integrations.
+							</Dialog.Description>
+						</div>
 						<Dialog.Close asChild>
 							<Button variant="secondary" icon="close" className={styles["close-button"]} aria-label="Close dialog" />
 						</Dialog.Close>

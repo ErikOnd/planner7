@@ -121,123 +121,6 @@
 	}
 }
 
-.voice-showcase {
-	padding: clamp(4rem, 8vw, 6rem) var(--space-xl);
-	max-width: 75rem;
-	margin: 0 auto;
-	position: relative;
-}
-
-.voice-showcase::before {
-	content: "";
-	position: absolute;
-	inset: clamp(3rem, 6vw, 4rem) 5% auto;
-	height: 18rem;
-	background: radial-gradient(circle at center, rgba(58, 157, 255, 0.16), rgba(210, 77, 255, 0.09) 42%, transparent 75%);
-	filter: blur(26px);
-	pointer-events: none;
-	z-index: 0;
-}
-
-.transcript-demo {
-	margin-top: clamp(1.6rem, 3vw, 2.4rem);
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 0.8rem;
-	align-items: stretch;
-
-	@include mixins.phone {
-		grid-template-columns: 1fr auto 1fr;
-	}
-}
-
-.transcript-panel {
-	background:
-		linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.92)) padding-box,
-		linear-gradient(95deg, rgba(41, 231, 214, 0.7), rgba(58, 157, 255, 0.85), rgba(210, 77, 255, 0.75)) border-box;
-	border: 0.08rem solid transparent;
-	border-radius: variables.$radius-lg;
-	padding: 0.95rem;
-	display: flex;
-	flex-direction: column;
-	gap: 0.55rem;
-	box-shadow:
-		0 0.5rem 1rem rgba(15, 23, 42, 0.3),
-		0 0 0.9rem rgba(58, 157, 255, 0.18);
-}
-
-.transcript-panel--after {
-	overflow: hidden;
-}
-
-.transcript-chip {
-	align-self: flex-start;
-	font-size: 0.68rem;
-	font-weight: 700;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	padding: 0.18rem 0.42rem;
-	border-radius: variables.$radius-sm;
-	background: color-mix(in srgb, var(--color-primary-subtle) 72%, transparent);
-	color: color-mix(in srgb, var(--color-primary-dark) 80%, var(--color-text));
-}
-
-.transcript-heading {
-	font-weight: 700;
-	color: var(--color-text);
-}
-
-.lexical-preview {
-	border-radius: variables.$radius-sm;
-	background: color-mix(in srgb, rgba(15, 23, 42, 0.35) 78%, transparent);
-	border: 0.06rem solid color-mix(in srgb, var(--color-border-light) 45%, transparent);
-	padding: 0.55rem 0.65rem;
-	min-height: 9.5rem;
-}
-
-.lexical-preview__content {
-	outline: none;
-	cursor: default;
-	user-select: none;
-	color: color-mix(in srgb, var(--color-text-light) 96%, #dbeafe);
-	font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-	font-size: 0.84rem;
-	line-height: 1.5;
-}
-
-.lexical-preview__content :global(p),
-.lexical-preview__content :global(h1),
-.lexical-preview__content :global(h2),
-.lexical-preview__content :global(h3),
-.lexical-preview__content :global(ul),
-.lexical-preview__content :global(ol) {
-	margin-top: 0;
-	margin-bottom: 0.3rem;
-}
-
-.transcript-arrow {
-	display: grid;
-	place-items: center;
-	justify-self: center;
-	align-self: center;
-	width: 100%;
-	height: 1.5rem;
-	line-height: 1;
-	font-size: 1.35rem;
-	font-weight: 700;
-	color: color-mix(in srgb, #3a9dff 75%, #d24dff);
-	text-shadow: 0 0 0.65rem rgba(58, 157, 255, 0.45);
-	transform: rotate(90deg);
-	margin: -0.2rem 0 0.2rem;
-
-	@include mixins.phone {
-		width: auto;
-		height: auto;
-		margin: 0;
-		transform: translateY(0.15rem);
-	}
-}
-
 .feature-icon {
 	width: 3.5rem;
 	height: 3.5rem;
@@ -354,7 +237,7 @@
 	display: block;
 	width: 1.5rem;
 	height: 1.5rem;
-	background-color: #1a1a1a;
+	background-color: var(--color-bg-sidebar);
 	border-radius: variables.$radius-xs;
 	padding: 0.125rem;
 }

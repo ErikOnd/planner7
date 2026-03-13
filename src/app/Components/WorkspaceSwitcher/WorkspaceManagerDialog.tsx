@@ -99,7 +99,7 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 							const isEditing = workspace.id === editingWorkspaceId;
 							const isSwitching = workspace.id === switchingWorkspaceId;
 							const gradient = gradientMap[workspace.gradientPreset] ?? gradientPresets[0]?.[1]
-								?? { from: "#555", to: "#888" };
+								?? { from: "#d2eb74", to: "#c3e060" };
 
 							return (
 								<div

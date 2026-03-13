@@ -14,7 +14,7 @@ export default function ToastProvider() {
 			pauseOnFocusLoss={true}
 			draggable={true}
 			pauseOnHover={true}
-			theme="dark"
+			theme="light"
 		/>
 	);
 }

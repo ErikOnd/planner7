@@ -19,37 +19,91 @@
 	}
 
 	&:focus-visible .todo-content {
-		box-shadow: inset 0 0 0 0.13rem var(--color-primary);
+		box-shadow: inset 0 0 0 0.1rem color-mix(in srgb, var(--color-text-inverse) 12%, transparent);
 	}
 
 	.todo-content {
 		position: relative;
 		display: flex;
-		padding: var(--space-sm) var(--space-sm);
-		border-radius: variables.$radius-md;
-		background: var(--color-surface);
-		border: 0.1rem solid var(--color-border-light);
+		padding: 0.55rem 0.2rem 0.55rem 0.05rem;
+		border-radius: variables.$radius-lg;
+		background: transparent;
+		border: 0.1rem solid transparent;
 		align-items: center;
-		gap: var(--space-sm);
+		gap: 0.7rem;
+		transition: background-color variables.$transition-base, border-color variables.$transition-base;
+
+		&:hover,
+		&:focus-within {
+			background: color-mix(in srgb, var(--color-text-inverse) 2.5%, transparent);
+			border-color: color-mix(in srgb, var(--color-text-inverse) 5%, transparent);
+		}
 
 		.todo-checkbox {
 			flex: 1 1 auto;
 			min-width: 0;
+			gap: 0.72rem;
+			align-items: center;
+
+			> span {
+				width: 1.28rem;
+				height: 1.28rem;
+				border-radius: variables.$radius-sm;
+				border: 0.12rem solid color-mix(in srgb, var(--color-text-inverse) 14%, transparent);
+				background: #4a4b49;
+				box-shadow: none;
+			}
+
+			&:hover > span {
+				background: #4a4b49;
+				border-color: color-mix(in srgb, var(--color-text-inverse) 18%, transparent);
+			}
+
+			&:focus-within > span {
+				outline: 0.1rem solid color-mix(in srgb, var(--color-text-inverse) 22%, transparent);
+				outline-offset: 0.08rem;
+			}
+
+			> input:checked + span {
+				background: var(--color-primary);
+				border-color: var(--color-primary);
+				box-shadow: none;
+			}
+
+			> input:checked + span::after {
+				left: 0.45rem;
+				top: 0.24rem;
+				width: 0.24rem;
+				height: 0.5rem;
+				border-width: 0 0.12rem 0.12rem 0;
+				border-color: var(--color-text-primary);
+			}
+
+			> input:checked ~ p {
+				color: color-mix(in srgb, var(--color-text-inverse) 46%, var(--color-bg-sidebar));
+			}
 		}
 
 		.todo-label {
 			min-width: 0;
 			word-break: break-word;
+			color: color-mix(in srgb, var(--color-text-inverse) 74%, var(--color-bg-sidebar));
+			font-size: 0.96rem;
+			font-weight: 500;
+			line-height: 1.4;
 		}
 
 		.action-buttons {
 			position: absolute;
-			right: 0.4rem;
-			top: 50%;
-			transform: translate(0.25rem, -50%);
-			display: inline-flex;
-			align-items: center;
-			gap: 0.25rem;
+			right: 0.18rem;
+			top: 0.18rem;
+			bottom: 0.18rem;
+			transform: translate(0.25rem, 0);
+			display: flex;
+			align-items: stretch;
+			gap: 0.12rem;
+			padding: 0;
+			background: transparent;
 			opacity: 0;
 			pointer-events: none;
 			transition: opacity variables.$transition-base, transform variables.$transition-base;
@@ -57,22 +111,26 @@
 
 		.edit-button,
 		.delete-button {
-			width: 2.45rem;
-			height: 2.45rem;
-			background-color: color-mix(in srgb, var(--color-gray-medium) 78%, var(--color-surface));
-			border: 0.1rem solid color-mix(in srgb, var(--color-border-light) 78%, transparent);
-			color: var(--color-text);
+			width: 2.05rem;
+			height: 100%;
+			border: 0.1rem solid transparent;
 			cursor: pointer;
 			padding: 0;
-			border-radius: 0.7rem;
+			border-radius: variables.$radius-md;
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			transition: background-color variables.$transition-fast, color variables.$transition-fast, border-color variables.$transition-fast;
+		}
+
+		.edit-button {
+			background-color: color-mix(in srgb, var(--color-primary) 14%, var(--color-bg-sidebar));
+			border-color: color-mix(in srgb, var(--color-primary) 16%, transparent);
+			color: color-mix(in srgb, var(--color-primary) 78%, var(--color-text-inverse));
 
 			&:hover, &:focus-visible {
-				background: color-mix(in srgb, var(--color-gray-light) 86%, var(--color-surface));
-				border-color: color-mix(in srgb, var(--color-primary-light) 45%, transparent);
+				background: color-mix(in srgb, var(--color-primary) 22%, var(--color-bg-sidebar));
+				border-color: color-mix(in srgb, var(--color-primary) 24%, transparent);
 				color: var(--color-primary);
 			}
 
@@ -82,10 +140,15 @@
 		}
 
 		.delete-button {
+			background-color: color-mix(in srgb, #a95d54 22%, var(--color-bg-sidebar));
+			border-color: color-mix(in srgb, #c97b71 34%, transparent);
+			color: color-mix(in srgb, #e2a59c 86%, var(--color-text-inverse));
+
 			&:hover,
 			&:focus-visible {
-				background: color-mix(in srgb, var(--color-error) 16%, transparent);
-				color: var(--color-error);
+				background: color-mix(in srgb, #a95d54 32%, var(--color-bg-sidebar));
+				border-color: color-mix(in srgb, #cf8076 48%, transparent);
+				color: #f3d5d0;
 			}
 		}
 	}
@@ -94,6 +157,6 @@
 	.todo-content:focus-within .action-buttons {
 		opacity: 1;
 		pointer-events: auto;
-		transform: translate(0, -50%);
+		transform: translate(0, 0);
 	}
 }

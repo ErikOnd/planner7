@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
 	title: "Planner7",
 	description:
-		"Planner7 turns voice into structured daily notes with headings, lists, and checkboxes in one focused weekly planner.",
+		"Planner7 is a focused weekly planner with rich daily notes and backlog task management.",
 };
 
 export default async function RootPage() {
