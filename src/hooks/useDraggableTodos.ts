@@ -1,6 +1,14 @@
 "use client";
 
-import { DragEndEvent, DragStartEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import {
+	DragEndEvent,
+	DragStartEvent,
+	KeyboardSensor,
+	MouseSensor,
+	TouchSensor,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import type { GeneralTodo } from "@prisma/client";
 import { useEffect, useState } from "react";
@@ -15,9 +23,15 @@ export function useDraggableTodos(todos: GeneralTodo[]) {
 	}, [todos]);
 
 	const sensors = useSensors(
-		useSensor(PointerSensor, {
+		useSensor(MouseSensor, {
 			activationConstraint: {
 				distance: 8,
+			},
+		}),
+		useSensor(TouchSensor, {
+			activationConstraint: {
+				delay: 1000,
+				tolerance: 8,
 			},
 		}),
 		useSensor(KeyboardSensor, {
