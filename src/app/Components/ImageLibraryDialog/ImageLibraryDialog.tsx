@@ -131,11 +131,11 @@ export function ImageLibraryDialog({ open, onOpenChange }: ImageLibraryDialogPro
 									</div>
 								</div>
 							</div>
-								<Dialog.Close asChild>
-									<button className={styles["image-library-close"]} aria-label="Close image library">
-										<Icon name="close" size={24} />
-									</button>
-								</Dialog.Close>
+							<Dialog.Close asChild>
+								<button className={styles["image-library-close"]} aria-label="Close image library">
+									<Icon name="close" size={24} />
+								</button>
+							</Dialog.Close>
 						</div>
 					</header>
 

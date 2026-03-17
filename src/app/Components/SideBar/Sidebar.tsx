@@ -54,7 +54,14 @@ export function Sidebar() {
 			<div className={styles["sticky-section"]}>
 				<div className={styles["sidebar-header"]}>
 					<div className={styles["brand"]}>
-						<Image src="/logo-full-dark.svg" alt="Planner7 logo" width={272} height={50} className={styles["brand-logo"]} priority />
+						<Image
+							src="/logo-full-dark.svg"
+							alt="Planner7 logo"
+							width={272}
+							height={50}
+							className={styles["brand-logo"]}
+							priority
+						/>
 					</div>
 				</div>
 
@@ -170,7 +177,13 @@ export function Sidebar() {
 								Completed Todos
 							</Dialog.Title>
 							<Dialog.Close asChild>
-								<Button variant="ghost" size="sm" icon="close" className={styles["completed-close"]} aria-label="Close" />
+								<Button
+									variant="ghost"
+									size="sm"
+									icon="close"
+									className={styles["completed-close"]}
+									aria-label="Close"
+								/>
 							</Dialog.Close>
 						</div>
 						<div className={styles["completed-table"]}>

@@ -65,7 +65,9 @@ export function MobileNavigation(props: MobileNavigationProps) {
 	const dayInMs = 86400000;
 	const dayStripGapRem = 0.7;
 	const dayCardStyle: CSSProperties = {
-		flexBasis: `max(4.55rem, calc((100% - ${((visibleDays.length - 1) * dayStripGapRem).toFixed(4)}rem) / ${visibleDays.length}))`,
+		flexBasis: `max(4.55rem, calc((100% - ${
+			((visibleDays.length - 1) * dayStripGapRem).toFixed(4)
+		}rem) / ${visibleDays.length}))`,
 	};
 
 	useEffect(() => {

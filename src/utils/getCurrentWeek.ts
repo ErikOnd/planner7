@@ -30,8 +30,8 @@ export function getCurrentWeek(baseDate: Date) {
 	const rangeLabel = isSameMonth
 		? `${mondayMonth} ${monday.getDate()}-${sunday.getDate()}, ${sunday.getFullYear()}`
 		: isSameYear
-			? `${mondayMonth} ${monday.getDate()} - ${sundayMonth} ${sunday.getDate()}, ${sunday.getFullYear()}`
-			: `${mondayMonth} ${monday.getDate()}, ${monday.getFullYear()} - ${sundayMonth} ${sunday.getDate()}, ${sunday.getFullYear()}`;
+		? `${mondayMonth} ${monday.getDate()} - ${sundayMonth} ${sunday.getDate()}, ${sunday.getFullYear()}`
+		: `${mondayMonth} ${monday.getDate()}, ${monday.getFullYear()} - ${sundayMonth} ${sunday.getDate()}, ${sunday.getFullYear()}`;
 
 	return { days: week, rangeLabel };
 }

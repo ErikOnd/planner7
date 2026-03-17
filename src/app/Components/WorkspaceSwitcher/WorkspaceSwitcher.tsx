@@ -2,10 +2,7 @@
 
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { WORKSPACE_GRADIENTS } from "@/lib/workspaceGradients";
-import {
-	WorkspaceManagerDialog,
-	WorkspaceManagerPanel,
-} from "@components/WorkspaceSwitcher/WorkspaceManagerDialog";
+import { WorkspaceManagerDialog, WorkspaceManagerPanel } from "@components/WorkspaceSwitcher/WorkspaceManagerDialog";
 import { WorkspaceSwitcherTrigger } from "@components/WorkspaceSwitcher/WorkspaceSwitcherTrigger";
 import clsx from "clsx";
 import { FormEvent, useState } from "react";

@@ -93,8 +93,8 @@ export function FeedbackPanel({ closeAction, className }: FeedbackPanelProps) {
 												damping: 34,
 												mass: 0.85,
 											}}
-											/>
-										)}
+										/>
+									)}
 									<span className={styles["segmented-option-label"]}>{option.label}</span>
 								</button>
 							);
@@ -116,8 +116,7 @@ export function FeedbackPanel({ closeAction, className }: FeedbackPanelProps) {
 					<div className={styles["helper-row"]}>
 						<span className={styles["helper-icon"]} aria-hidden="true">i</span>
 						<Text size="xs" className={styles["helper-text"]}>
-							Adding screenshots or images in your email helps us debug issues and implement feature requests
-							faster.
+							Adding screenshots or images in your email helps us debug issues and implement feature requests faster.
 						</Text>
 					</div>
 				</div>
@@ -153,18 +152,18 @@ export function FeedbackDialog({ children }: FeedbackDialogProps) {
 						Report bugs and request features so we can improve Planner7 faster.
 					</Dialog.Description>
 					<FeedbackPanel
-						closeAction={(
+						closeAction={
 							<Dialog.Close asChild>
-									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										icon="close"
-										className={styles["close-button"]}
-										aria-label="Close feedback dialog"
-									/>
+								<Button
+									type="button"
+									variant="ghost"
+									size="sm"
+									icon="close"
+									className={styles["close-button"]}
+									aria-label="Close feedback dialog"
+								/>
 							</Dialog.Close>
-						)}
+						}
 					/>
 				</Dialog.Content>
 				<div className={styles["mobile-nav-blocker"]} aria-hidden="true" />

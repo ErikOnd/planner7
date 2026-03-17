@@ -12,7 +12,9 @@ type CheckboxProps = {
 	checkmarkClassName?: string;
 };
 
-export default function Checkbox({ label, checked, onChange, className, labelClassName, checkmarkClassName }: CheckboxProps) {
+export default function Checkbox(
+	{ label, checked, onChange, className, labelClassName, checkmarkClassName }: CheckboxProps,
+) {
 	const id = useId();
 
 	return (

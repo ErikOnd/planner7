@@ -23,8 +23,7 @@ const features = [
 	{
 		icon: "star" as const,
 		title: "Backlog That Stays Usable",
-		description:
-			"Capture tasks quickly, keep them organized, and pull the right work into your week when it matters.",
+		description: "Capture tasks quickly, keep them organized, and pull the right work into your week when it matters.",
 	},
 	{
 		icon: "calendar" as const,
@@ -117,7 +116,13 @@ export function LandingPage() {
 					variants={navVariants}
 				>
 					<div className={styles.logo}>
-						<Image src="/logo-full-dark.svg" alt="Planner7 logo" width={272} height={50} className={styles["logo-icon"]} />
+						<Image
+							src="/logo-full-dark.svg"
+							alt="Planner7 logo"
+							width={272}
+							height={50}
+							className={styles["logo-icon"]}
+						/>
 					</div>
 					<div className={styles["nav-actions"]}>
 						<MagneticButton>
@@ -161,9 +166,9 @@ export function LandingPage() {
 					>
 						{features.map((feature) => (
 							<motion.div key={feature.title} className={styles["feature-card"]} variants={cardVariants}>
-									<div className={styles["feature-icon"]}>
-										<Icon name={feature.icon} size={22} />
-									</div>
+								<div className={styles["feature-icon"]}>
+									<Icon name={feature.icon} size={22} />
+								</div>
 								<Text size="base" fontWeight={600} className={styles["feature-title"]}>{feature.title}</Text>
 								<Text size="sm" className={styles["feature-description"]}>{feature.description}</Text>
 							</motion.div>
@@ -211,7 +216,8 @@ export function LandingPage() {
 							Ready to plan at the speed of thought?
 						</Headline>
 						<Text size="base" className={styles["cta-subtitle"]}>
-							Build a planning habit with a cleaner weekly view, better daily notes, and a backlog that stays actionable.
+							Build a planning habit with a cleaner weekly view, better daily notes, and a backlog that stays
+							actionable.
 						</Text>
 						<div className={styles["cta-button"]}>
 							<MagneticButton>

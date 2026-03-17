@@ -5,8 +5,8 @@ import styles from "./DesktopNavigation.module.scss";
 import { Button } from "@atoms/Button/Button";
 import { CalendarOverlay } from "@atoms/CalendarOverlay/CalendarOverlay";
 import { ProfileDialog } from "@atoms/ProfileDialog/ProfileDialog";
-import { FeedbackDialog } from "@components/FeedbackDialog/FeedbackDialog";
 import { Text } from "@atoms/Text/Text";
+import { FeedbackDialog } from "@components/FeedbackDialog/FeedbackDialog";
 
 type DesktopNavigationProps = {
 	rangeLabel: string;
