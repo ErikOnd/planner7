@@ -252,7 +252,6 @@ export function WorkspaceManagerPanel(props: WorkspaceManagerPanelProps) {
 					<div
 						className={clsx(
 							styles["workspace-detail-card"],
-							detailMode === "view" && styles["workspace-detail-card--view"],
 							(detailMode === "create" || detailMode === "edit") && styles["workspace-detail-card--form"],
 							detailMode === "delete" && styles["workspace-detail-card--delete"],
 						)}
@@ -377,14 +376,6 @@ export function WorkspaceManagerPanel(props: WorkspaceManagerPanelProps) {
 										Delete Permanently
 									</Button>
 								</div>
-							</div>
-						)}
-
-						{!detailWorkspace && detailMode === "view" && (
-							<div className={styles["workspace-detail-empty"]}>
-								<Text size="sm" className={styles["workspace-detail-description"]}>
-									No workspace available.
-								</Text>
 							</div>
 						)}
 
