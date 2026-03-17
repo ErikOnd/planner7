@@ -2,9 +2,7 @@
 
 import styles from "./ImageLibraryDialog.module.scss";
 
-import { Button } from "@atoms/Button/Button";
 import { Icon } from "@atoms/Icons/Icon";
-import { Text } from "@atoms/Text/Text";
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -37,12 +35,20 @@ function formatDate(value: string) {
 		month: "short",
 		day: "numeric",
 		year: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
 	}).format(date);
 }
 
-export function ImageLibraryDialog({ open, onOpenChange, showLimitNotice = false }: ImageLibraryDialogProps) {
+function getDisplayFileName(url: string) {
+	try {
+		const pathname = new URL(url).pathname;
+		const rawFileName = pathname.split("/").pop() ?? "image.webp";
+		return decodeURIComponent(rawFileName).replace(/^\d+-/, "");
+	} catch {
+		return "image.webp";
+	}
+}
+
+export function ImageLibraryDialog({ open, onOpenChange }: ImageLibraryDialogProps) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -111,30 +117,25 @@ export function ImageLibraryDialog({ open, onOpenChange, showLimitNotice = false
 				<Dialog.Content className={styles["image-library-dialog"]}>
 					<header className={styles["image-library-header"]}>
 						<div className={styles["image-library-title-row"]}>
-							<Dialog.Title className={styles["image-library-title"]}>Uploaded images</Dialog.Title>
-							<Dialog.Close asChild>
-								<button className={styles["image-library-close"]} aria-label="Close image library">
-									<Icon name="close" size={18} />
-								</button>
-							</Dialog.Close>
-						</div>
-
-						{showLimitNotice && (
-							<div className={styles["image-library-limit-banner"]}>
-								You reached your image storage limit. Delete images to free space for new uploads.
+							<div className={styles["image-library-heading"]}>
+								<Dialog.Title className={styles["image-library-title"]}>Uploaded images</Dialog.Title>
+								<div className={styles["image-library-storage"]}>
+									<div className={styles["image-library-storage-text"]}>
+										{formatBytes(storageUsedBytes)} used of {formatBytes(storageLimitBytes)}
+									</div>
+									<div className={styles["image-library-storage-bar"]} aria-hidden="true">
+										<div
+											className={styles["image-library-storage-bar-fill"]}
+											style={{ width: `${usagePercent}%` }}
+										/>
+									</div>
+								</div>
 							</div>
-						)}
-
-						<div className={styles["image-library-storage"]}>
-							<Text size="sm" className={styles["image-library-storage-text"]}>
-								{formatBytes(storageUsedBytes)} used of {formatBytes(storageLimitBytes)}
-							</Text>
-							<div className={styles["image-library-storage-bar"]} aria-hidden="true">
-								<div
-									className={styles["image-library-storage-bar-fill"]}
-									style={{ width: `${usagePercent}%` }}
-								/>
-							</div>
+								<Dialog.Close asChild>
+									<button className={styles["image-library-close"]} aria-label="Close image library">
+										<Icon name="close" size={24} />
+									</button>
+								</Dialog.Close>
 						</div>
 					</header>
 
@@ -163,29 +164,38 @@ export function ImageLibraryDialog({ open, onOpenChange, showLimitNotice = false
 											/>
 										</div>
 										<div className={styles["image-library-card-body"]}>
-											<div className={styles["image-library-meta"]}>
-												<div>{formatBytes(image.fileSize)}</div>
-												<div>{formatDate(image.createdAt)}</div>
+											<div className={styles["image-library-file-name"]} title={getDisplayFileName(image.url)}>
+												{getDisplayFileName(image.url)}
 											</div>
-											<Button
+											<div className={styles["image-library-meta"]}>
+												<span>{formatBytes(image.fileSize)}</span>
+												<span aria-hidden="true">•</span>
+												<span>{formatDate(image.createdAt)}</span>
+											</div>
+										</div>
+										<div className={styles["image-library-card-footer"]}>
+											<button
 												type="button"
-												variant="secondary"
-												icon="trash"
-												iconSize={16}
 												className={styles["image-library-delete"]}
 												disabled={isDeletingId === image.id}
+												aria-label={`Delete ${getDisplayFileName(image.url)}`}
 												onClick={() => {
 													void handleDeleteImage(image.id);
 												}}
 											>
-												Delete
-											</Button>
+												<Icon name="trash" size={20} />
+											</button>
 										</div>
 									</article>
 								))}
 							</div>
 						)}
 					</div>
+					<footer className={styles["image-library-footer"]}>
+						{!isLoading && !error && hasLoadedOnce
+							? `Showing ${images.length} of ${images.length} images`
+							: "\u00A0"}
+					</footer>
 				</Dialog.Content>
 			</Dialog.Portal>
 		</Dialog.Root>

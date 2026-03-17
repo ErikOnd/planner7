@@ -17,7 +17,7 @@ export function ConnectorsSettings({ styles }: ConnectorsSettingsProps) {
 				<div className={styles["section-header"]}>
 					<div className={styles["section-title-group"]}>
 						<span className={styles["section-icon"]}>
-							<Icon name="connectors" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+							<Icon name="workflow" size={sectionIconSize} className={styles["section-icon-glyph"]} />
 						</span>
 						<div className={styles["section-title-stack"]}>
 							<h3 className={styles["section-heading"]}>Connectors</h3>

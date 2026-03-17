@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon } from "@atoms/Icons/Icon";
+import { Icon, type IconName } from "@atoms/Icons/Icon";
 import {
 	Messages,
 	PasswordFormData,
@@ -46,10 +46,10 @@ export function ProfileSettingsContent({
 	const [selectedTab, setSelectedTab] = useState<TabType>("general");
 	const tabIconSize = 24;
 
-	const tabs: { id: TabType; label: string; icon: "general" | "preferences" | "connectors" }[] = [
-		{ id: "general", label: "General", icon: "general" },
-		{ id: "preferences", label: "Preferences", icon: "preferences" },
-		{ id: "connectors", label: "Connectors", icon: "connectors" },
+	const tabs: { id: TabType; label: string; icon: IconName }[] = [
+		{ id: "general", label: "General", icon: "circle-user-round" },
+		{ id: "preferences", label: "Preferences", icon: "sliders-horizontal" },
+		{ id: "connectors", label: "Connectors", icon: "workflow" },
 	];
 
 	const renderTabContent = () => {

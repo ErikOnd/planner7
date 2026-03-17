@@ -2,29 +2,36 @@
 
 import styles from "@components/Homepage/HomePage.module.scss";
 
+import { useBacklog } from "@/contexts/BacklogContext";
 import { useNotes } from "@/contexts/NotesContext";
 import { useProfile } from "@/contexts/ProfileContext";
 import { logClientPerf } from "@/lib/perf";
+import { CalendarPanel } from "@atoms/CalendarOverlay/CalendarOverlay";
 import { Button } from "@atoms/Button/Button";
+import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
 import { DesktopContent } from "@components/DesktopContent/DesktopContent";
+import { FeedbackPanel } from "@components/FeedbackDialog/FeedbackDialog";
 import { DesktopNavigation } from "@components/DesktopNavigation/DesktopNavigation";
-import { MobileNavigation } from "@components/MobileNavigation/MobileNavigation";
+import { MobileNavigation, type MobileSection } from "@components/MobileNavigation/MobileNavigation";
 import { ProfileContent } from "@components/ProfileContent/ProfileContent";
 import { RememberContent } from "@components/RememberContent/RememberContent";
 import { Sidebar } from "@components/SideBar/Sidebar";
 import { WeeklyContent } from "@components/WeeklyContent/WeeklyContent";
+import { WorkspacePanel } from "@components/WorkspaceSwitcher/WorkspaceSwitcher";
 import { useMediaQuery } from "@hooks/useMediaQuery";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import * as Dialog from "@radix-ui/react-dialog";
 import { getCurrentWeek } from "@utils/getCurrentWeek";
-import { FormEvent, useEffect, useState } from "react";
+import clsx from "clsx";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 
 export default function HomePage() {
-	const isMobile = useMediaQuery("(max-width: 1023px)");
-	const [selectedContent, setSelectedContent] = useState<"weekly" | "remember" | "profile">("weekly");
+	const isMobile = useMediaQuery("(max-width: 767px)");
+	const [selectedContent, setSelectedContent] = useState<MobileSection>("weekly");
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [baseDate, setBaseDate] = useState<Date>(new Date());
 	const [highlightedDate, setHighlightedDate] = useState<Date | null>(null);
+	const [isMobileAddOpen, setIsMobileAddOpen] = useState(false);
 	const [isNamePromptOpen, setIsNamePromptOpen] = useState(false);
 	const [nameInput, setNameInput] = useState("");
 	const [isSavingName, setIsSavingName] = useState(false);
@@ -33,6 +40,7 @@ export default function HomePage() {
 	const { showWeekends } = useWeekDisplayPreference();
 	const { profile, isLoading: isProfileLoading, updateDisplayName } = useProfile();
 	const { loadWeek } = useNotes();
+	const { addTodo, silentRefresh } = useBacklog();
 
 	useEffect(() => {
 		let cancelled = false;
@@ -113,6 +121,30 @@ export default function HomePage() {
 		setTimeout(() => setHighlightedDate(null), 3000);
 	};
 
+	const handleMobileWeekChange = useCallback((nextBaseDate: Date) => {
+		const { days } = getCurrentWeek(nextBaseDate);
+		const visibleDays = showWeekends
+			? days
+			: days.filter(({ fullDate }) => {
+				const dayIndex = fullDate.getDay();
+				return dayIndex >= 1 && dayIndex <= 5;
+			});
+		const selectedWeekday = selectedDate.getDay();
+		const nextSelectedDate = visibleDays.find(({ fullDate }) => fullDate.getDay() === selectedWeekday)?.fullDate
+			?? visibleDays.find(({ fullDate }) => fullDate.toDateString() === nextBaseDate.toDateString())?.fullDate
+			?? visibleDays[0]?.fullDate
+			?? nextBaseDate;
+
+		setBaseDate(nextBaseDate);
+		setSelectedDate(nextSelectedDate);
+	}, [selectedDate, showWeekends]);
+
+	const handleMobileCalendarDateSelect = useCallback((date: Date) => {
+		setSelectedContent("weekly");
+		setBaseDate(date);
+		setSelectedDate(date);
+	}, []);
+
 	const handleSaveName = async (event: FormEvent) => {
 		event.preventDefault();
 		const normalized = nameInput.trim();
@@ -140,6 +172,19 @@ export default function HomePage() {
 				return <WeeklyContent selectedDate={selectedDate} />;
 			case "remember":
 				return <RememberContent />;
+			case "feedback":
+				return <FeedbackPanel className={styles["mobile-feedback-panel"]} />;
+			case "calendar":
+				return (
+					<CalendarPanel
+						onDateSelect={handleMobileCalendarDateSelect}
+						activeDate={selectedDate}
+						showWeekends={showWeekends}
+						className={styles["mobile-calendar-panel"]}
+					/>
+				);
+			case "workspace":
+				return <WorkspacePanel className={styles["mobile-workspace-panel"]} />;
 			case "profile":
 				return <ProfileContent />;
 			default:
@@ -158,10 +203,27 @@ export default function HomePage() {
 							selectedDate={selectedDate}
 							onSelectDateAction={setSelectedDate}
 							baseDate={baseDate}
-							setBaseDateAction={setBaseDate}
+							setBaseDateAction={handleMobileWeekChange}
 							showWeekends={showWeekends}
+							onOpenAddAction={() => setIsMobileAddOpen(true)}
 						/>
-						{renderMobileContent()}
+						<div
+							className={clsx(
+								styles["mobile-content"],
+								selectedContent === "weekly"
+									? styles["mobile-content--planner"]
+									: styles["mobile-content--secondary"],
+							)}
+						>
+							{renderMobileContent()}
+						</div>
+						<AddTaskModal
+							open={isMobileAddOpen}
+							onOpenAction={setIsMobileAddOpen}
+							renderTrigger={false}
+							onOptimisticAdd={addTodo}
+							onSuccess={silentRefresh}
+						/>
 					</div>
 				)
 				: (
@@ -172,6 +234,7 @@ export default function HomePage() {
 								<DesktopNavigation
 									rangeLabel={rangeLabel}
 									onDateSelect={handleCalendarDateSelect}
+									activeDate={baseDate}
 									baseDate={baseDate}
 									setBaseDateAction={setBaseDate}
 									showWeekends={showWeekends}

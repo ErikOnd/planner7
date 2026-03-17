@@ -37,7 +37,7 @@ export function DeleteTodoDialog({
 							<Button variant="secondary" fontWeight={500}>Cancel</Button>
 						</AlertDialog.Cancel>
 						<AlertDialog.Action asChild>
-							<Button className={styles["delete-button"]} onClick={onConfirm} fontWeight={700} autoFocus>
+							<Button variant="danger" onClick={onConfirm} fontWeight={700} autoFocus>
 								{confirmLabel}
 							</Button>
 						</AlertDialog.Action>

@@ -6,9 +6,9 @@
 	color: var(--color-error);
 	background-color: var(--color-error-background);
 	padding: var(--space-md);
-	border-radius: variables.$radius-lg;
+	border-radius: var(--radius-lg);
 	margin-top: var(--space-md);
-	border: 0.1rem solid var(--color-error-border);
+	border: var(--border-width-base) solid var(--color-error-border);
 	transition: all variables.$transition-base;
 }
 
@@ -16,8 +16,8 @@
 	color: var(--color-info);
 	background-color: var(--color-info-background);
 	padding: var(--space-md);
-	border-radius: variables.$radius-lg;
+	border-radius: var(--radius-lg);
 	margin-top: var(--space-md);
-	border: 0.1rem solid var(--color-info-border);
+	border: var(--border-width-base) solid var(--color-info-border);
 	transition: all variables.$transition-base;
 }

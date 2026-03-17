@@ -38,13 +38,10 @@ export function PreferencesSettings({ styles }: PreferencesSettingsProps) {
 				<div className={styles["section-header"]}>
 					<div className={styles["section-title-group"]}>
 						<span className={styles["section-icon"]}>
-							<Icon name="appearance" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+							<Icon name="palette" size={sectionIconSize} className={styles["section-icon-glyph"]} />
 						</span>
 						<div className={styles["section-title-stack"]}>
 							<h3 className={styles["section-heading"]}>Appearance</h3>
-							<p className={styles["section-description"]}>
-								Preview the available color modes for Planner7.
-							</p>
 						</div>
 					</div>
 					<Badge variant="coming-soon">Coming soon</Badge>
@@ -91,7 +88,7 @@ export function PreferencesSettings({ styles }: PreferencesSettingsProps) {
 				<section className={clsx(styles["settings-section"], styles["preference-option-card"])}>
 					<div className={styles["preference-option-card-body"]}>
 						<span className={styles["preference-card-icon"]}>
-							<Icon name="week" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+							<Icon name="calendar-range" size={sectionIconSize} className={styles["section-icon-glyph"]} />
 						</span>
 						<div className={styles["preference-option-copy"]}>
 							<h3 className={styles["section-heading"]}>Week Display</h3>
@@ -117,7 +114,7 @@ export function PreferencesSettings({ styles }: PreferencesSettingsProps) {
 				<section className={clsx(styles["settings-section"], styles["preference-option-card"])}>
 					<div className={styles["preference-option-card-body"]}>
 						<span className={styles["preference-card-icon"]}>
-							<Icon name="editor" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+							<Icon name="pencil-line" size={sectionIconSize} className={styles["section-icon-glyph"]} />
 						</span>
 						<div className={styles["preference-option-copy"]}>
 							<h3 className={styles["section-heading"]}>Rich Text Editor</h3>
@@ -145,7 +142,7 @@ export function PreferencesSettings({ styles }: PreferencesSettingsProps) {
 				<div className={styles["section-card-header"]}>
 					<div className={styles["section-title-group"]}>
 						<span className={styles["section-icon"]}>
-							<Icon name="storage" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+							<Icon name="image" size={sectionIconSize} className={styles["section-icon-glyph"]} />
 						</span>
 						<div className={styles["section-title-stack"]}>
 							<h3 className={styles["section-heading"]}>Image Storage</h3>
@@ -156,7 +153,7 @@ export function PreferencesSettings({ styles }: PreferencesSettingsProps) {
 					</div>
 				</div>
 				<div className={styles["section-content"]}>
-					<div className={`${styles["form-actions"]} ${styles["form-actions--start"]}`}>
+					<div className={`${styles["form-actions"]} ${styles["form-actions--center"]}`}>
 						<Button
 							type="button"
 							variant="secondary"

@@ -9,10 +9,13 @@ import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
 import { DeleteTodoDialog } from "@components/DeleteTodoDialog/DeleteTodoDialog";
 import { DraggableTaskItem } from "@components/DraggableTaskItem/DraggableTaskItem";
 import { closestCenter, DndContext, DragOverlay } from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useBacklogController } from "@hooks/useBacklogController";
 import * as Dialog from "@radix-ui/react-dialog";
 import styles from "./RememberContent.module.scss";
+
+const DELETE_SWIPE_THRESHOLD = 72;
 
 export function RememberContent() {
 	const todosState = useBacklog();
@@ -39,6 +42,18 @@ export function RememberContent() {
 		handleDelete,
 	} = useBacklogController(todosState, activeWorkspaceId);
 
+	const handleTaskDragEnd = async (event: DragEndEvent) => {
+		const isDeleteSwipe = event.delta.x <= -DELETE_SWIPE_THRESHOLD && Math.abs(event.delta.x) > Math.abs(event.delta.y);
+
+		if (isDeleteSwipe) {
+			handleDragCancel();
+			setDeleteTargetId(String(event.active.id));
+			return;
+		}
+
+		await handleDragEnd(event);
+	};
+
 	return (
 		<div className={styles["remember-content"]}>
 			<div className={styles["task-items"]}>
@@ -49,7 +64,7 @@ export function RememberContent() {
 							sensors={sensors}
 							collisionDetection={closestCenter}
 							onDragStart={handleDragStart}
-							onDragEnd={handleDragEnd}
+							onDragEnd={handleTaskDragEnd}
 							onDragCancel={handleDragCancel}
 						>
 							<SortableContext
@@ -64,7 +79,6 @@ export function RememberContent() {
 										checked={checkedTodos.has(todo.id)}
 										onToggleAction={checked => handleTodoToggle(todo.id, checked)}
 										onEdit={() => handleEditTodo(todo)}
-										onDelete={() => setDeleteTargetId(todo.id)}
 									/>
 								))}
 							</SortableContext>
@@ -90,6 +104,7 @@ export function RememberContent() {
 			<AddTaskModal
 				open={isAddOpen}
 				onOpenAction={handleModalChange}
+				renderTrigger={false}
 				editMode={editingTodo
 					? {
 						todoId: editingTodo.id,
@@ -111,7 +126,8 @@ export function RememberContent() {
 							<Dialog.Close asChild>
 								<Button
 									type="button"
-									variant="secondary"
+									variant="ghost"
+									size="sm"
 									icon="close"
 									className={styles["completed-close"]}
 									aria-label="Close"

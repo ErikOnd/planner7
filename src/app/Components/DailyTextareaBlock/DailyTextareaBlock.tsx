@@ -188,6 +188,10 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 	return (
 		<div ref={textareaBlock} className={DailyTextareaBlockClass} id={`daily-note-${dateKey}`} data-note-date={dateKey}>
 			<div className={styles["date"]}>
+				<div className={styles["date-content-mobile"]}>
+					<span className={styles["mobile-day-pill"]}>{weekday}</span>
+					<Text className={styles["mobile-date-label"]}>{date}</Text>
+				</div>
 				<div className={styles["date-content"]}>
 					<div className={styles["day-batch"]} aria-hidden="true">
 						<span className={styles["month-label"]}>{monthLabel}</span>

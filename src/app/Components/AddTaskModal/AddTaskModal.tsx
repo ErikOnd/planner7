@@ -4,7 +4,6 @@ import styles from "./AddTaskModal.module.scss";
 
 import { Button } from "@atoms/Button/Button";
 import { Icon } from "@atoms/Icons/Icon";
-import { InputField } from "@atoms/InputField/InputField";
 import { Message } from "@atoms/Message/Message";
 import { Text } from "@atoms/Text/Text";
 import type { GeneralTodo } from "@prisma/client";
@@ -112,35 +111,46 @@ export function AddTaskModal(props: AddTaskModalProps) {
 			<Dialog.Portal>
 				<Dialog.Overlay className={styles["overlay"]} />
 				<Dialog.Content className={styles["content"]}>
-					<Dialog.Title className={styles["title"]}>
-						<Text fontWeight={700}>{isEditMode ? "Edit Task" : "New Task"}</Text>
-					</Dialog.Title>
-					<form ref={formRef} key={formKey} onSubmit={handleFormSubmit}>
+					<div className={styles["sheet-handle"]} aria-hidden="true" />
+					<div className={styles["header"]}>
+						<Dialog.Title className={styles["title"]}>
+							<Text fontWeight={700}>{isEditMode ? "Edit Task" : "New Task"}</Text>
+						</Dialog.Title>
+						<Dialog.Description className={styles["description"]}>
+							{isEditMode
+								? "Update your thought or assignment quickly."
+								: "Capture your thought or assignment quickly."}
+						</Dialog.Description>
+					</div>
+					<form ref={formRef} key={formKey} onSubmit={handleFormSubmit} className={styles["form"]}>
 						{isEditMode && <input type="hidden" name="todoId" value={editMode.todoId} />}
 						<fieldset className={styles["fieldset"]}>
-							<InputField
+							<textarea
+								className={styles["task-input"]}
 								name="text"
 								defaultValue={isEditMode ? editMode.initialText : defaultValue}
+								placeholder="Add a new task"
 								required
+								rows={6}
 							/>
 						</fieldset>
 						{error && <Message variant="error">{error}</Message>}
 						<div className={styles["button-group"]}>
+							<Dialog.Close asChild>
+								<Button type="button" variant="ghost" size="lg" className={styles["close-action"]} aria-label="Close">
+									Close
+								</Button>
+							</Dialog.Close>
 							<Button
 								type="button"
 								variant="primary"
-								fontWeight={700}
+								size="lg"
+								className={styles["save-action"]}
 								disabled={isPending}
 								onClick={handleSaveClick}
 							>
 								Save Task
 							</Button>
-
-							<Dialog.Close asChild>
-								<Button variant="secondary" aria-label="Close" fontWeight={700}>
-									Close
-								</Button>
-							</Dialog.Close>
 						</div>
 					</form>
 				</Dialog.Content>

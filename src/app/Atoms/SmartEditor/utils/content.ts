@@ -26,15 +26,44 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null;
 }
 
+function isContainerNode(type: string) {
+	return type === "root" || type === "paragraph" || type === "quote" || type.startsWith("heading");
+}
+
+function isLexicalNodeEffectivelyEmpty(node: unknown): boolean {
+	if (!isRecord(node)) return true;
+
+	const type = typeof node.type === "string" ? node.type : "";
+
+	if (type === "text") {
+		return typeof node.text !== "string" || node.text.trim().length === 0;
+	}
+
+	if (!isContainerNode(type)) {
+		return false;
+	}
+
+	if (!Array.isArray(node.children) || node.children.length === 0) {
+		return true;
+	}
+
+	return node.children.every((child) => isLexicalNodeEffectivelyEmpty(child));
+}
+
 export function isLexicalEditorState(value: unknown): value is LexicalEditorStateJSON {
 	if (!isRecord(value)) return false;
 	if (!isRecord(value.root)) return false;
 	return value.root.type === "root";
 }
 
+export function isLexicalEditorStateEffectivelyEmpty(value: unknown): boolean {
+	if (!isLexicalEditorState(value)) return true;
+	return isLexicalNodeEffectivelyEmpty(value.root);
+}
+
 export function hasNonEmptyRoot(value: unknown): boolean {
 	if (!isLexicalEditorState(value)) return false;
-	return Array.isArray(value.root.children) && value.root.children.length > 0;
+	return !isLexicalEditorStateEffectivelyEmpty(value);
 }
 
 function getBlockText(block: unknown): string {

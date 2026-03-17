@@ -1,6 +1,7 @@
 import Appearance from "@assets/icons/appearance.svg";
 import ArrowDownRight from "@assets/icons/arrow-down-right.svg";
 import Calendar from "@assets/icons/calendar.svg";
+import Bug from "@assets/icons/bug.svg";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import ChevronRight from "@assets/icons/chevron-right.svg";
 import Close from "@assets/icons/close.svg";
@@ -13,6 +14,7 @@ import Eye from "@assets/icons/eye.svg";
 import Google from "@assets/icons/google.svg";
 import Megaphone from "@assets/icons/megaphone.svg";
 import Moon from "@assets/icons/moon.svg";
+import NotebookPen from "@assets/icons/notebook-pen.svg";
 import Notifications from "@assets/icons/notifications.svg";
 import Password from "@assets/icons/password.svg";
 import Pencil from "@assets/icons/pencil.svg";
@@ -20,6 +22,7 @@ import Plus from "@assets/icons/plus.svg";
 import Preferences from "@assets/icons/preferences.svg";
 import Profile from "@assets/icons/profile.svg";
 import Questionmark from "@assets/icons/questionmark.svg";
+import Send from "@assets/icons/send.svg";
 import Settings from "@assets/icons/settings.svg";
 import SignOut from "@assets/icons/sign-out.svg";
 import SignOutSettings from "@assets/icons/signout-settings.svg";
@@ -34,6 +37,8 @@ import clsx from "clsx";
 
 const icons = {
 	"appearance": Appearance,
+	"palette": Appearance,
+	"bug": Bug,
 	"chevron-left": ChevronLeft,
 	"chevron-right": ChevronRight,
 	"plus": Plus,
@@ -46,6 +51,8 @@ const icons = {
 	"closed-eye": ClosedEye,
 	"sun": Sun,
 	"moon": Moon,
+	"notebook-pen": NotebookPen,
+	"planner": NotebookPen,
 	"user": User,
 	"profile": Profile,
 	"general": Profile,
@@ -59,13 +66,23 @@ const icons = {
 	"Megaphone": Megaphone,
 	"arrow-down-right": ArrowDownRight,
 	"preferences": Preferences,
+	"sliders-horizontal": Preferences,
+	"send": Send,
 	"connectors": Connectors,
+	"workflow": Connectors,
 	"password": Password,
+	"lock-keyhole": Password,
 	"notifications": Notifications,
+	"bell": Notifications,
 	"week": Week,
+	"calendar-range": Week,
 	"editor": Editor,
+	"pencil-line": Editor,
 	"storage": Storage,
+	"image": Storage,
+	"circle-user-round": Profile,
 	"signout": SignOutSettings,
+	"log-out": SignOutSettings,
 };
 
 export type IconName = keyof typeof icons;

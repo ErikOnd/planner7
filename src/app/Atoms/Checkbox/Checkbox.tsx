@@ -9,9 +9,10 @@ type CheckboxProps = {
 	onChange?: (checked: boolean) => void;
 	className?: string;
 	labelClassName?: string;
+	checkmarkClassName?: string;
 };
 
-export default function Checkbox({ label, checked, onChange, className, labelClassName }: CheckboxProps) {
+export default function Checkbox({ label, checked, onChange, className, labelClassName, checkmarkClassName }: CheckboxProps) {
 	const id = useId();
 
 	return (
@@ -22,7 +23,7 @@ export default function Checkbox({ label, checked, onChange, className, labelCla
 				checked={checked}
 				onChange={(e) => onChange?.(e.target.checked)}
 			/>
-			<span className={styles["checkmark"]}></span>
+			<span className={clsx(styles["checkmark"], checkmarkClassName)}></span>
 			<Text className={clsx(styles["label"], labelClassName)}>{label}</Text>
 		</label>
 	);

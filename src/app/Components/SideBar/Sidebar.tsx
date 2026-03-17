@@ -54,14 +54,7 @@ export function Sidebar() {
 			<div className={styles["sticky-section"]}>
 				<div className={styles["sidebar-header"]}>
 					<div className={styles["brand"]}>
-						<Image src="/logo-mark.svg" alt="Planner7 logo" width={40} height={40} className={styles["brand-logo"]} priority />
-						<div className={styles["brand-greeting"]}>
-							<span className={styles["brand-greeting-title"]}>
-								<span className={styles["brand-wordmark"]}>planner</span>
-								<span className={styles["brand-accent"]}>7</span>
-							</span>
-							<span className={styles["brand-greeting-subtitle"]}>INTELLIGENT PLANNING</span>
-						</div>
+						<Image src="/logo-full-dark.svg" alt="Planner7 logo" width={272} height={50} className={styles["brand-logo"]} priority />
 					</div>
 				</div>
 
@@ -92,7 +85,7 @@ export function Sidebar() {
 						{localTodos.length === 0
 							? (
 								<div className={styles["empty-state"]}>
-									<Text size="sm">No todos yet.</Text>
+									<Text size="sm" className={styles["empty-state-title"]}>No todos yet.</Text>
 									<Text size="xs" className={styles["empty-state-meta"]}>
 										Press Cmd+K or click Add to create one.
 									</Text>
@@ -177,7 +170,7 @@ export function Sidebar() {
 								Completed Todos
 							</Dialog.Title>
 							<Dialog.Close asChild>
-								<Button variant="secondary" icon="close" className={styles["completed-close"]} aria-label="Close" />
+								<Button variant="ghost" size="sm" icon="close" className={styles["completed-close"]} aria-label="Close" />
 							</Dialog.Close>
 						</div>
 						<div className={styles["completed-table"]}>

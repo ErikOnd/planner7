@@ -6,7 +6,7 @@ import { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
 import styles from "./Button.module.scss";
 
 type BaseButtonProps = {
-	variant?: "primary" | "secondary" | "ghost" | "ai";
+	variant?: "primary" | "secondary" | "ghost" | "danger";
 	children?: ReactNode;
 	size?: "xs" | "sm" | "base" | "lg" | "xl";
 	iconSize?: number;
@@ -48,6 +48,12 @@ function renderContent(
 }
 
 export function Button(props: ButtonProps) {
+	const resolveSize = (value: BaseButtonProps["size"]) => {
+		if (value === "xs" || value === "sm") return "sm";
+		if (value === "lg" || value === "xl") return "lg";
+		return "base";
+	};
+
 	if ("href" in props && props.href) {
 		const {
 			variant = "primary",
@@ -62,8 +68,16 @@ export function Button(props: ButtonProps) {
 			...linkProps
 		} = props;
 		const iconOnly = Boolean(icon) && !children;
+		const resolvedSize = resolveSize(size);
+		const resolvedIconSize = iconSize ?? (resolvedSize === "lg" ? 20 : 18);
 
-		const classNames = clsx(styles.button, styles[variant], iconOnly && styles["icon-button"], className);
+		const classNames = clsx(
+			styles.button,
+			styles[`size-${resolvedSize}`],
+			styles[variant],
+			iconOnly && styles["icon-button"],
+			className,
+		);
 
 		return (
 			<Link
@@ -71,7 +85,7 @@ export function Button(props: ButtonProps) {
 				className={classNames}
 				{...(linkProps as AnchorHTMLAttributes<HTMLAnchorElement>)}
 			>
-				{renderContent(icon, iconSize, wrapText, size, fontWeight, children)}
+				{renderContent(icon, resolvedIconSize, wrapText, size, fontWeight, children)}
 			</Link>
 		);
 	}
@@ -90,8 +104,16 @@ export function Button(props: ButtonProps) {
 		...buttonProps
 	} = buttonPropsTyped;
 	const iconOnly = Boolean(icon) && !children;
+	const resolvedSize = resolveSize(size);
+	const resolvedIconSize = iconSize ?? (resolvedSize === "lg" ? 20 : 18);
 
-	const classNames = clsx(styles.button, styles[variant], iconOnly && styles["icon-button"], className);
+	const classNames = clsx(
+		styles.button,
+		styles[`size-${resolvedSize}`],
+		styles[variant],
+		iconOnly && styles["icon-button"],
+		className,
+	);
 
 	return (
 		<button
@@ -99,7 +121,7 @@ export function Button(props: ButtonProps) {
 			className={classNames}
 			{...buttonProps}
 		>
-			{renderContent(icon, iconSize, wrapText, size, fontWeight, children)}
+			{renderContent(icon, resolvedIconSize, wrapText, size, fontWeight, children)}
 		</button>
 	);
 }

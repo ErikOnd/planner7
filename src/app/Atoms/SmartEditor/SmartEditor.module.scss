@@ -20,13 +20,13 @@
 	-webkit-overflow-scrolling: touch;
 	scrollbar-width: thin;
 	scrollbar-color:
-		color-mix(in srgb, var(--color-border) 82%, var(--color-text-subtle))
-		color-mix(in srgb, var(--color-background) 72%, var(--color-surface));
+		var(--color-surface-border-strong)
+		var(--color-surface-muted);
 	scroll-snap-type: x proximity;
 	gap: 0.55rem;
 	padding: 0.9rem 1.15rem;
-	border-bottom: 0.1rem solid color-mix(in srgb, var(--color-border) 78%, transparent);
-	background-color: color-mix(in srgb, var(--color-border) 34%, var(--color-surface));
+	border-bottom: var(--border-width-base) solid var(--color-border);
+	background-color: var(--color-surface-border-fill);
 	position: sticky;
 	top: 0;
 	z-index: var(--z-editor-toolbar);
@@ -37,16 +37,16 @@
 	}
 
 	&::-webkit-scrollbar-track {
-		background: color-mix(in srgb, var(--color-background) 72%, var(--color-surface));
-		border-radius: 999px;
+		background: var(--color-surface-muted);
+		border-radius: var(--radius-pill);
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background: color-mix(in srgb, var(--color-border) 82%, var(--color-text-subtle));
-		border-radius: 999px;
+		background: var(--color-surface-border-strong);
+		border-radius: var(--radius-pill);
 	}
 
-	@media (max-width: 639px) {
+	@media (max-width: 39.9375rem) {
 		scrollbar-width: none;
 		padding: 0.72rem 0.9rem;
 		gap: 0.45rem;
@@ -59,8 +59,8 @@
 
 .smart-editor__upload-status {
 	padding: 0.45rem 1.15rem;
-	border-bottom: 0.1rem solid color-mix(in srgb, var(--color-border) 74%, transparent);
-	background: color-mix(in srgb, var(--color-background) 68%, var(--color-surface));
+	border-bottom: var(--border-width-base) solid var(--color-border);
+	background: var(--color-surface-muted);
 	color: var(--color-text-secondary);
 	font-size: 0.82rem;
 	font-weight: 600;
@@ -68,21 +68,21 @@
 
 .smart-editor__upload-error {
 	padding: 0.45rem 1.15rem;
-	border-bottom: 0.1rem solid color-mix(in srgb, var(--color-border) 74%, transparent);
-	background: color-mix(in srgb, var(--color-background) 64%, var(--color-surface));
+	border-bottom: var(--border-width-base) solid var(--color-border);
+	background: var(--color-surface-danger);
 	color: var(--color-text-secondary);
 	font-size: 0.82rem;
 	font-weight: 600;
 }
 
 .smart-editor__toolbar-btn {
-	border: 0.1rem solid color-mix(in srgb, var(--color-border) 90%, transparent);
-	background-color: color-mix(in srgb, var(--color-surface) 94%, var(--color-background));
+	border: var(--border-width-base) solid var(--color-border);
+	background-color: var(--color-surface-subtle);
 	color: var(--color-text-primary);
-	border-radius: variables.$radius-md;
+	border-radius: var(--radius-md);
 	padding: 0.55rem 0.9rem;
-	min-height: 2.9rem;
-	min-width: 2.9rem;
+	min-height: var(--control-size-md);
+	min-width: var(--control-size-md);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -99,17 +99,17 @@
 		border-color variables.$transition-base,
 		color variables.$transition-base,
 		box-shadow variables.$transition-base;
-	box-shadow: 0 0.04rem 0.2rem color-mix(in srgb, var(--shadow-sm) 48%, transparent);
+	box-shadow: var(--shadow-control);
 
 	&:hover {
-		background-color: color-mix(in srgb, var(--color-primary-hover) 24%, var(--color-surface));
-		border-color: color-mix(in srgb, var(--color-primary-hover) 46%, var(--color-border));
-		box-shadow: 0 0.08rem 0.25rem color-mix(in srgb, var(--shadow-sm) 56%, transparent);
+		background-color: var(--color-surface-primary-hover);
+		border-color: var(--color-primary-hover);
+		box-shadow: var(--shadow-control-hover);
 	}
 
 	&[data-active="true"] {
-		background-color: color-mix(in srgb, var(--color-primary-soft) 72%, var(--color-surface));
-		border-color: color-mix(in srgb, var(--color-primary) 74%, var(--color-border));
+		background-color: var(--color-surface-primary-selected);
+		border-color: var(--color-primary);
 		color: var(--color-text-primary);
 		box-shadow: none;
 	}
@@ -117,22 +117,22 @@
 	&:disabled {
 		cursor: not-allowed;
 		opacity: 1;
-		background-color: color-mix(in srgb, var(--color-disabled-bg) 82%, var(--color-surface));
-		border-color: color-mix(in srgb, var(--color-border) 84%, transparent);
+		background-color: var(--color-surface-disabled);
+		border-color: var(--color-border);
 		color: var(--color-disabled-text);
 		box-shadow: none;
 	}
 
 	&:focus-visible {
-		background-color: color-mix(in srgb, var(--color-primary-hover) 20%, var(--color-surface));
-		border-color: color-mix(in srgb, var(--color-primary-hover) 52%, var(--color-border));
-		outline: 0.14rem solid color-mix(in srgb, var(--color-primary-hover) 62%, var(--color-border));
+		background-color: var(--color-surface-primary-hover);
+		border-color: var(--color-primary-hover);
+		outline: 0.14rem solid var(--color-primary-hover);
 		outline-offset: 0.12rem;
 	}
 
-	@media (max-width: 639px) {
-		min-height: 2.6rem;
-		min-width: 2.6rem;
+	@media (max-width: 39.9375rem) {
+		min-height: var(--control-size-sm);
+		min-width: var(--control-size-sm);
 		padding: 0.45rem 0.72rem;
 		font-size: 0.88rem;
 		flex: 0 0 auto;
@@ -162,13 +162,15 @@
 	padding: 1.45rem 1.75rem 2.2rem;
 	min-height: 13.5rem;
 	flex: 1 1 auto;
+	position: relative;
+	z-index: 0;
 	outline: none;
 	white-space: pre-wrap;
 	word-break: break-word;
 	font-size: 1.02rem;
 	line-height: 1.68;
 
-	@media (max-width: 639px) {
+	@media (max-width: 39.9375rem) {
 		padding: 1rem 1rem 4rem;
 		min-height: 14rem;
 		font-size: 1rem;
@@ -182,23 +184,6 @@
 	&:focus,
 	&:focus-visible {
 		outline: none;
-	}
-}
-
-.smart-editor__placeholder {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	padding: 1.45rem 1.75rem 2.2rem;
-	line-height: 1.68;
-	color: color-mix(in srgb, var(--color-text-muted) 78%, var(--color-disabled-text));
-	pointer-events: none;
-	user-select: none;
-	font-size: 1.02rem;
-
-	@media (max-width: 639px) {
-		padding: 1rem 1rem 4rem;
 	}
 }
 
@@ -232,7 +217,7 @@
 .smart-editor__quote {
 	margin: 0.8rem 0;
 	padding-left: 1rem;
-	border-left: 0.2rem solid color-mix(in srgb, var(--color-primary-soft) 75%, var(--color-border));
+	border-left: 0.2rem solid var(--color-primary-soft);
 	color: var(--color-text-muted);
 	font-style: italic;
 }
@@ -260,8 +245,8 @@
 	width: 100%;
 	max-width: 100%;
 	height: auto;
-	border-radius: variables.$radius-sm;
-	border: 0.1rem solid var(--color-border-light);
+	border-radius: var(--radius-sm);
+	border: var(--border-width-base) solid var(--color-border-light);
 }
 
 .smart-editor__image-handle {
@@ -270,10 +255,10 @@
 	bottom: -0.5rem;
 	width: 1.45rem;
 	height: 1.45rem;
-	border: 0.1rem solid var(--color-primary);
+	border: var(--border-width-base) solid var(--color-primary);
 	background-color: var(--color-surface-elevated);
-	border-radius: variables.$radius-xs;
-	box-shadow: 0 0.3rem 0.8rem rgba(0, 0, 0, 0.28);
+	border-radius: var(--radius-xs);
+	box-shadow: var(--shadow-control-hover);
 	cursor: nwse-resize;
 	padding: 0.12rem;
 	display: inline-flex;
@@ -283,7 +268,7 @@
 	pointer-events: none;
 	transition: opacity variables.$transition-fast, transform variables.$transition-fast;
 
-	@media (max-width: 639px) {
+	@media (max-width: 39.9375rem) {
 		width: 1.65rem;
 		height: 1.65rem;
 		right: 0.2rem;
@@ -308,15 +293,15 @@
 	right: -0.7rem;
 	width: 1.7rem;
 	height: 1.7rem;
-	border: 0.12rem solid color-mix(in srgb, var(--color-border) 78%, transparent);
-	background: color-mix(in srgb, var(--color-surface-elevated) 84%, transparent);
-	border-radius: 50%;
+	border: 0.12rem solid var(--color-border);
+	background: var(--color-bg-surface);
+	border-radius: var(--radius-rounded);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	backdrop-filter: blur(4px);
-	-webkit-backdrop-filter: blur(4px);
-	box-shadow: 0 0.45rem 1rem rgba(0, 0, 0, 0.32);
+	backdrop-filter: blur(0.25rem);
+	-webkit-backdrop-filter: blur(0.25rem);
+	box-shadow: var(--shadow-control-hover);
 	cursor: pointer;
 	opacity: 0;
 	pointer-events: none;
@@ -330,7 +315,7 @@
 		top: 50%;
 		width: 0.78rem;
 		height: 0.12rem;
-		border-radius: 999px;
+		border-radius: var(--radius-pill);
 		background-color: var(--color-text);
 		transform-origin: center;
 	}
@@ -348,7 +333,7 @@
 		transform: translateY(-0.05rem) scale(1.02);
 	}
 
-	@media (max-width: 639px) {
+	@media (max-width: 39.9375rem) {
 		width: 1.95rem;
 		height: 1.95rem;
 		top: -0.8rem;
@@ -380,14 +365,14 @@
 }
 
 .smart-editor__link {
-	color: color-mix(in srgb, var(--color-text-primary) 64%, var(--color-primary-hover));
+	color: var(--color-primary-active);
 	text-decoration: underline;
 	text-decoration-thickness: 0.08rem;
 	text-underline-offset: 0.14rem;
 
 	&:hover {
 		cursor: pointer;
-		color: color-mix(in srgb, var(--color-text-primary) 78%, var(--color-primary-hover));
+		color: var(--color-primary-hover);
 	}
 }
 
@@ -447,10 +432,10 @@
 	top: 0.1rem;
 	width: 1.65rem;
 	height: 1.65rem;
-	border-radius: variables.$radius-md;
-	border: 0.1rem solid color-mix(in srgb, var(--color-border) 90%, transparent);
-	background-color: color-mix(in srgb, var(--color-background) 50%, var(--color-surface));
-	box-shadow: 0 0.04rem 0.2rem color-mix(in srgb, var(--shadow-sm) 40%, transparent);
+	border-radius: var(--radius-md);
+	border: var(--border-width-base) solid var(--color-border);
+	background-color: var(--color-surface-subtle);
+	box-shadow: var(--shadow-control);
 	cursor: pointer;
 	transition:
 		border-color variables.$transition-base,
@@ -460,37 +445,36 @@
 }
 
 .smart-editor__li-checked::before {
-	border-color: color-mix(in srgb, var(--color-primary) 70%, var(--color-border));
-	background-color: color-mix(in srgb, var(--color-primary-soft) 86%, var(--color-surface));
-	box-shadow: 0 0.08rem 0.24rem color-mix(in srgb, var(--shadow-primary-sm) 42%, transparent);
+	border-color: var(--color-primary);
+	background-color: var(--color-surface-primary-selected);
+	box-shadow: var(--shadow-control), var(--ring-primary-soft);
 }
 
 .smart-editor__li-checked::after {
 	content: "";
 	position: absolute;
-	left: 0.62rem;
-	top: 0.38rem;
+	left: 0.825rem;
+	top: 0.925rem;
 	width: 0.34rem;
 	height: 0.7rem;
 	border: solid var(--color-text-secondary);
 	border-width: 0 0.14rem 0.14rem 0;
-	transform: rotate(45deg);
+	transform: translate(-50%, -58%) rotate(45deg);
 	pointer-events: none;
 }
 
 .smart-editor__li-unchecked:focus-within::before {
-	border-color: color-mix(in srgb, var(--color-primary-soft) 82%, var(--color-border));
-	box-shadow: 0 0.08rem 0.24rem color-mix(in srgb, var(--shadow-sm) 56%, transparent);
+	border-color: var(--color-primary-soft);
+	box-shadow: var(--shadow-control-hover), var(--ring-primary-soft);
 }
 
 .smart-editor__li-checked:focus-within::before {
-	box-shadow: 0 0.08rem 0.24rem color-mix(in srgb, var(--shadow-primary-sm) 48%, transparent);
+	box-shadow: var(--shadow-control-hover), var(--ring-primary-strong);
 }
 
 .smart-editor__li-checked {
-	--smart-editor-checked-text: color-mix(in srgb, var(--color-text-muted) 86%, var(--color-text-secondary));
 	text-decoration: none;
-	color: var(--smart-editor-checked-text);
+	color: var(--color-text-muted);
 	opacity: 1;
 }
 
@@ -502,7 +486,7 @@
 	.smart-editor__link,
 	span[data-lexical-text="true"]
 ) {
-	color: var(--smart-editor-checked-text);
+	color: var(--color-text-muted);
 }
 
 .smart-editor__slash-menu {
@@ -510,8 +494,8 @@
 	z-index: var(--z-editor-menu);
 	margin-top: 0.4rem;
 	background-color: var(--color-surface-elevated);
-	border: 0.1rem solid var(--color-border);
-	border-radius: variables.$radius-sm;
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-sm);
 	box-shadow: var(--shadow-lg);
 	padding: 0.3rem;
 	min-width: 13rem;
@@ -519,7 +503,7 @@
 	flex-direction: column;
 	gap: 0.1rem;
 
-	@media (max-width: 639px) {
+	@media (max-width: 39.9375rem) {
 		min-width: 0;
 		width: min(90vw, 20rem);
 		max-width: 90vw;
@@ -532,7 +516,7 @@
 	color: var(--color-text);
 	text-align: left;
 	padding: 0.45rem 0.55rem;
-	border-radius: variables.$radius-xs;
+	border-radius: var(--radius-xs);
 	cursor: pointer;
 
 	&:hover,
@@ -540,7 +524,7 @@
 		background-color: var(--color-primary-subtle);
 	}
 
-	@media (max-width: 639px) {
+	@media (max-width: 39.9375rem) {
 		padding: 0.65rem 0.7rem;
 		font-size: 0.95rem;
 	}
@@ -560,7 +544,7 @@
 	z-index: var(--z-editor-drag);
 	cursor: grab;
 
-	@media (max-width: 639px) {
+	@media (max-width: 39.9375rem) {
 		display: none;
 	}
 }
@@ -575,7 +559,7 @@
 	position: absolute;
 	height: 0.12rem;
 	background-color: var(--color-primary);
-	border-radius: variables.$radius-sm;
+	border-radius: var(--radius-sm);
 	opacity: 0;
 	pointer-events: none;
 }

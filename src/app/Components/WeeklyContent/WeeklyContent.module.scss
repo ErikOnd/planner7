@@ -3,10 +3,9 @@
 @use "../../styles/variables" as variables;
 
 .weekly-content {
-		padding-block: var(--content-spacing);
-		padding-inline: var(--space-xs);
+	padding: 0;
 
 	@include mixins.phone {
-		padding-inline: var(--content-spacing);
+		padding-inline: 0;
 	}
 }

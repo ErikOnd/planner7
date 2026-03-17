@@ -3,7 +3,7 @@
 import { buildAppBootstrapPayload } from "@/lib/bootstrapPayload";
 import prisma from "@/lib/prisma";
 import { requireWorkspaceContext } from "@/lib/serverActionContext";
-import { isWorkspaceGradientPreset, type WorkspaceGradientPreset } from "@/lib/workspaceGradients";
+import type { WorkspaceGradientPreset } from "@/lib/workspaceGradients";
 import type { AppBootstrapPayload } from "types/appBootstrap";
 
 export type WorkspaceActionResult = {
@@ -126,17 +126,11 @@ export async function switchWorkspaceWithBootstrap(
 	}
 }
 
-export async function createWorkspace(
-	name: string,
-	gradientPreset: WorkspaceGradientPreset = "violet",
-): Promise<WorkspaceActionResult> {
+export async function createWorkspace(name: string): Promise<WorkspaceActionResult> {
 	try {
 		const validation = validateWorkspaceName(name);
 		if (!validation.valid) {
 			return { success: false, error: validation.error };
-		}
-		if (!isWorkspaceGradientPreset(gradientPreset)) {
-			return { success: false, error: "Invalid workspace gradient" };
 		}
 
 		const session = await requireWorkspaceSession();
@@ -145,7 +139,7 @@ export async function createWorkspace(
 			data: {
 				userId: session.userId,
 				name: validation.name,
-				gradientPreset,
+				gradientPreset: "violet",
 			},
 		});
 
@@ -182,37 +176,6 @@ export async function renameWorkspace(workspaceId: string, name: string): Promis
 	} catch (error) {
 		console.error("Error renaming workspace:", error);
 		return { success: false, error: "Failed to rename workspace" };
-	}
-}
-
-export async function updateWorkspaceGradient(
-	workspaceId: string,
-	gradientPreset: WorkspaceGradientPreset,
-): Promise<WorkspaceActionResult> {
-	try {
-		if (!isWorkspaceGradientPreset(gradientPreset)) {
-			return { success: false, error: "Invalid workspace gradient" };
-		}
-
-		const session = await requireWorkspaceSession();
-		const workspace = await prisma.workspace.findFirst({
-			where: { id: workspaceId, userId: session.userId },
-			select: { id: true },
-		});
-
-		if (!workspace) {
-			return { success: false, error: "Workspace not found" };
-		}
-
-		await prisma.workspace.update({
-			where: { id: workspace.id },
-			data: { gradientPreset },
-		});
-
-		return { success: true };
-	} catch (error) {
-		console.error("Error updating workspace gradient:", error);
-		return { success: false, error: "Failed to update workspace gradient" };
 	}
 }
 

@@ -4,19 +4,15 @@
 .page {
 	min-height: 100vh;
 	padding: clamp(2rem, 5vw, 4rem) var(--space-lg);
-	background: linear-gradient(
-		135deg,
-		var(--color-background) 0%,
-		var(--color-gray-light) 100%
-	);
+	background: var(--color-bg-page-subtle);
 }
 
 .content {
 	max-width: 56rem;
 	margin: 0 auto;
 	background: var(--color-surface);
-	border: 0.06rem solid var(--color-border-light);
-	border-radius: variables.$radius-xl;
+	border: var(--border-width-hairline) solid var(--color-border-light);
+	border-radius: var(--radius-xl);
 	padding: clamp(2rem, 5vw, 4rem);
 	@include mixins.shadow-card;
 }
@@ -30,14 +26,14 @@
 	color: var(--color-text-muted);
 	margin-bottom: var(--space-2xl);
 	padding-bottom: var(--space-lg);
-	border-bottom: 0.06rem solid var(--color-border-light);
+	border-bottom: var(--border-width-hairline) solid var(--color-border-light);
 }
 
 .intro {
 	margin-bottom: var(--space-2xl);
 	padding: var(--space-lg);
 	background: var(--color-gray-light);
-	border-radius: variables.$radius-md;
+	border-radius: var(--radius-md);
 	border-left: 0.25rem solid var(--color-primary);
 }
 
@@ -53,7 +49,7 @@
 	margin-bottom: var(--space-md);
 	color: var(--color-text);
 	padding-bottom: var(--space-xs);
-	border-bottom: 0.06rem solid var(--color-border-light);
+	border-bottom: var(--border-width-hairline) solid var(--color-border-light);
 }
 
 .subsection {
@@ -108,13 +104,13 @@
 }
 
 .emailLink {
-	color: var(--color-primary);
+	color: var(--color-primary-active);
 	text-underline-offset: 0.14rem;
-	font-weight: 500;
+	font-weight: 600;
 	transition: color variables.$transition-fast;
 
 	&:hover {
-		color: var(--color-primary-dark);
+		color: var(--color-primary);
 	}
 }
 
@@ -124,16 +120,16 @@
 	gap: var(--space-md);
 	margin-top: var(--space-2xl);
 	padding-top: var(--space-xl);
-	border-top: 0.06rem solid var(--color-border-light);
+	border-top: var(--border-width-hairline) solid var(--color-border-light);
 }
 
 .link {
-	color: var(--color-primary);
+	color: var(--color-primary-active);
 	text-underline-offset: 0.14rem;
-	font-weight: 500;
+	font-weight: 600;
 	transition: color variables.$transition-fast;
 
 	&:hover {
-		color: var(--color-primary-dark);
+		color: var(--color-primary);
 	}
 }

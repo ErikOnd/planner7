@@ -1,14 +1,12 @@
 "use client";
 
 import { hydrateBootstrapPayload, invalidateWorkspaceTopologyCache, loadAppBootstrap } from "@/lib/clientBootstrap";
-import type { WorkspaceGradientPreset } from "@/lib/workspaceGradients";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
 	createWorkspace,
 	deleteWorkspace,
 	renameWorkspace,
 	switchWorkspaceWithBootstrap,
-	updateWorkspaceGradient,
 	type WorkspaceSummary,
 } from "../app/actions/workspaces";
 
@@ -22,15 +20,8 @@ type WorkspaceContextValue = {
 	refreshWorkspaces: () => Promise<void>;
 	prefetchWorkspace: (workspaceId: string) => Promise<void>;
 	switchWorkspace: (workspaceId: string) => Promise<{ success: boolean; error?: string }>;
-	createWorkspaceAction: (
-		name: string,
-		gradientPreset: WorkspaceGradientPreset,
-	) => Promise<{ success: boolean; error?: string }>;
+	createWorkspaceAction: (name: string) => Promise<{ success: boolean; error?: string }>;
 	renameWorkspaceAction: (workspaceId: string, name: string) => Promise<{ success: boolean; error?: string }>;
-	updateWorkspaceGradientAction: (
-		workspaceId: string,
-		gradientPreset: WorkspaceGradientPreset,
-	) => Promise<{ success: boolean; error?: string }>;
 	deleteWorkspaceAction: (workspaceId: string) => Promise<{ success: boolean; error?: string }>;
 };
 
@@ -129,11 +120,11 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 		}
 	}, []);
 
-	const createWorkspaceAction = useCallback(async (name: string, gradientPreset: WorkspaceGradientPreset) => {
+	const createWorkspaceAction = useCallback(async (name: string) => {
 		setIsSaving(true);
 		setError(null);
 		try {
-			const result = await createWorkspace(name, gradientPreset);
+			const result = await createWorkspace(name);
 			if (!result.success) {
 				setError(result.error ?? "Failed to create workspace");
 				return result;
@@ -170,30 +161,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 			setIsSaving(false);
 		}
 	}, [refreshWorkspaces]);
-
-	const updateWorkspaceGradientAction = useCallback(
-		async (workspaceId: string, gradientPreset: WorkspaceGradientPreset) => {
-			setIsSaving(true);
-			setError(null);
-			try {
-				const result = await updateWorkspaceGradient(workspaceId, gradientPreset);
-				if (!result.success) {
-					setError(result.error ?? "Failed to update workspace gradient");
-					return result;
-				}
-				invalidateWorkspaceTopologyCache();
-				await refreshWorkspaces();
-				return result;
-			} catch (gradientError) {
-				setError("Failed to update workspace gradient");
-				console.error("Error updating workspace gradient:", gradientError);
-				return { success: false, error: "Failed to update workspace gradient" };
-			} finally {
-				setIsSaving(false);
-			}
-		},
-		[refreshWorkspaces],
-	);
 
 	const deleteWorkspaceAction = useCallback(async (workspaceId: string) => {
 		setIsSaving(true);
@@ -235,7 +202,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 				switchWorkspace,
 				createWorkspaceAction,
 				renameWorkspaceAction,
-				updateWorkspaceGradientAction,
 				deleteWorkspaceAction,
 			}}
 		>

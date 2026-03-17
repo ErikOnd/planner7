@@ -1,6 +1,19 @@
 @use "../../styles/mixins" as mixins;
 @use "../../styles/variables" as variables;
 
+.landing-page {
+	min-height: 100dvh;
+	background: var(--color-bg-sidebar);
+	color: var(--color-text-inverse);
+}
+
+.header,
+.main,
+.footer {
+	position: relative;
+	z-index: 1;
+}
+
 // Nav
 .nav {
 	display: flex;
@@ -15,7 +28,7 @@
 .logo {
 	display: flex;
 	align-items: center;
-	color: var(--color-primary);
+	color: var(--color-text-inverse);
 	font-weight: 600;
 	letter-spacing: 0.05em;
 	text-decoration: none;
@@ -63,14 +76,15 @@
 	max-width: 75rem;
 }
 
-.hero .hero-headline {
+.landing-page .hero .hero-headline {
 	margin-bottom: var(--space-2xl);
 	font-size: clamp(2.8rem, 10vw, 8rem);
 	line-height: 1.06;
+	color: var(--color-text-inverse);
 }
 
 .hero-subtitle {
-	color: var(--color-text-muted);
+	color: var(--color-sidebar-text-soft);
 	line-height: 1.7;
 	max-width: 44rem;
 	margin: var(--space-xl) auto;
@@ -85,17 +99,18 @@
 
 .section-label {
 	text-align: center;
-	color: var(--color-primary-ink);
-	font-weight: 600;
+	color: var(--color-primary);
+	font-weight: 700;
 	margin-bottom: var(--space-md);
 	text-transform: uppercase;
 	letter-spacing: 0.08em;
 	font-size: 0.8125rem;
 }
 
-.section-title {
+.landing-page .section-title {
 	text-align: center;
 	margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+	color: var(--color-text-inverse);
 }
 
 .feature-cards {
@@ -109,36 +124,46 @@
 }
 
 .feature-card {
-	background: var(--color-surface);
-	border: 0.06rem solid var(--color-border-light);
-	border-radius: variables.$radius-xl;
+	background: var(--color-surface-sidebar);
+	border: var(--border-width-hairline) solid var(--color-sidebar-border);
+	border-radius: var(--radius-xl);
 	padding: clamp(1.75rem, 4vw, 2.5rem);
-	transition: transform variables.$transition-smooth, box-shadow variables.$transition-smooth;
+	box-shadow: 0 1rem 2.2rem rgba(17, 18, 17, 0.18);
+	backdrop-filter: blur(0.5rem);
+	transition:
+		transform variables.$transition-smooth,
+		box-shadow variables.$transition-smooth,
+		border-color variables.$transition-base,
+		background-color variables.$transition-base;
 
 	&:hover {
 		transform: translateY(-0.25rem);
-		@include mixins.shadow-card-hover;
+		background: var(--color-surface-sidebar-active);
+		border-color: var(--color-surface-sidebar-primary-hover);
+		box-shadow: 0 1.2rem 2.6rem rgba(17, 18, 17, 0.26);
 	}
 }
 
 .feature-icon {
 	width: 3.5rem;
 	height: 3.5rem;
-	border-radius: variables.$radius-lg;
+	border-radius: var(--radius-lg);
 	background: var(--color-primary);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	margin-bottom: var(--space-lg);
 	color: var(--color-on-primary);
+	box-shadow: 0 0.9rem 1.6rem rgba(210, 235, 116, 0.2);
 }
 
 .feature-title {
 	margin-bottom: var(--space-sm);
+	color: var(--color-text-inverse);
 }
 
 .feature-description {
-	color: var(--color-text-muted);
+	color: var(--color-sidebar-text-soft);
 	line-height: 1.7;
 }
 
@@ -168,7 +193,7 @@
 	flex-shrink: 0;
 	width: 3rem;
 	height: 3rem;
-	border-radius: variables.$radius-rounded;
+	border-radius: var(--radius-rounded);
 	background: var(--color-primary);
 	color: var(--color-on-primary);
 	display: flex;
@@ -184,11 +209,11 @@
 
 .step-title {
 	margin-bottom: var(--space-sm);
-	color: var(--color-text);
+	color: var(--color-text-inverse);
 }
 
 .step-description {
-	color: var(--color-text-light);
+	color: var(--color-sidebar-text-soft);
 	line-height: 1.7;
 }
 
@@ -202,24 +227,26 @@
 
 .cta-banner {
 	max-width: 75rem;
-	background: var(--color-surface);
-	border: 0.06rem solid var(--color-border-light);
-	border-radius: variables.$radius-2xl;
+	background:
+		linear-gradient(135deg, rgba(210, 235, 116, 0.08), rgba(210, 235, 116, 0.02)),
+		var(--color-surface-sidebar);
+	border: var(--border-width-hairline) solid var(--color-surface-sidebar-primary-hover);
+	border-radius: var(--radius-2xl);
 	padding: clamp(2.5rem, 5vw, 4rem) var(--space-xl);
 	text-align: center;
-	@include mixins.shadow-card;
+	box-shadow: 0 1.4rem 3rem rgba(17, 18, 17, 0.22);
 
 	margin-left: auto;
 	margin-right: auto;
 }
 
-.cta-title {
+.landing-page .cta-title {
 	margin-bottom: var(--space-lg);
-	color: var(--color-text);
+	color: var(--color-text-inverse);
 }
 
 .cta-subtitle {
-	color: var(--color-text-light);
+	color: var(--color-sidebar-text-soft);
 	margin-bottom: var(--space-2xl);
 	line-height: 1.7;
 	max-width: 42rem;
@@ -238,7 +265,7 @@
 	width: 1.5rem;
 	height: 1.5rem;
 	background-color: var(--color-bg-sidebar);
-	border-radius: variables.$radius-xs;
+	border-radius: var(--radius-xs);
 	padding: 0.125rem;
 }
 
@@ -280,7 +307,7 @@
 	align-items: center;
 	justify-content: center;
 	gap: var(--space-lg);
-	border-top: 0.06rem solid var(--color-border-light);
+	border-top: var(--border-width-hairline) solid var(--color-sidebar-border);
 	text-align: center;
 
 	@include mixins.phone {
@@ -291,7 +318,7 @@
 }
 
 .footer-text {
-	color: var(--color-text-light);
+	color: var(--color-sidebar-text-soft);
 }
 
 .footer-links {
@@ -310,11 +337,11 @@
 }
 
 .footer-link {
-	color: var(--color-text-light);
+	color: var(--color-sidebar-text-soft);
 	font-size: var(--text-sm);
 	text-underline-offset: 0.14rem;
 
 	&:hover {
-		color: var(--color-primary-ink);
+		color: var(--color-primary);
 	}
 }

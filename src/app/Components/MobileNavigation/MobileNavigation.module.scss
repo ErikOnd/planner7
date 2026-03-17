@@ -1,169 +1,270 @@
 @use "../../styles/variables" as variables;
-@use "../../styles/mixins" as mixins;
 @use "../../styles/typography" as typography;
 
 .mobile-navigation {
+	position: relative;
+}
+
+.planner-chrome {
 	display: flex;
 	flex-direction: column;
-	background-color: var(--color-surface);
+	gap: 1rem;
+	padding: 0.9rem 1rem 0;
+	background: var(--color-surface-subtle);
+}
 
-	.workspace-section {
-		padding: var(--space-sm) var(--content-spacing);
-		border-bottom: .1rem solid var(--color-border);
-		background:
-			linear-gradient(
-				180deg,
-				color-mix(in srgb, var(--color-surface) 94%, transparent) 0%,
-				color-mix(in srgb, var(--color-surface-elevated) 86%, transparent) 100%
-			);
+.week-row {
+	display: grid;
+	grid-template-columns: var(--button-height-sm) minmax(0, 1fr) var(--button-height-sm);
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.week-arrow {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--button-height-sm);
+	height: var(--button-height-sm);
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-md);
+	background: var(--color-bg-surface);
+	box-shadow: var(--shadow-control);
+	color: var(--color-text-primary);
+	cursor: pointer;
+	transition:
+		color variables.$transition-base,
+		background-color variables.$transition-base,
+		border-color variables.$transition-base,
+		box-shadow variables.$transition-base;
+
+	&:hover,
+	&:focus-visible {
+		background: var(--color-surface-primary-subtle);
+		border-color: var(--color-primary-hover);
+		box-shadow: none;
+		color: var(--color-primary-active);
 	}
 
-	.slider-section {
-		position: relative;
-		display: flex;
-		align-items: center;
-		gap: var(--space-sm);
-		border-bottom: .1rem solid var(--color-border);
-		padding-block: var(--space-md);
-		padding-inline: var(--content-spacing);
-		background:
-			linear-gradient(
-				180deg,
-				color-mix(in srgb, var(--color-surface) 92%, transparent) 0%,
-				color-mix(in srgb, var(--color-surface-elevated) 84%, transparent) 100%
-			);
+	&:focus-visible {
+		outline: none;
+	}
+}
+
+.week-title {
+	@include typography.text-lg;
+	text-align: center;
+	font-weight: 800;
+	color: var(--color-text-primary);
+	letter-spacing: -0.03em;
+}
+
+.day-strip {
+	display: flex;
+	width: 100%;
+	gap: 0.7rem;
+	padding: 0.05rem 0.05rem 0.1rem;
+	overflow-x: auto;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+.day-card {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.18rem;
+	flex: 0 0 auto;
+	min-width: 4.55rem;
+	min-height: 4.7rem;
+	padding: 0.65rem 0.5rem;
+	border-radius: var(--radius-lg);
+	border: var(--border-width-base) solid var(--color-border);
+	background: var(--color-surface-subtle);
+	box-shadow: var(--shadow-control);
+	color: var(--color-text-secondary);
+	cursor: pointer;
+	transition:
+		transform variables.$transition-fast,
+		border-color variables.$transition-base,
+		background-color variables.$transition-base,
+		color variables.$transition-base,
+		box-shadow variables.$transition-base;
+
+	&:hover,
+	&:focus-visible {
+		background: var(--color-surface-primary-subtle);
+		border-color: var(--color-primary);
+		color: var(--color-text-primary);
+		transform: translateY(-0.05rem);
 	}
 
-	.slider-tabs {
-		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-		align-items: center;
-		flex: 1 1 auto;
-		min-width: 0;
-		column-gap: var(--space-xs);
+	&:focus-visible {
+		outline: none;
+	}
+}
+
+.day-card--today {
+	border-color: var(--color-primary);
+}
+
+.day-card--active {
+	background: var(--color-primary);
+	border-color: var(--color-primary-hover);
+	box-shadow: var(--shadow-button-primary);
+	color: var(--color-text-primary);
+	transform: translateY(-0.08rem);
+
+	.day-card-label,
+	.day-card-number {
+		color: var(--color-text-primary);
+	}
+}
+
+.day-card-label {
+	font-size: 0.7rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--color-text-muted);
+}
+
+.day-card-number {
+	font-size: 1.48rem;
+	line-height: 1;
+	font-weight: 800;
+	letter-spacing: -0.05em;
+	color: var(--color-text-primary);
+}
+
+.mobile-add-button {
+	position: fixed;
+	left: 50%;
+	bottom: calc(2.3rem + env(safe-area-inset-bottom));
+	transform: translateX(-50%);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 4.15rem;
+	height: 4.15rem;
+	border: var(--border-width-base) solid var(--color-primary);
+	border-radius: var(--radius-md);
+	background: var(--color-primary);
+	color: var(--color-text-primary);
+	box-shadow: var(--shadow-button-primary);
+	cursor: pointer;
+	z-index: calc(var(--z-sticky) + 1);
+	transition:
+		transform variables.$transition-fast,
+		background-color variables.$transition-base,
+		box-shadow variables.$transition-base;
+
+	&:hover,
+	&:focus-visible {
+		background: var(--color-primary-hover);
+		border-color: var(--color-primary-hover);
 	}
 
-	.slider-button {
-		@include typography.text-base;
-		color: var(--color-text-muted);
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		background-color: transparent;
-		border: none;
-		padding: 0;
-		cursor: pointer;
-		transition:
-			color variables.$transition-base,
-			transform variables.$transition-fast;
-		min-width: 0;
+	&:focus-visible {
+		outline: none;
+	}
+}
 
-		&:hover {
-			color: var(--color-primary);
-		}
+.bottom-nav {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: var(--z-sticky);
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	align-items: end;
+	gap: 0.1rem;
+	padding: 0.55rem 0.5rem calc(0.55rem + env(safe-area-inset-bottom));
+	border-top: var(--border-width-base) solid var(--color-sidebar-border);
+	background: var(--color-bg-sidebar);
+	box-shadow: var(--shadow-surface);
+}
 
-		&:focus-visible {
-			color: var(--color-primary);
-			outline: .1rem solid var(--color-primary);
-			border-radius: variables.$radius-sm;
-			outline-offset: .1rem;
-		}
+.bottom-nav-item {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 2.7rem;
+	border: none;
+	background: transparent;
+	color: var(--color-sidebar-text-soft);
+	text-decoration: none;
+	cursor: pointer;
+	padding: 0.2rem 0.1rem;
+	transition: color variables.$transition-base, transform variables.$transition-fast;
 
-		.slider-button-label {
-			padding: 0;
-		}
+	&:hover,
+	&:focus-visible {
+		color: var(--color-text-inverse);
 	}
 
-	.active {
+	&:focus-visible {
+		outline: none;
+		border-radius: var(--radius-md);
+	}
+}
+
+.bottom-nav-item--active {
+	color: var(--color-text-inverse);
+
+	.bottom-nav-icon {
 		color: var(--color-primary);
 	}
+}
 
-	.slider-underline {
-		position: absolute;
-		bottom: 0;
-		height: .16rem;
-		border-radius: 999px;
-		background: linear-gradient(90deg, var(--color-primary-light), var(--color-primary));
-		box-shadow: 0 0 .55rem color-mix(in srgb, var(--color-primary) 50%, transparent);
-		transition: left 0.3s ease, width 0.3s ease;
-	}
+.bottom-nav-icon {
+	display: block;
+	color: currentColor;
+}
 
-	.date-section {
-		padding-block: var(--space-sm);
-		padding-inline: var(--content-spacing);
-		border-bottom: .1rem solid var(--color-border);
-	}
+.bottom-nav-avatar {
+	width: 1.55rem;
+	height: 1.55rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: var(--border-width-base) solid var(--color-sidebar-border-strong);
+	border-radius: var(--radius-sm);
+	background: var(--color-surface-sidebar-active);
+	color: var(--color-text-inverse);
+	font-size: 0.78rem;
+	font-weight: 800;
+	line-height: 1;
+	transition:
+		background-color variables.$transition-base,
+		color variables.$transition-base,
+		box-shadow variables.$transition-base;
+}
 
-	.calendar-section {
-		display: flex;
-		justify-content: space-between;
-		padding: var(--space-md) var(--content-spacing);
-		overflow-x: auto;
-		gap: var(--space-md);
-		border-bottom: 1px solid var(--color-border);
-		scroll-snap-type: x mandatory;
-		scroll-padding-inline: 50%;
-		scrollbar-width: none;
-		-ms-overflow-style: none;
-	}
+.bottom-nav-avatar--active {
+	background: var(--color-primary);
+	color: var(--color-text-primary);
+	border-color: var(--color-primary-hover);
+}
 
-	.day-button {
-		background-color: var(--color-surface);
-		border: .06rem solid color-mix(in srgb, var(--color-border-light) 72%, transparent);
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		height: 4.4rem;
-		min-width: 5rem;
-		width: 3.8rem;
-		border-radius: variables.$radius-md;
-		color: var(--color-text-muted);
-		cursor: pointer;
-		scroll-snap-align: center;
-		box-shadow: 0 .15rem .5rem var(--shadow-sm);
-		transition:
-			background-color variables.$transition-base,
-			color variables.$transition-base,
-			border-color variables.$transition-base,
-			transform variables.$transition-fast,
-			box-shadow variables.$transition-base;
+.bottom-nav-label {
+	font-size: 0.58rem;
+	line-height: 1;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+}
 
-		&:focus-visible {
-			outline: .1rem solid var(--color-primary);
-			outline-offset: .08rem;
-		}
+.bottom-nav-item--utility {
+	color: var(--color-sidebar-text-soft);
+}
 
-		&:hover {
-			background-color: var(--color-primary-subtle);
-			color: var(--color-primary);
-			border-color: color-mix(in srgb, var(--color-primary-light) 60%, transparent);
-			transform: translateY(-2px);
-			box-shadow: 0 .55rem 1.1rem var(--shadow-md);
-
-			.day-date {
-				color: var(--color-primary);
-			}
-		}
-
-		&.active-day {
-			background-color: var(--color-primary);
-			color: var(--color-on-primary);
-			border-color: color-mix(in srgb, var(--color-primary-dark) 70%, transparent);
-			transform: translateY(-1px);
-			box-shadow:
-				0 .65rem 1.4rem color-mix(in srgb, var(--color-primary) 36%, transparent),
-				0 .25rem .6rem var(--shadow-sm);
-
-			.day-date {
-				color: var(--color-on-primary);
-			}
-		}
-	}
-
-	.day-date {
-		font-weight: 800;
-		color: var(--color-text);
-	}
-
+.bottom-nav-spacer {
+	visibility: hidden;
 }

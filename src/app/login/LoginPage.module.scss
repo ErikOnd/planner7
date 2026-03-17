@@ -3,9 +3,5 @@
 	place-items: center;
 	min-height: 100vh;
 	padding: var(--space-lg);
-	background: linear-gradient(
-		135deg,
-		var(--color-background) 0%,
-		var(--color-gray-light) 100%
-	);
+	background: var(--color-bg-page-subtle);
 }

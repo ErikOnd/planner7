@@ -1,197 +1,199 @@
 @use "../../styles/variables" as variables;
-@use "../../styles/mixins" as mixins;
 
-.button {
-	display: flex;
+@mixin button-base {
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	border: none;
-	border-radius: variables.$radius-sm;
-	padding: var(--space-sm) var(--space-lg);
+	gap: var(--button-gap);
+	border: var(--border-width-base) solid transparent;
+	border-radius: var(--button-radius);
+	background: transparent;
+	color: var(--color-text-primary);
+	font: inherit;
+	font-weight: var(--button-font-weight);
+	line-height: 1;
+	text-decoration: none;
+	white-space: nowrap;
 	cursor: pointer;
-	font-weight: 600;
-	font-size: var(--font-size-base);
-	min-height: 3.6rem;
-	position: relative;
-	overflow: hidden;
 	transition:
 		background-color variables.$transition-base,
+		border-color variables.$transition-base,
 		color variables.$transition-base,
+		box-shadow variables.$transition-base,
 		transform variables.$transition-fast;
-
-
-	&:active:not(:disabled) {
-		transform: scale(0.98);
-	}
-
-	&:disabled {
-		cursor: not-allowed;
-		opacity: 0.5;
-	}
 
 	&:focus-visible {
 		outline: none;
 	}
 }
 
+@mixin button-size($height-var, $padding-var, $font-size: var(--font-size-base)) {
+	min-height: var(#{$height-var});
+	padding-inline: var(#{$padding-var});
+	font-size: $font-size;
+}
+
+@mixin button-primary {
+	background: var(--color-primary);
+	border-color: var(--color-primary);
+	color: var(--color-text-primary);
+	box-shadow: var(--shadow-button-primary);
+
+	&:hover:not(:disabled),
+	&:focus-visible:not(:disabled) {
+		background: var(--color-primary-hover);
+		border-color: var(--color-primary-hover);
+		box-shadow: var(--shadow-button-primary-hover);
+	}
+
+	&:focus-visible:not(:disabled) {
+		box-shadow: var(--shadow-button-primary-hover);
+	}
+
+	&:disabled {
+		background: var(--color-disabled-bg);
+		border-color: var(--color-disabled-bg);
+		color: var(--color-disabled-text);
+		box-shadow: none;
+		cursor: not-allowed;
+		transform: none;
+	}
+}
+
+@mixin button-secondary {
+	background: var(--color-bg-surface);
+	border-color: var(--color-border);
+	color: var(--color-text-primary);
+	box-shadow: var(--shadow-control);
+
+	&:hover:not(:disabled),
+	&:focus-visible:not(:disabled) {
+		background: var(--color-surface-subtle);
+		border-color: var(--color-primary-hover);
+		box-shadow: var(--shadow-control-hover);
+	}
+
+	&:focus-visible:not(:disabled) {
+		box-shadow: var(--shadow-control-hover);
+	}
+
+	&:disabled {
+		background: var(--color-surface-disabled);
+		border-color: var(--color-border);
+		color: var(--color-disabled-text);
+		box-shadow: none;
+		cursor: not-allowed;
+		transform: none;
+	}
+}
+
+@mixin button-ghost {
+	background: transparent;
+	border-color: transparent;
+	color: var(--color-primary-active);
+	box-shadow: none;
+
+	&:hover:not(:disabled),
+	&:focus-visible:not(:disabled) {
+		background: var(--color-surface-primary-subtle);
+		border-color: var(--color-primary-hover);
+		color: var(--color-primary-active);
+	}
+
+	&:focus-visible:not(:disabled) {
+		box-shadow: none;
+	}
+
+	&:disabled {
+		color: var(--color-disabled-text);
+		cursor: not-allowed;
+		transform: none;
+	}
+}
+
+@mixin button-danger {
+	background: var(--color-danger);
+	border-color: var(--color-danger);
+	color: var(--color-text-inverse);
+	box-shadow: var(--shadow-control);
+
+	&:hover:not(:disabled),
+	&:focus-visible:not(:disabled) {
+		background: var(--color-danger-solid-hover);
+		border-color: var(--color-danger-solid-hover);
+		box-shadow: var(--shadow-control-hover);
+	}
+
+	&:focus-visible:not(:disabled) {
+		box-shadow: var(--shadow-control-hover);
+	}
+
+	&:disabled {
+		background: var(--color-danger-border);
+		border-color: var(--color-danger-border);
+		color: var(--color-text-inverse);
+		opacity: 0.65;
+		box-shadow: none;
+		cursor: not-allowed;
+		transform: none;
+	}
+}
+
+.button {
+	@include button-base;
+	@include button-size("--button-height-base", "--button-padding-inline-base");
+}
+
 .button-content {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.5rem;
+	justify-content: center;
+	gap: var(--button-gap);
+}
+
+.size-sm {
+	@include button-size("--button-height-sm", "--button-padding-inline-sm", var(--font-size-sm));
+}
+
+.size-base {
+	@include button-size("--button-height-base", "--button-padding-inline-base");
+}
+
+.size-lg {
+	@include button-size("--button-height-lg", "--button-padding-inline-lg", var(--font-size-base));
 }
 
 .icon-button {
-	padding: var(--space-sm);
-	width: 3.2rem;
-	height: 3.2rem;
-	min-height: 3.2rem;
-	min-width: 3.2rem;
+	padding-inline: 0;
+}
+
+.icon-button.size-sm {
+	width: var(--button-height-sm);
+	min-width: var(--button-height-sm);
+}
+
+.icon-button.size-base {
+	width: var(--button-height-base);
+	min-width: var(--button-height-base);
+}
+
+.icon-button.size-lg {
+	width: var(--button-height-lg);
+	min-width: var(--button-height-lg);
 }
 
 .primary {
-	background-color: var(--color-primary);
-	color: var(--color-on-primary);
-
-	&:hover:not(:disabled) {
-		background-color: var(--color-primary-dark);
-	}
-
-	&:focus-visible {
-		outline: 0.13rem solid var(--color-primary-light);
-		outline-offset: 0.13rem;
-	}
-
-	&:active:not(:disabled) {
-		background-color: var(--color-primary);
-	}
+	@include button-primary;
 }
 
 .secondary {
-	background-color: var(--color-surface);
-	color: var(--color-text);
-	border: 0.1rem solid var(--color-border);
-
-	&:hover:not(:disabled) {
-		background-color: var(--color-gray-light);
-		border-color: var(--color-text-muted);
-	}
-
-	&:focus-visible {
-		outline: 0.13rem solid var(--color-primary);
-		outline-offset: 0.13rem;
-		border-color: var(--color-border);
-	}
-
-	&:active:not(:disabled) {
-		background-color: var(--color-gray-medium);
-	}
+	@include button-secondary;
 }
 
 .ghost {
-	background-color: transparent;
-	color: var(--color-primary-ink);
-	border: .1rem solid transparent;
-
-	&:hover:not(:disabled) {
-		border: .1rem solid var(--color-primary-ink);
-	}
-
-	&:focus-visible {
-		outline: 0.13rem solid var(--color-primary);
-		outline-offset: 0.13rem;
-	}
-
-	&:active:not(:disabled) {
-		border: .1rem solid var(--color-primary-ink);
-		color: var(--color-primary-dark);
-	}
+	@include button-ghost;
 }
 
-.ai {
-	position: relative;
-	border: 0.1rem solid transparent;
-	color: var(--color-text-inverse);
-	background:
-		linear-gradient(
-			135deg,
-			color-mix(in srgb, var(--color-bg-sidebar) 96%, transparent),
-			color-mix(in srgb, var(--color-bg-sidebar) 88%, var(--color-bg-main))
-		) padding-box,
-		linear-gradient(90deg, var(--color-primary), var(--color-primary-hover)) border-box;
-	box-shadow:
-		0 0.5rem 1.2rem var(--shadow-lg),
-		0 0 1rem color-mix(in srgb, var(--color-primary) 24%, transparent);
-	animation: ai-button-glow 2.6s ease-in-out infinite;
-	isolation: isolate;
-
-	&::before {
-		content: "";
-		position: absolute;
-		inset: 0;
-		border-radius: inherit;
-		background: linear-gradient(115deg, transparent 18%, rgba(252, 252, 248, 0.45) 50%, transparent 82%);
-		transform: translateX(-125%);
-		animation: ai-button-shine 2.8s cubic-bezier(0.19, 1, 0.22, 1) infinite;
-		pointer-events: none;
-		z-index: 0;
-	}
-
-	> * {
-		position: relative;
-		z-index: 1;
-	}
-
-	&:hover:not(:disabled) {
-		transform: translateY(-1px);
-		box-shadow:
-			0 0.7rem 1.5rem var(--shadow-xl),
-			0 0 1.25rem color-mix(in srgb, var(--color-primary) 32%, transparent);
-	}
-
-	&:focus-visible {
-		outline: 0.12rem solid var(--color-primary);
-		outline-offset: 0.14rem;
-	}
-
-	&:active:not(:disabled) {
-		transform: translateY(0);
-	}
-}
-
-@keyframes ai-button-shine {
-	0% {
-		transform: translateX(-125%);
-		opacity: 0;
-	}
-	15% {
-		opacity: 1;
-	}
-	60% {
-		opacity: 1;
-	}
-	100% {
-		transform: translateX(130%);
-		opacity: 0;
-	}
-}
-
-@keyframes ai-button-glow {
-	0%,
-	100% {
-		box-shadow:
-			0 0.5rem 1.2rem var(--shadow-lg),
-			0 0 1rem color-mix(in srgb, var(--color-primary) 24%, transparent);
-	}
-	50% {
-		box-shadow:
-			0 0.7rem 1.6rem var(--shadow-xl),
-			0 0 1.35rem color-mix(in srgb, var(--color-primary) 34%, transparent);
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.ai,
-	.ai::before {
-		animation: none;
-	}
+.danger {
+	@include button-danger;
 }

@@ -13,21 +13,19 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	background-color: var(--color-surface-elevated);
-	border: 0.1rem solid var(--color-border);
-	border-radius: variables.$radius-lg;
+	background-color: var(--color-bg-surface);
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-lg);
 	padding: var(--space-lg);
 	width: min(26rem, 92vw);
-	box-shadow:
-		0 1rem 3rem var(--shadow-xl),
-		0 0.5rem 1.5rem var(--shadow-lg);
+	box-shadow: var(--shadow-dialog);
 	z-index: var(--z-modal);
 }
 
 .delete-title {
 	@include typography.text-lg;
 	margin-bottom: var(--space-xs);
-	color: var(--color-text);
+	color: var(--color-text-primary);
 }
 
 .delete-description {
@@ -40,18 +38,4 @@
 	display: flex;
 	justify-content: flex-end;
 	gap: var(--space-sm);
-}
-
-.delete-button {
-	background-color: var(--color-error);
-	color: var(--color-surface);
-
-	&:hover:not(:disabled) {
-		background-color: color-mix(in srgb, var(--color-error) 90%, var(--color-primary-hover));
-	}
-
-	&:focus-visible {
-		outline: 0.13rem solid var(--color-error-border);
-		outline-offset: 0.13rem;
-	}
 }

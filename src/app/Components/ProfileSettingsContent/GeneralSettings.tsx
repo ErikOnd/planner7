@@ -12,6 +12,7 @@ import {
 	UIState,
 } from "@hooks/useProfileSettings";
 import * as Switch from "@radix-ui/react-switch";
+import clsx from "clsx";
 import { useState } from "react";
 
 const DELETE_CONFIRMATION_TEXT = "DELETE MY ACCOUNT";
@@ -76,11 +77,13 @@ export function GeneralSettings({
 
 	return (
 		<div className={styles["tab-content"]}>
-			<section className={styles["settings-section"]}>
+			<div className={styles["mobile-section-block"]}>
+				<div className={styles["mobile-section-label"]}>Profile</div>
+				<section className={clsx(styles["settings-section"], styles["settings-section--mobile-compact"])}>
 				<div className={styles["section-card-header"]}>
 					<div className={`${styles["section-title-group"]} ${styles["section-title-group--centered"]}`}>
 						<span className={styles["section-icon"]}>
-							<Icon name="profile" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+							<Icon name="circle-user-round" size={sectionIconSize} className={styles["section-icon-glyph"]} />
 						</span>
 						<div className={styles["section-title-stack"]}>
 							<h3 className={styles["section-heading"]}>Profile</h3>
@@ -126,6 +129,7 @@ export function GeneralSettings({
 						<div className={styles["form-actions"]}>
 							<Button
 								variant="primary"
+								size="lg"
 								onClick={actions.handleSave}
 								disabled={uiState.isSaving}
 							>
@@ -134,13 +138,16 @@ export function GeneralSettings({
 						</div>
 					)}
 				</div>
-			</section>
+				</section>
+			</div>
 
-			<section className={styles["settings-section"]}>
+			<div className={styles["mobile-section-block"]}>
+				<div className={styles["mobile-section-label"]}>Security</div>
+				<section className={clsx(styles["settings-section"], styles["settings-section--mobile-compact"])}>
 				<div className={styles["section-card-header"]}>
 					<div className={`${styles["section-title-group"]} ${styles["section-title-group--centered"]}`}>
 						<span className={styles["section-icon"]}>
-							<Icon name="password" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+							<Icon name="lock-keyhole" size={sectionIconSize} className={styles["section-icon-glyph"]} />
 						</span>
 						<div className={styles["section-title-stack"]}>
 							<h3 className={styles["section-heading"]}>Password</h3>
@@ -192,28 +199,31 @@ export function GeneralSettings({
 							</div>
 						</div>
 					</div>
-					{(passwordForm.currentPassword || passwordForm.newPassword || passwordForm.confirmPassword) && (
-						<div className={styles["form-actions"]}>
-							<Button
-								variant="primary"
-								onClick={actions.handlePasswordChange}
-								disabled={uiState.isChangingPassword
-									|| !passwordForm.currentPassword
-									|| !passwordForm.newPassword
-									|| !passwordForm.confirmPassword}
-							>
-								{uiState.isChangingPassword ? "Changing Password..." : "Change Password"}
-							</Button>
-						</div>
-					)}
+					<div className={styles["form-actions"]}>
+						<Button
+							variant="primary"
+							size="lg"
+							onClick={actions.handlePasswordChange}
+							disabled={uiState.isChangingPassword
+								|| !passwordForm.currentPassword
+								|| !passwordForm.newPassword
+								|| !passwordForm.confirmPassword}
+							className={styles["mobile-primary-cta"]}
+						>
+							{uiState.isChangingPassword ? "Changing Password..." : "Change Password"}
+						</Button>
+					</div>
 				</div>
-			</section>
+				</section>
+			</div>
 
-			<section className={styles["settings-section"]}>
+			<div className={styles["mobile-section-block"]}>
+				<div className={styles["mobile-section-label"]}>Notifications</div>
+				<section className={clsx(styles["settings-section"], styles["settings-section--mobile-compact"])}>
 				<div className={styles["section-header"]}>
 					<div className={styles["section-title-group"]}>
 						<span className={styles["section-icon"]}>
-							<Icon name="notifications" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+							<Icon name="bell" size={sectionIconSize} className={styles["section-icon-glyph"]} />
 						</span>
 						<div className={styles["section-title-stack"]}>
 							<h3 className={styles["section-heading"]}>Notifications</h3>
@@ -225,17 +235,25 @@ export function GeneralSettings({
 				<div className={styles["section-content"]}>
 					<div className={styles["notification-item"]}>
 						<div className={styles["notification-info"]}>
-							<span className={styles["notification-label"]}>Push notifications</span>
-							<span className={styles["notification-description"]}>Get notified about upcoming tasks</span>
+							<div className={styles["notification-label-row"]}>
+								<span className={styles["notification-label"]}>Push notifications</span>
+								<Badge variant="coming-soon" className={styles["notification-badge-mobile"]}>
+									Coming Soon
+								</Badge>
+							</div>
+							<span className={styles["notification-description"]}>Receive alerts on your mobile device</span>
 						</div>
 						<Switch.Root className={styles["switch"]} disabled aria-label="Push notifications">
 							<Switch.Thumb className={styles["switch-thumb"]} />
 						</Switch.Root>
 					</div>
 				</div>
-			</section>
+				</section>
+			</div>
 
-			<section className={styles["settings-section"]}>
+			<div className={styles["mobile-section-block"]}>
+				<div className={styles["mobile-section-label"]}>Delete Account</div>
+				<section className={clsx(styles["settings-section"], styles["settings-section--mobile-compact"])}>
 				<div className={styles["section-card-header"]}>
 					<div className={styles["section-title-group"]}>
 						<span className={`${styles["section-icon"]} ${styles["section-icon--danger"]}`}>
@@ -250,19 +268,26 @@ export function GeneralSettings({
 					</div>
 				</div>
 				<div className={styles["section-content"]}>
-					<div className={`${styles["form-actions"]} ${styles["form-actions--start"]}`}>
-						<Button
-							variant="secondary"
-							onClick={() => {
-								setDeleteConfirmationInput("");
-								setDeleteError(null);
-								setIsDeleteDialogOpen((prev) => !prev);
-							}}
-							disabled={uiState.isDeletingAccount}
-						>
-							{uiState.isDeletingAccount ? "Deleting..." : "Delete account"}
-						</Button>
-					</div>
+					<p className={styles["mobile-card-note"]}>
+						Permanently delete your profile, workspaces, notes, and todos. This cannot be recovered.
+					</p>
+					{!isDeleteDialogOpen && (
+						<div className={`${styles["form-actions"]} ${styles["form-actions--start"]}`}>
+							<Button
+								variant="danger"
+								size="lg"
+								onClick={() => {
+									setDeleteConfirmationInput("");
+									setDeleteError(null);
+									setIsDeleteDialogOpen(true);
+								}}
+								disabled={uiState.isDeletingAccount}
+								className={styles["mobile-danger-cta"]}
+							>
+								{uiState.isDeletingAccount ? "Deleting..." : "Delete account"}
+							</Button>
+						</div>
+					)}
 					{isDeleteDialogOpen && (
 						<>
 							<p className={styles["delete-account-description"]}>
@@ -284,18 +309,20 @@ export function GeneralSettings({
 							<div className={styles["delete-account-actions"]}>
 								<Button
 									variant="secondary"
+									size="lg"
 									disabled={uiState.isDeletingAccount}
 									onClick={() => setIsDeleteDialogOpen(false)}
 								>
 									Cancel
 								</Button>
 								<Button
-									variant="primary"
+									variant="danger"
+									size="lg"
 									onClick={() => {
 										void handleConfirmDelete();
 									}}
 									disabled={uiState.isDeletingAccount
-										|| deleteConfirmationInput.trim().toUpperCase() !== DELETE_CONFIRMATION_TEXT}
+									|| deleteConfirmationInput.trim().toUpperCase() !== DELETE_CONFIRMATION_TEXT}
 									className={styles["delete-account-confirm"]}
 								>
 									{uiState.isDeletingAccount ? "Deleting..." : "Delete account"}
@@ -304,14 +331,17 @@ export function GeneralSettings({
 						</>
 					)}
 				</div>
-			</section>
+				</section>
+			</div>
 
 			{handleLogout && (
-				<section className={styles["settings-section"]}>
+				<div className={styles["mobile-section-block"]}>
+					<div className={styles["mobile-section-label"]}>Sign Out</div>
+					<section className={clsx(styles["settings-section"], styles["settings-section--mobile-compact"])}>
 					<div className={styles["section-card-header"]}>
 						<div className={styles["section-title-group"]}>
 							<span className={styles["section-icon"]}>
-								<Icon name="signout" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+								<Icon name="log-out" size={sectionIconSize} className={styles["section-icon-glyph"]} />
 							</span>
 							<div className={styles["section-title-stack"]}>
 								<h3 className={styles["section-heading"]}>Sign Out</h3>
@@ -320,17 +350,21 @@ export function GeneralSettings({
 						</div>
 					</div>
 					<div className={styles["section-content"]}>
+						<p className={styles["mobile-card-note"]}>Sign out of your account</p>
 						<div className={`${styles["form-actions"]} ${styles["form-actions--start"]}`}>
 							<Button
-								variant="secondary"
+								variant="primary"
+								size="lg"
 								disabled={isLoggingOut}
 								onClick={handleLogoutClick}
+								className={styles["mobile-primary-cta"]}
 							>
 								{isLoggingOut ? "Logging out..." : "Logout"}
 							</Button>
 						</div>
 					</div>
-				</section>
+					</section>
+				</div>
 			)}
 		</div>
 	);

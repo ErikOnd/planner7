@@ -11,7 +11,7 @@
 	width: 100%;
 	padding-inline: clamp(1.5rem, 2.5vw, 2.75rem);
 	background-color: var(--color-bg-surface);
-	border-bottom: 0.1rem solid color-mix(in srgb, var(--color-border) 88%, transparent);
+	border-bottom: var(--border-width-base) solid var(--color-border);
 	color: var(--color-text);
 
 	.date-section {
@@ -63,8 +63,8 @@
 	min-width: 2.45rem;
 	min-height: 2.45rem;
 	padding: 0;
-	border: 0.1rem solid transparent;
-	border-radius: variables.$radius-sm;
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-sm);
 	background: transparent;
 	box-shadow: none;
 	color: var(--color-icon);
@@ -76,24 +76,23 @@
 		border-color variables.$transition-base;
 
 	&:hover:not(:disabled) {
-		background: color-mix(in srgb, var(--color-primary-hover) 20%, var(--color-bg-surface));
-		border-color: color-mix(in srgb, var(--color-primary-hover) 42%, transparent);
+		background: var(--color-surface-primary-hover);
+		border-color: var(--color-primary-hover);
 		box-shadow: none;
 		transform: none;
 	}
 
 	&:active:not(:disabled) {
-		background: color-mix(in srgb, var(--color-primary-hover) 28%, var(--color-bg-surface));
-		border-color: color-mix(in srgb, var(--color-primary-hover) 52%, transparent);
+		background: var(--color-surface-primary-hover-strong);
+		border-color: var(--color-primary-hover);
 		box-shadow: none;
 		transform: none;
 	}
 
 	&:focus-visible {
-		outline: 0.12rem solid color-mix(in srgb, var(--color-primary-hover) 58%, transparent);
-		outline-offset: 0.08rem;
-		background: color-mix(in srgb, var(--color-primary-hover) 24%, var(--color-bg-surface));
-		border-color: color-mix(in srgb, var(--color-primary-hover) 48%, transparent);
+		outline: none;
+		background: var(--color-surface-primary-hover);
+		border-color: var(--color-primary-hover);
 		box-shadow: none;
 	}
 
@@ -107,15 +106,15 @@
 
 	&:hover:not(:disabled),
 	&:focus-visible {
-		color: color-mix(in srgb, var(--color-text-primary) 72%, var(--color-primary-hover));
+		color: var(--color-primary-active);
 	}
 }
 
 .nav-control.nav-action {
-	color: color-mix(in srgb, var(--color-icon) 92%, var(--color-text-secondary));
+	color: var(--color-icon);
 
 	&:hover:not(:disabled),
 	&:focus-visible {
-		color: color-mix(in srgb, var(--color-text-secondary) 62%, var(--color-primary-hover));
+		color: var(--color-primary-active);
 	}
 }

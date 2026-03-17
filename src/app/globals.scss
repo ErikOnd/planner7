@@ -51,6 +51,7 @@
 	--color-primary: #{variables.$color-primary};
 	--color-primary-hover: #{variables.$color-primary-hover};
 	--color-primary-soft: #{variables.$color-primary-soft};
+	--color-primary-active: #{variables.$color-primary-active};
 
 	--color-text-primary: #{variables.$color-text-primary};
 	--color-text-secondary: #{variables.$color-text-secondary};
@@ -64,9 +65,62 @@
 	--color-icon-inverse: #{variables.$color-text-inverse};
 
 	--color-success: #{variables.$color-success};
+	--color-danger: #{variables.$color-danger};
+	--color-danger-border: #{variables.$color-danger-border};
+	--color-danger-border-strong: #{variables.$color-danger-border-strong};
+	--color-danger-text-soft: #{variables.$color-danger-text-soft};
+	--color-danger-text-strong: #{variables.$color-danger-text-strong};
+	--color-danger-border-soft: #{variables.$color-danger-border-soft};
+	--color-danger-border-dark: #{variables.$color-danger-border-dark};
+	--color-danger-border-dark-hover: #{variables.$color-danger-border-dark-hover};
+	--color-danger-emphasis: #{variables.$color-danger-emphasis};
+	--color-danger-solid-hover: #{variables.$color-danger-solid-hover};
 
 	--color-disabled-bg: #{variables.$color-disabled-bg};
 	--color-disabled-text: #{variables.$color-disabled-text};
+
+	--color-bg-page-subtle: #{variables.$color-bg-page-subtle};
+	--color-surface-soft: #{variables.$color-surface-soft};
+	--color-surface-subtle: #{variables.$color-surface-subtle};
+	--color-surface-muted: #{variables.$color-surface-muted};
+	--color-surface-muted-strong: #{variables.$color-surface-muted-strong};
+	--color-surface-control: #{variables.$color-surface-control};
+	--color-surface-disabled: #{variables.$color-surface-disabled};
+	--color-surface-primary-subtle: #{variables.$color-surface-primary-subtle};
+	--color-surface-primary: #{variables.$color-surface-primary};
+	--color-surface-primary-strong: #{variables.$color-surface-primary-strong};
+	--color-surface-primary-selected: #{variables.$color-surface-primary-selected};
+	--color-surface-primary-selected-strong: #{variables.$color-surface-primary-selected-strong};
+	--color-surface-primary-hover: #{variables.$color-surface-primary-hover};
+	--color-surface-primary-hover-strong: #{variables.$color-surface-primary-hover-strong};
+	--color-surface-primary-hover-accent: #{variables.$color-surface-primary-hover-accent};
+	--color-surface-primary-sidebar: #{variables.$color-surface-primary-sidebar};
+	--color-surface-primary-sidebar-strong: #{variables.$color-surface-primary-sidebar-strong};
+	--color-surface-sidebar: #{variables.$color-surface-sidebar};
+	--color-surface-sidebar-hover: #{variables.$color-surface-sidebar-hover};
+	--color-surface-sidebar-active: #{variables.$color-surface-sidebar-active};
+	--color-surface-sidebar-primary: #{variables.$color-surface-sidebar-primary};
+	--color-surface-sidebar-primary-strong: #{variables.$color-surface-sidebar-primary-strong};
+	--color-surface-sidebar-primary-hover: #{variables.$color-surface-sidebar-primary-hover};
+	--color-surface-danger: #{variables.$color-surface-danger};
+	--color-surface-danger-strong: #{variables.$color-surface-danger-strong};
+	--color-surface-danger-dark: #{variables.$color-surface-danger-dark};
+	--color-surface-danger-dark-hover: #{variables.$color-surface-danger-dark-hover};
+	--color-surface-warning: #{variables.$color-surface-warning};
+	--color-surface-info: #{variables.$color-surface-info};
+	--color-surface-border: #{variables.$color-surface-border};
+	--color-surface-border-strong: #{variables.$color-surface-border-strong};
+	--color-surface-border-fill: #{variables.$color-surface-border-fill};
+	--color-sidebar-border: #{variables.$color-sidebar-border};
+	--color-sidebar-border-strong: #{variables.$color-sidebar-border-strong};
+	--color-sidebar-text-muted: #{variables.$color-sidebar-text-muted};
+	--color-sidebar-text-soft: #{variables.$color-sidebar-text-soft};
+	--color-sidebar-icon-muted: #{variables.$color-sidebar-icon-muted};
+	--color-sidebar-icon-soft: #{variables.$color-sidebar-icon-soft};
+	--color-danger-surface: var(--color-surface-danger);
+	--color-danger-surface-strong: var(--color-surface-danger-strong);
+	--color-danger-surface-dark: var(--color-surface-danger-dark);
+	--color-danger-surface-dark-hover: var(--color-surface-danger-dark-hover);
 
 	/* Compatibility aliases for existing components */
 	--color-background: var(--color-bg-main);
@@ -118,6 +172,15 @@
 	--shadow-primary-sm: #{variables.$shadow-primary-sm};
 	--color-shadow-sm: var(--shadow-sm);
 	--color-shadow-lg: var(--shadow-lg);
+	--shadow-surface: 0 0.25rem 0.9rem var(--shadow-sm);
+	--shadow-control: 0 0.2rem 0.55rem var(--shadow-sm);
+	--shadow-control-hover: 0 0.45rem 0.95rem var(--shadow-md);
+	--shadow-button-primary: 0 0.55rem 1.1rem var(--shadow-md);
+	--shadow-button-primary-hover: 0 0.75rem 1.35rem var(--shadow-lg);
+	--shadow-dialog: 0 1rem 3rem var(--shadow-xl), 0 0.45rem 1.45rem var(--shadow-lg);
+
+	--border-width-base: 0.1rem;
+	--border-width-hairline: 0.06rem;
 
 	--space-xs: #{mixins.clamp-builder(0.4, 0.6)};
 	--space-sm: #{mixins.clamp-builder(0.6, 0.8)};
@@ -130,11 +193,36 @@
 
 	--content-spacing: #{mixins.clamp-builder(1.6, 4.8)};
 
+	--button-height-sm: #{variables.$button-height-sm};
+	--button-height-base: #{variables.$button-height-base};
+	--button-height-lg: #{variables.$button-height-lg};
+	--control-size-xs: 2.25rem;
+	--control-size-sm: 2.6rem;
+	--control-size-md: 2.9rem;
+	--control-size-base: 3rem;
+	--control-size-lg: 3.2rem;
+	--control-size-xl: 3.7rem;
+	--button-padding-inline-sm: #{variables.$button-padding-inline-sm};
+	--button-padding-inline-base: #{variables.$button-padding-inline-base};
+	--button-padding-inline-lg: #{variables.$button-padding-inline-lg};
+	--button-radius: #{variables.$radius-lg};
+	--radius-xs: #{variables.$radius-xs};
+	--radius-sm: #{variables.$radius-sm};
+	--radius-md: #{variables.$radius-md};
+	--radius-lg: #{variables.$radius-lg};
+	--radius-xl: #{variables.$radius-xl};
+	--radius-2xl: #{variables.$radius-2xl};
+	--radius-pill: #{variables.$radius-pill};
+	--radius-rounded: #{variables.$radius-rounded};
+	--button-gap: #{variables.$button-gap};
+	--button-font-weight: #{variables.$button-font-weight};
+
 	--font-size-xl: 1.25rem;
 	--font-size-lg: 1.0625rem;
 	--font-size-base: 0.9375rem;
 	--font-size-sm: 0.875rem;
 	--font-size-xs: 0.8125rem;
+	--font-size-2xs: #{variables.$font-size-2xs};
 
 	/* Z-index scale */
 	--z-sticky: 100;
@@ -152,6 +240,9 @@
 	--z-editor-toolbar: 2;
 	--z-editor-drag: 3;
 	--z-editor-menu: 30;
+	--ring-primary-soft: 0 0 0 0.16rem var(--color-surface-primary-selected);
+	--ring-primary-strong: 0 0 0 0.16rem var(--color-surface-primary-hover-accent);
+	--ring-danger-soft: 0 0 0 0.16rem var(--color-surface-danger-strong);
 
 	color-scheme: light;
 }

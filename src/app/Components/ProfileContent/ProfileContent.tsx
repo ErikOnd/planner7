@@ -5,10 +5,12 @@ import styles from "./ProfileContent.module.scss";
 
 export function ProfileContent() {
 	return (
-		<ProfileSettingsPanel
-			styles={styles}
-			containerClassName={styles["profile-container"]}
-			navigationLayout="tab-navigation"
-		/>
+		<div className={styles["profile-shell"]}>
+			<ProfileSettingsPanel
+				styles={styles}
+				containerClassName={styles["profile-panel"]}
+				navigationLayout="tab-navigation"
+			/>
+		</div>
 	);
 }

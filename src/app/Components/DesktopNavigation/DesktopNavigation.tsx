@@ -5,11 +5,13 @@ import styles from "./DesktopNavigation.module.scss";
 import { Button } from "@atoms/Button/Button";
 import { CalendarOverlay } from "@atoms/CalendarOverlay/CalendarOverlay";
 import { ProfileDialog } from "@atoms/ProfileDialog/ProfileDialog";
+import { FeedbackDialog } from "@components/FeedbackDialog/FeedbackDialog";
 import { Text } from "@atoms/Text/Text";
 
 type DesktopNavigationProps = {
 	rangeLabel: string;
 	onDateSelect: (date: Date) => void;
+	activeDate: Date;
 	baseDate: Date;
 	setBaseDateAction: (date: Date) => void;
 	showWeekends: boolean;
@@ -18,6 +20,7 @@ type DesktopNavigationProps = {
 export function DesktopNavigation({
 	rangeLabel,
 	onDateSelect,
+	activeDate,
 	baseDate,
 	setBaseDateAction,
 	showWeekends,
@@ -54,15 +57,16 @@ export function DesktopNavigation({
 				</div>
 			</div>
 			<div className={styles["actions-section"]}>
-				<Button
-					href="/feedback"
-					variant="ghost"
-					icon="Megaphone"
-					iconSize={28}
-					className={`${styles["nav-control"]} ${styles["nav-action"]}`}
-					aria-label="Send feedback"
-				/>
-				<CalendarOverlay onDateSelect={onDateSelect} showWeekends={showWeekends}>
+				<FeedbackDialog>
+					<Button
+						variant="ghost"
+						icon="Megaphone"
+						iconSize={28}
+						className={`${styles["nav-control"]} ${styles["nav-action"]}`}
+						aria-label="Send feedback"
+					/>
+				</FeedbackDialog>
+				<CalendarOverlay onDateSelect={onDateSelect} activeDate={activeDate} showWeekends={showWeekends}>
 					<Button
 						variant="ghost"
 						icon="calendar"

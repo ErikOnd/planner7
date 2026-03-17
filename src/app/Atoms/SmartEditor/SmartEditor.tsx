@@ -34,7 +34,13 @@ import CodeHighlightingPlugin from "./plugins/CodeHighlightingPlugin";
 import ImageUploadDropPlugin from "./plugins/ImageUploadDropPlugin";
 import SlashCommandPlugin from "./plugins/SlashCommandPlugin";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
-import { blockNoteToMarkdown, emptyState, hasNonEmptyRoot, isLexicalEditorState } from "./utils/content";
+import {
+	blockNoteToMarkdown,
+	emptyState,
+	hasNonEmptyRoot,
+	isLexicalEditorState,
+	isLexicalEditorStateEffectivelyEmpty,
+} from "./utils/content";
 import { LINK_MATCHERS } from "./utils/linkMatchers";
 
 type SmartEditorProps = {
@@ -129,39 +135,12 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 	const { showEditorToolbar } = useWeekDisplayPreference();
 	const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
 	const [isFocused, setIsFocused] = useState(false);
-	const [toolbarOffset, setToolbarOffset] = useState(0);
 	const [activeImageUploads, setActiveImageUploads] = useState(0);
 	const [imageUploadError, setImageUploadError] = useState<string | null>(null);
 	const [isImageLibraryOpen, setIsImageLibraryOpen] = useState(false);
 	const [showImageLimitNotice, setShowImageLimitNotice] = useState(false);
 	const dragMenuRef = useRef<HTMLElement>(null);
 	const dragTargetLineRef = useRef<HTMLElement>(null);
-	const toolbarContainerRef = useRef<HTMLDivElement | null>(null);
-
-	useEffect(() => {
-		if (!showEditorToolbar) {
-			setToolbarOffset(0);
-			return;
-		}
-
-		const toolbarElement = toolbarContainerRef.current;
-		if (!toolbarElement) return;
-
-		const updateToolbarOffset = () => {
-			setToolbarOffset(toolbarElement.getBoundingClientRect().height);
-		};
-
-		updateToolbarOffset();
-
-		if (typeof ResizeObserver !== "undefined") {
-			const observer = new ResizeObserver(updateToolbarOffset);
-			observer.observe(toolbarElement);
-			return () => observer.disconnect();
-		}
-
-		window.addEventListener("resize", updateToolbarOffset);
-		return () => window.removeEventListener("resize", updateToolbarOffset);
-	}, [showEditorToolbar]);
 
 	const serializedEditorState = useMemo(() => {
 		return JSON.stringify(toLexicalStateJSON(initialContent));
@@ -233,7 +212,7 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 			}}
 		>
 			<LexicalComposer initialConfig={initialConfig}>
-				<div ref={toolbarContainerRef}>
+				<div>
 					{showEditorToolbar && <ToolbarPlugin />}
 				</div>
 				{activeImageUploads > 0 && (
@@ -259,14 +238,7 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 							data-enable-grammarly="false"
 						/>
 					}
-					placeholder={
-						<div
-							className={styles["smart-editor__placeholder"]}
-							style={{ top: `${toolbarOffset}px` }}
-						>
-							Start note taking, or type / for commands.
-						</div>
-					}
+					placeholder={null}
 					ErrorBoundary={LexicalErrorBoundary}
 				/>
 				<HistoryPlugin />
@@ -330,7 +302,10 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 					onChange={(nextEditorState, _editor, tags) => {
 						if (tags.has("external-sync")) return;
 						const editorStateJSON = nextEditorState.toJSON();
-						onChange?.(JSON.stringify(editorStateJSON));
+						const normalizedEditorState = isLexicalEditorStateEffectivelyEmpty(editorStateJSON)
+							? emptyState
+							: editorStateJSON;
+						onChange?.(JSON.stringify(normalizedEditorState));
 					}}
 				/>
 				<EditorStateSyncPlugin serializedEditorState={serializedEditorState} />

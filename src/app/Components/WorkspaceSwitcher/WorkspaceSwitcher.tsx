@@ -1,24 +1,36 @@
 "use client";
 
 import { useWorkspace } from "@/contexts/WorkspaceContext";
-import { WORKSPACE_GRADIENTS, type WorkspaceGradientPreset } from "@/lib/workspaceGradients";
-import { DeleteTodoDialog } from "@components/DeleteTodoDialog/DeleteTodoDialog";
-import { WorkspaceManagerDialog } from "@components/WorkspaceSwitcher/WorkspaceManagerDialog";
+import { WORKSPACE_GRADIENTS } from "@/lib/workspaceGradients";
+import {
+	WorkspaceManagerDialog,
+	WorkspaceManagerPanel,
+} from "@components/WorkspaceSwitcher/WorkspaceManagerDialog";
 import { WorkspaceSwitcherTrigger } from "@components/WorkspaceSwitcher/WorkspaceSwitcherTrigger";
+import clsx from "clsx";
 import { FormEvent, useState } from "react";
+import dialogStyles from "./WorkspaceManagerDialog.module.scss";
 import styles from "./WorkspaceSwitcher.module.scss";
 
 type WorkspaceSwitcherProps = {
 	compact?: boolean;
-	variant?: "default" | "sidebar" | "chip" | "tab";
+	variant?: "default" | "sidebar" | "chip" | "tab" | "nav";
 };
 
-const gradientPresets = Object.entries(WORKSPACE_GRADIENTS) as [
-	WorkspaceGradientPreset,
-	{ from: string; to: string },
-][];
+type WorkspacePanelProps = {
+	className?: string;
+};
 
-export function WorkspaceSwitcher({ compact = false, variant = "default" }: WorkspaceSwitcherProps) {
+function getWorkspaceInitials(label: string) {
+	return label
+		.split(/\s+/)
+		.filter(Boolean)
+		.slice(0, 2)
+		.map((part) => part[0]?.toUpperCase() ?? "")
+		.join("") || "P";
+}
+
+function useWorkspaceManagerController() {
 	const {
 		workspaces,
 		activeWorkspaceId,
@@ -29,17 +41,14 @@ export function WorkspaceSwitcher({ compact = false, variant = "default" }: Work
 		prefetchWorkspace,
 		createWorkspaceAction,
 		renameWorkspaceAction,
-		updateWorkspaceGradientAction,
 		deleteWorkspaceAction,
 	} = useWorkspace();
 
-	const [isManageOpen, setIsManageOpen] = useState(false);
 	const [newWorkspaceName, setNewWorkspaceName] = useState("");
-	const [newWorkspaceGradient, setNewWorkspaceGradient] = useState<WorkspaceGradientPreset>("violet");
 	const [editingWorkspaceId, setEditingWorkspaceId] = useState<string | null>(null);
 	const [editingName, setEditingName] = useState("");
-	const [editingGradient, setEditingGradient] = useState<WorkspaceGradientPreset>("violet");
 	const [deleteWorkspaceTarget, setDeleteWorkspaceTarget] = useState<{ id: string; name: string } | null>(null);
+	const [deleteWorkspaceConfirmation, setDeleteWorkspaceConfirmation] = useState("");
 	const [localError, setLocalError] = useState<string | null>(null);
 	const [switchingWorkspaceId, setSwitchingWorkspaceId] = useState<string | null>(null);
 
@@ -47,17 +56,12 @@ export function WorkspaceSwitcher({ compact = false, variant = "default" }: Work
 	const activeLabel = activeWorkspace?.name ?? "Personal";
 	const activeGradientPreset = activeWorkspace?.gradientPreset ?? "violet";
 	const activeGradient = WORKSPACE_GRADIENTS[activeGradientPreset];
-	const activeInitials = activeLabel
-		.split(/\s+/)
-		.filter(Boolean)
-		.slice(0, 2)
-		.map((part) => part[0]?.toUpperCase() ?? "")
-		.join("") || "P";
+	const activeInitials = getWorkspaceInitials(activeLabel);
 
 	const onCreateWorkspace = async (event: FormEvent) => {
 		event.preventDefault();
 		setLocalError(null);
-		const result = await createWorkspaceAction(newWorkspaceName, newWorkspaceGradient);
+		const result = await createWorkspaceAction(newWorkspaceName);
 		if (!result.success) {
 			setLocalError(result.error ?? "Failed to create workspace");
 			return;
@@ -68,22 +72,16 @@ export function WorkspaceSwitcher({ compact = false, variant = "default" }: Work
 	const onQuickSwitchWorkspace = async (workspaceId: string) => {
 		setLocalError(null);
 		setSwitchingWorkspaceId(workspaceId);
-		// Close immediately so workspace switches feel instant.
-		setIsManageOpen(false);
 		const result = await switchWorkspace(workspaceId);
 		setSwitchingWorkspaceId(null);
 		if (!result.success) {
 			setLocalError(result.error ?? "Failed to switch workspace");
-			setIsManageOpen(true);
-			return;
 		}
 	};
 
 	const startEditingWorkspace = (workspaceId: string, name: string) => {
 		setEditingWorkspaceId(workspaceId);
 		setEditingName(name);
-		const workspace = workspaces.find((item) => item.id === workspaceId);
-		setEditingGradient(workspace?.gradientPreset ?? "violet");
 	};
 
 	const onSaveRename = async () => {
@@ -94,11 +92,6 @@ export function WorkspaceSwitcher({ compact = false, variant = "default" }: Work
 			setLocalError(result.error ?? "Failed to rename workspace");
 			return;
 		}
-		const gradientResult = await updateWorkspaceGradientAction(editingWorkspaceId, editingGradient);
-		if (!gradientResult.success) {
-			setLocalError(gradientResult.error ?? "Failed to update workspace gradient");
-			return;
-		}
 		setEditingWorkspaceId(null);
 		setEditingName("");
 	};
@@ -106,87 +99,134 @@ export function WorkspaceSwitcher({ compact = false, variant = "default" }: Work
 	const onDeleteWorkspace = async () => {
 		if (!deleteWorkspaceTarget) return;
 		setLocalError(null);
+		if (deleteWorkspaceConfirmation.trim() !== deleteWorkspaceTarget.name.trim()) {
+			setLocalError("Type the workspace name exactly to confirm deletion");
+			return;
+		}
 		const result = await deleteWorkspaceAction(deleteWorkspaceTarget.id);
 		if (!result.success) {
 			setLocalError(result.error ?? "Failed to delete workspace");
 			return;
 		}
 		setDeleteWorkspaceTarget(null);
+		setDeleteWorkspaceConfirmation("");
+	};
+
+	const managerProps = {
+		workspaces,
+		activeWorkspaceId,
+		isSaving,
+		localError,
+		error,
+		newWorkspaceName,
+		editingWorkspaceId,
+		editingName,
+		deleteWorkspaceTarget,
+		deleteWorkspaceConfirmation,
+		switchingWorkspaceId,
+		onNewWorkspaceNameChange: setNewWorkspaceName,
+		onEditingNameChange: setEditingName,
+		onDeleteWorkspaceConfirmationChange: setDeleteWorkspaceConfirmation,
+		onCreateWorkspace,
+		onQuickSwitchWorkspace: (workspaceId: string) => {
+			void onQuickSwitchWorkspace(workspaceId);
+		},
+		onPrefetchWorkspace: (workspaceId: string) => {
+			void prefetchWorkspace(workspaceId);
+		},
+		onStartEditingWorkspace: startEditingWorkspace,
+		onSaveRename: () => {
+			void onSaveRename();
+		},
+		onCancelEditing: () => {
+			setEditingWorkspaceId(null);
+			setEditingName("");
+		},
+		onRequestDelete: (workspaceId: string, name: string) => {
+			setEditingWorkspaceId(null);
+			setEditingName("");
+			setDeleteWorkspaceTarget({ id: workspaceId, name });
+			setDeleteWorkspaceConfirmation("");
+			setLocalError(null);
+		},
+		onCancelDelete: () => {
+			setDeleteWorkspaceTarget(null);
+			setDeleteWorkspaceConfirmation("");
+			setLocalError(null);
+		},
+		onConfirmDelete: () => {
+			void onDeleteWorkspace();
+		},
+	};
+
+	return {
+		activeWorkspaceId,
+		activeLabel,
+		activeInitials,
+		activeGradient,
+		error,
+		isLoading,
+		isSaving,
+		managerProps,
+		switchWorkspace,
+		workspaces,
+	};
+}
+
+export function WorkspacePanel({ className }: WorkspacePanelProps) {
+	const { managerProps } = useWorkspaceManagerController();
+
+	return (
+		<div className={styles["workspace-switcher-wrapper"]}>
+			<WorkspaceManagerPanel
+				{...managerProps}
+				className={clsx(dialogStyles["manage-panel--embedded"], className)}
+			/>
+		</div>
+	);
+}
+
+export function WorkspaceSwitcher({ compact = false, variant = "default" }: WorkspaceSwitcherProps) {
+	const {
+		activeWorkspaceId,
+		activeLabel,
+		activeInitials,
+		activeGradient,
+		isLoading,
+		isSaving,
+		managerProps,
+		switchWorkspace,
+		workspaces,
+	} = useWorkspaceManagerController();
+	const [isManageOpen, setIsManageOpen] = useState(false);
+
+	const handleManageOpenChange = (open: boolean) => {
+		setIsManageOpen(open);
 	};
 
 	return (
-		<>
-			<div className={styles["workspace-switcher-wrapper"]}>
-				<WorkspaceSwitcherTrigger
-					compact={compact}
-					variant={variant}
-					workspaces={workspaces}
-					activeWorkspaceId={activeWorkspaceId}
-					activeLabel={activeLabel}
-					activeInitials={activeInitials}
-					activeGradient={activeGradient}
-					isLoading={isLoading}
-					isSaving={isSaving}
-					isManageOpen={isManageOpen}
-					onOpenManage={setIsManageOpen}
-					onSwitchWorkspace={(workspaceId) => {
-						void switchWorkspace(workspaceId);
-					}}
-					manageContent={
-						<WorkspaceManagerDialog
-							workspaces={workspaces}
-							activeWorkspaceId={activeWorkspaceId}
-							isSaving={isSaving}
-							localError={localError}
-							error={error}
-							gradientPresets={gradientPresets}
-							newWorkspaceName={newWorkspaceName}
-							newWorkspaceGradient={newWorkspaceGradient}
-							editingWorkspaceId={editingWorkspaceId}
-							editingName={editingName}
-							editingGradient={editingGradient}
-							switchingWorkspaceId={switchingWorkspaceId}
-							onNewWorkspaceNameChange={setNewWorkspaceName}
-							onNewWorkspaceGradientChange={setNewWorkspaceGradient}
-							onEditingNameChange={setEditingName}
-							onEditingGradientChange={setEditingGradient}
-							onCreateWorkspace={onCreateWorkspace}
-							onQuickSwitchWorkspace={(workspaceId) => {
-								void onQuickSwitchWorkspace(workspaceId);
-							}}
-							onPrefetchWorkspace={(workspaceId) => {
-								void prefetchWorkspace(workspaceId);
-							}}
-							onStartEditingWorkspace={startEditingWorkspace}
-							onSaveRename={() => {
-								void onSaveRename();
-							}}
-							onCancelEditing={() => {
-								setEditingWorkspaceId(null);
-								setEditingName("");
-								setEditingGradient("violet");
-							}}
-							onRequestDelete={(workspaceId, name) => {
-								setDeleteWorkspaceTarget({ id: workspaceId, name });
-							}}
-						/>
-					}
-				/>
-			</div>
-			<DeleteTodoDialog
-				open={Boolean(deleteWorkspaceTarget)}
-				onOpenChange={(open) => {
-					if (!open) setDeleteWorkspaceTarget(null);
+		<div className={styles["workspace-switcher-wrapper"]}>
+			<WorkspaceSwitcherTrigger
+				compact={compact}
+				variant={variant}
+				workspaces={workspaces}
+				activeWorkspaceId={activeWorkspaceId}
+				activeLabel={activeLabel}
+				activeInitials={activeInitials}
+				activeGradient={activeGradient}
+				isLoading={isLoading}
+				isSaving={isSaving}
+				isManageOpen={isManageOpen}
+				onOpenManage={handleManageOpenChange}
+				onSwitchWorkspace={(workspaceId) => {
+					void switchWorkspace(workspaceId);
 				}}
-				onConfirm={() => {
-					void onDeleteWorkspace();
-				}}
-				title="Delete workspace?"
-				description={deleteWorkspaceTarget
-					? `Delete "${deleteWorkspaceTarget.name}" permanently? This can't be recovered.`
-					: "This action can't be recovered."}
-				confirmLabel="Delete workspace"
+				manageContent={
+					<WorkspaceManagerDialog
+						{...managerProps}
+					/>
+				}
 			/>
-		</>
+		</div>
 	);
 }

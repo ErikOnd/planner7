@@ -1,33 +1,28 @@
 "use client";
 
-import type { WorkspaceGradientPreset } from "@/lib/workspaceGradients";
 import { Button } from "@atoms/Button/Button";
-import { Icon } from "@atoms/Icons/Icon";
 import { Text } from "@atoms/Text/Text";
-import { GradientPicker } from "@components/WorkspaceSwitcher/GradientPicker";
 import * as Dialog from "@radix-ui/react-dialog";
 import clsx from "clsx";
-import { FormEvent, useState } from "react";
+import { FormEvent, ReactNode, useMemo, useState } from "react";
 import type { WorkspaceSummary } from "../../actions/workspaces";
 import styles from "./WorkspaceManagerDialog.module.scss";
 
-type WorkspaceManagerDialogProps = {
+type WorkspaceManagerSharedProps = {
 	workspaces: WorkspaceSummary[];
 	activeWorkspaceId: string | null;
 	isSaving: boolean;
 	localError: string | null;
 	error: string | null;
-	gradientPresets: [WorkspaceGradientPreset, { from: string; to: string }][];
 	newWorkspaceName: string;
-	newWorkspaceGradient: WorkspaceGradientPreset;
 	editingWorkspaceId: string | null;
 	editingName: string;
-	editingGradient: WorkspaceGradientPreset;
+	deleteWorkspaceTarget: { id: string; name: string } | null;
+	deleteWorkspaceConfirmation: string;
 	switchingWorkspaceId: string | null;
 	onNewWorkspaceNameChange: (value: string) => void;
-	onNewWorkspaceGradientChange: (preset: WorkspaceGradientPreset) => void;
 	onEditingNameChange: (value: string) => void;
-	onEditingGradientChange: (preset: WorkspaceGradientPreset) => void;
+	onDeleteWorkspaceConfirmationChange: (value: string) => void;
 	onCreateWorkspace: (event: FormEvent) => void;
 	onQuickSwitchWorkspace: (workspaceId: string) => void;
 	onPrefetchWorkspace: (workspaceId: string) => void;
@@ -35,6 +30,13 @@ type WorkspaceManagerDialogProps = {
 	onSaveRename: () => void;
 	onCancelEditing: () => void;
 	onRequestDelete: (workspaceId: string, name: string) => void;
+	onCancelDelete: () => void;
+	onConfirmDelete: () => void;
+};
+
+type WorkspaceManagerPanelProps = WorkspaceManagerSharedProps & {
+	className?: string;
+	closeAction?: ReactNode;
 };
 
 function getWorkspaceInitials(name: string) {
@@ -46,24 +48,22 @@ function getWorkspaceInitials(name: string) {
 		.join("") || "W";
 }
 
-export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
+export function WorkspaceManagerPanel(props: WorkspaceManagerPanelProps) {
 	const {
 		workspaces,
 		activeWorkspaceId,
 		isSaving,
 		localError,
 		error,
-		gradientPresets,
 		newWorkspaceName,
-		newWorkspaceGradient,
 		editingWorkspaceId,
 		editingName,
-		editingGradient,
+		deleteWorkspaceTarget,
+		deleteWorkspaceConfirmation,
 		switchingWorkspaceId,
 		onNewWorkspaceNameChange,
-		onNewWorkspaceGradientChange,
 		onEditingNameChange,
-		onEditingGradientChange,
+		onDeleteWorkspaceConfirmationChange,
 		onCreateWorkspace,
 		onQuickSwitchWorkspace,
 		onPrefetchWorkspace,
@@ -71,193 +71,360 @@ export function WorkspaceManagerDialog(props: WorkspaceManagerDialogProps) {
 		onSaveRename,
 		onCancelEditing,
 		onRequestDelete,
+		onCancelDelete,
+		onConfirmDelete,
+		className,
+		closeAction,
 	} = props;
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
-	const gradientMap = Object.fromEntries(gradientPresets);
 
+	const activeWorkspace = useMemo(
+		() => workspaces.find((workspace) => workspace.id === activeWorkspaceId) ?? workspaces[0] ?? null,
+		[activeWorkspaceId, workspaces],
+	);
+	const editingWorkspace = useMemo(
+		() => workspaces.find((workspace) => workspace.id === editingWorkspaceId) ?? activeWorkspace,
+		[activeWorkspace, editingWorkspaceId, workspaces],
+	);
+	const deleteWorkspace = useMemo(
+		() => deleteWorkspaceTarget
+			? workspaces.find((workspace) => workspace.id === deleteWorkspaceTarget.id) ?? deleteWorkspaceTarget
+			: null,
+		[deleteWorkspaceTarget, workspaces],
+	);
+
+	const detailMode = deleteWorkspace ? "delete" : isCreateOpen ? "create" : editingWorkspaceId ? "edit" : "view";
+	const detailWorkspace = deleteWorkspace ? deleteWorkspace : editingWorkspaceId ? editingWorkspace : activeWorkspace;
+	const selectedWorkspaceId = deleteWorkspace?.id ?? editingWorkspaceId ?? activeWorkspaceId;
+	const hasDetailPanel = detailMode !== "view";
+	const detailName = detailMode === "create"
+		? newWorkspaceName || "New Workspace"
+		: detailMode === "edit"
+			? editingName || editingWorkspace?.name || "Workspace"
+			: detailWorkspace?.name || "Workspace";
+	const detailInitials = getWorkspaceInitials(detailName);
+	const isDeleteConfirmationValid = deleteWorkspace
+		? deleteWorkspaceConfirmation.trim() === deleteWorkspace.name.trim()
+		: false;
+
+	const closeCreate = () => setIsCreateOpen(false);
+	const openCreate = () => {
+		setIsCreateOpen((current) => {
+			const nextValue = !current;
+			if (nextValue && editingWorkspaceId) {
+				onCancelEditing();
+			}
+			if (nextValue && deleteWorkspace) {
+				onCancelDelete();
+			}
+			return nextValue;
+		});
+	};
+
+	return (
+		<div className={clsx(styles["manage-panel"], className)}>
+			<div className={styles["manage-header"]}>
+				<div className={styles["manage-heading"]}>
+					<h1 className={styles["manage-title"]}>Switch Workspace</h1>
+					<Text size="sm" className={styles["manage-subtitle"]}>
+						Manage your productivity environments
+					</Text>
+				</div>
+				{closeAction}
+			</div>
+
+			<div
+				className={clsx(
+					styles["manage-body"],
+					!hasDetailPanel && styles["manage-body--sidebar-only"],
+				)}
+			>
+				<aside className={styles["workspace-sidebar"]}>
+					<div className={styles["switch-list"]}>
+						{workspaces.map((workspace) => {
+							const isActive = workspace.id === activeWorkspaceId;
+							const isSelected = workspace.id === selectedWorkspaceId;
+							const isSwitching = workspace.id === switchingWorkspaceId;
+							const isTapToSwitchState = !isSwitching && !isActive && !(isSelected && detailMode !== "view");
+							const statusLabel = isSwitching
+								? "Switching workspace..."
+								: isActive
+									? "Active workspace"
+									: isSelected && detailMode !== "view"
+										? detailMode === "delete"
+											? "Selected workspace"
+											: "Editing workspace"
+										: "Tap to switch";
+
+							return (
+								<button
+									key={workspace.id}
+									type="button"
+									className={clsx(styles["workspace-row"], isSelected && styles["workspace-row--active"])}
+									onClick={() => {
+										if (isSelected || isSaving || Boolean(switchingWorkspaceId)) return;
+										onQuickSwitchWorkspace(workspace.id);
+										setIsCreateOpen(false);
+									}}
+									disabled={isSaving || Boolean(switchingWorkspaceId)}
+									onMouseEnter={() => {
+										if (!isSelected) onPrefetchWorkspace(workspace.id);
+									}}
+									onFocus={() => {
+										if (!isSelected) onPrefetchWorkspace(workspace.id);
+									}}
+								>
+									<span className={styles["workspace-row-avatar"]}>{getWorkspaceInitials(workspace.name)}</span>
+									<span className={styles["workspace-row-copy"]}>
+										<span className={styles["workspace-row-title"]}>{workspace.name}</span>
+										<span
+											className={clsx(
+												styles["workspace-row-status"],
+												isTapToSwitchState && styles["workspace-row-status--tap"],
+											)}
+										>
+											{statusLabel}
+										</span>
+									</span>
+									<span
+										className={clsx(
+											styles["workspace-row-indicator"],
+											isSelected && styles["workspace-row-indicator--active"],
+											isSwitching && styles["workspace-row-indicator--loading"],
+										)}
+										aria-hidden
+									>
+										<span />
+									</span>
+								</button>
+							);
+						})}
+					</div>
+
+					<div className={styles["sidebar-footer"]}>
+						<Button
+							type="button"
+							variant={isCreateOpen ? "secondary" : "primary"}
+							size="lg"
+							className={clsx(styles["new-workspace-button"], isCreateOpen && styles["new-workspace-button--active"])}
+							onClick={openCreate}
+						>
+							{isCreateOpen ? "Hide New Workspace" : "New Workspace"}
+						</Button>
+
+						{detailMode === "view" && detailWorkspace && (
+							<div className={styles["sidebar-action-row"]}>
+								<Button
+									type="button"
+									variant="secondary"
+									size="lg"
+									className={styles["sidebar-action-button"]}
+									onClick={() => {
+										setIsCreateOpen(false);
+										onStartEditingWorkspace(detailWorkspace.id, detailWorkspace.name);
+									}}
+									disabled={isSaving}
+									icon="pencil"
+								>
+									Edit
+								</Button>
+								<Button
+									type="button"
+									variant="danger"
+									size="lg"
+									className={clsx(
+										styles["sidebar-action-button"],
+										styles["sidebar-action-button--danger"],
+									)}
+									onClick={() => onRequestDelete(detailWorkspace.id, detailWorkspace.name)}
+									disabled={workspaces.length <= 1 || isSaving}
+									icon="trash"
+								>
+									Delete
+								</Button>
+							</div>
+						)}
+					</div>
+				</aside>
+
+				{hasDetailPanel && (
+					<section className={styles["workspace-detail-panel"]}>
+					<div
+						className={clsx(
+							styles["workspace-detail-card"],
+							detailMode === "view" && styles["workspace-detail-card--view"],
+							(detailMode === "create" || detailMode === "edit") && styles["workspace-detail-card--form"],
+							detailMode === "delete" && styles["workspace-detail-card--delete"],
+						)}
+					>
+						{detailMode === "create" && (
+							<form className={styles["workspace-form"]} onSubmit={onCreateWorkspace}>
+								<div className={styles["workspace-detail-avatar"]}>{detailInitials}</div>
+								<div className={styles["workspace-detail-copy"]}>
+									<h2 className={styles["workspace-detail-title"]}>Create Workspace</h2>
+									<Text size="sm" className={styles["workspace-detail-description"]}>
+										Set up a new environment for projects, tasks, and notes.
+									</Text>
+								</div>
+
+								<label className={styles["workspace-field"]}>
+									<span className={styles["workspace-field-label"]}>Workspace name</span>
+									<input
+										type="text"
+										value={newWorkspaceName}
+										onChange={(event) => onNewWorkspaceNameChange(event.target.value)}
+										className={styles["workspace-input"]}
+										placeholder="New workspace name"
+										maxLength={60}
+									/>
+								</label>
+
+								<div className={styles["workspace-detail-actions"]}>
+									<Button type="submit" variant="primary" size="lg" className={styles["detail-primary-action"]} disabled={isSaving}>
+										Create Workspace
+									</Button>
+									<Button type="button" variant="secondary" size="lg" className={styles["detail-secondary-action"]} onClick={closeCreate}>
+										Cancel
+									</Button>
+								</div>
+							</form>
+						)}
+
+						{detailMode === "edit" && editingWorkspace && (
+							<div className={styles["workspace-form"]}>
+								<div className={styles["workspace-detail-avatar"]}>{detailInitials}</div>
+								<div className={styles["workspace-detail-copy"]}>
+									<h2 className={styles["workspace-detail-title"]}>Edit Workspace</h2>
+									<Text size="sm" className={styles["workspace-detail-description"]}>
+										Update the name and visual style for this workspace.
+									</Text>
+								</div>
+
+								<label className={styles["workspace-field"]}>
+									<span className={styles["workspace-field-label"]}>Workspace name</span>
+									<input
+										type="text"
+										value={editingName}
+										onChange={(event) => onEditingNameChange(event.target.value)}
+										className={styles["workspace-input"]}
+										maxLength={60}
+									/>
+								</label>
+
+								<div className={styles["workspace-detail-actions"]}>
+									<Button type="button" variant="primary" size="lg" className={styles["detail-primary-action"]} onClick={onSaveRename}>
+										Save Changes
+									</Button>
+									<Button type="button" variant="secondary" size="lg" className={styles["detail-secondary-action"]} onClick={onCancelEditing}>
+										Cancel
+									</Button>
+								</div>
+							</div>
+						)}
+
+						{detailMode === "delete" && deleteWorkspace && (
+							<div className={styles["workspace-delete-state"]}>
+								<div className={styles["delete-warning-emblem"]} aria-hidden="true">
+									<div className={styles["delete-warning-halo"]}>
+										<div className={styles["delete-warning-triangle"]}>
+											<span className={styles["delete-warning-mark"]}>!</span>
+										</div>
+									</div>
+								</div>
+
+								<div className={styles["workspace-delete-copy"]}>
+									<h2 className={styles["workspace-delete-title"]}>Are you absolutely sure?</h2>
+									<div className={styles["workspace-delete-alert"]}>
+										This action <strong>cannot be undone.</strong> This will permanently delete the{" "}
+										{deleteWorkspace.name} workspace, including all associated tasks, calendars, and
+										documentation.
+									</div>
+								</div>
+
+								<label className={clsx(styles["workspace-field"], styles["workspace-delete-field"])}>
+									<span className={styles["workspace-delete-label"]}>
+										Type {deleteWorkspace.name.toUpperCase()} to confirm
+									</span>
+									<input
+										type="text"
+										value={deleteWorkspaceConfirmation}
+										onChange={(event) => onDeleteWorkspaceConfirmationChange(event.target.value)}
+										className={clsx(styles["workspace-input"], styles["workspace-delete-input"])}
+										placeholder="Enter workspace name"
+										autoComplete="off"
+									/>
+								</label>
+
+								<div className={styles["workspace-delete-actions"]}>
+									<Button
+										type="button"
+										variant="secondary"
+										size="lg"
+										className={styles["workspace-delete-cancel"]}
+										onClick={onCancelDelete}
+									>
+										Cancel
+									</Button>
+									<Button
+										type="button"
+										variant="danger"
+										size="lg"
+										className={styles["workspace-delete-confirm"]}
+										onClick={onConfirmDelete}
+										disabled={!isDeleteConfirmationValid || isSaving}
+										icon="trash"
+									>
+										Delete Permanently
+									</Button>
+								</div>
+							</div>
+						)}
+
+						{!detailWorkspace && detailMode === "view" && (
+							<div className={styles["workspace-detail-empty"]}>
+								<Text size="sm" className={styles["workspace-detail-description"]}>
+									No workspace available.
+								</Text>
+							</div>
+						)}
+
+						{(localError || error) && (
+							<Text size="sm" className={styles["error-text"]}>
+								{localError ?? error}
+							</Text>
+						)}
+					</div>
+					</section>
+				)}
+			</div>
+		</div>
+	);
+}
+
+export function WorkspaceManagerDialog(props: WorkspaceManagerSharedProps) {
 	return (
 		<Dialog.Portal>
 			<Dialog.Overlay className={styles["manage-overlay"]} />
 			<Dialog.Content className={styles["manage-dialog"]}>
-				<div className={styles["manage-header"]}>
-					<div>
-						<Dialog.Title className={styles["manage-title"]}>Switch Workspace</Dialog.Title>
-						<Text size="sm" className={styles["manage-subtitle"]}>
-							Manage your productivity environments
-						</Text>
-					</div>
-					<Dialog.Close asChild>
-						<Button type="button" variant="secondary" icon="close" aria-label="Close workspace manager" />
-					</Dialog.Close>
-				</div>
-				<div className={styles["manage-divider"]} />
-
-				<div className={styles["switch-section"]}>
-					<div className={styles["switch-list"]}>
-						{workspaces.map((workspace) => {
-							const isActive = workspace.id === activeWorkspaceId;
-							const isEditing = workspace.id === editingWorkspaceId;
-							const isSwitching = workspace.id === switchingWorkspaceId;
-							const gradient = gradientMap[workspace.gradientPreset] ?? gradientPresets[0]?.[1]
-								?? { from: "#d2eb74", to: "#c3e060" };
-
-							return (
-								<div
-									key={workspace.id}
-									className={clsx(styles["switch-item"], isActive && styles["switch-item--active"])}
-								>
-									{isEditing
-										? (
-											<div className={styles["workspace-edit-block"]}>
-												<input
-													type="text"
-													value={editingName}
-													onChange={(event) => onEditingNameChange(event.target.value)}
-													className={styles["workspace-input"]}
-													maxLength={60}
-												/>
-												<GradientPicker
-													idPrefix={workspace.id}
-													selected={editingGradient}
-													presets={gradientPresets}
-													onPick={onEditingGradientChange}
-													className={clsx(styles["gradient-picker"], styles["gradient-picker--compact"])}
-													dotClassName={styles["gradient-dot"]}
-													activeDotClassName={styles["gradient-dot--active"]}
-												/>
-											</div>
-										)
-										: (
-											<button
-												type="button"
-												className={clsx(styles["switch-main"], isActive && styles["switch-main--active"])}
-												onClick={() => {
-													onQuickSwitchWorkspace(workspace.id);
-													setIsCreateOpen(false);
-												}}
-												disabled={isSaving || Boolean(switchingWorkspaceId) || isActive}
-												onMouseEnter={() => {
-													if (!isActive) onPrefetchWorkspace(workspace.id);
-												}}
-												onFocus={() => {
-													if (!isActive) onPrefetchWorkspace(workspace.id);
-												}}
-												style={{
-													["--workspace-grad-from" as string]: gradient.from,
-													["--workspace-grad-to" as string]: gradient.to,
-												}}
-											>
-												<span className={styles["switch-main-avatar"]}>{getWorkspaceInitials(workspace.name)}</span>
-												<span className={styles["switch-main-content"]}>
-													<span className={styles["switch-main-label"]}>{workspace.name}</span>
-													<span className={styles["switch-main-sub"]}>
-														{isSwitching ? "Switching workspace..." : isActive ? "Active workspace" : "Tap to switch"}
-													</span>
-												</span>
-												{isSwitching && <span className={styles["switch-loading-dot"]} aria-hidden />}
-											</button>
-										)}
-
-									<div className={styles["switch-actions"]}>
-										{isEditing
-											? (
-												<>
-													<button
-														type="button"
-														className={`${styles["switch-action"]} ${styles["switch-action--save"]}`}
-														onClick={onSaveRename}
-													>
-														Save
-													</button>
-													<button type="button" className={styles["switch-action"]} onClick={onCancelEditing}>
-														Cancel
-													</button>
-												</>
-											)
-											: (
-												<>
-													<button
-														type="button"
-														className={styles["switch-action-icon"]}
-														onClick={(event) => {
-															event.stopPropagation();
-															onStartEditingWorkspace(workspace.id, workspace.name);
-														}}
-														aria-label={`Rename ${workspace.name}`}
-														disabled={isSaving || Boolean(switchingWorkspaceId)}
-													>
-														<Icon name="pencil" size={14} />
-													</button>
-													<button
-														type="button"
-														className={clsx(styles["switch-action-icon"], styles["switch-action-icon--danger"])}
-														onClick={(event) => {
-															event.stopPropagation();
-															onRequestDelete(workspace.id, workspace.name);
-														}}
-														aria-label={`Delete ${workspace.name}`}
-														disabled={workspaces.length <= 1 || isSaving || Boolean(switchingWorkspaceId)}
-													>
-														<Icon name="trash" size={14} />
-													</button>
-												</>
-											)}
-									</div>
-								</div>
-							);
-						})}
-					</div>
-				</div>
-
-				<div className={styles["create-toggle-row"]}>
-					<Button
-						type="button"
-						variant="secondary"
-						fontWeight={700}
-						wrapText={false}
-						className={styles["create-toggle-button"]}
-						onClick={() => setIsCreateOpen((value) => !value)}
-					>
-						<Icon name="plus" size={18} />
-						<span>{isCreateOpen ? "Hide New Workspace" : "New Workspace"}</span>
-					</Button>
-				</div>
-
-				{isCreateOpen && (
-					<form className={styles["create-form"]} onSubmit={onCreateWorkspace}>
-						<Text size="sm" fontWeight={700}>Create Workspace</Text>
-						<input
-							type="text"
-							value={newWorkspaceName}
-							onChange={(event) => onNewWorkspaceNameChange(event.target.value)}
-							className={clsx(styles["workspace-input"], styles["workspace-input--create"])}
-							placeholder="New workspace name"
-							maxLength={60}
-						/>
-						<div className={styles["create-controls"]}>
-							<GradientPicker
-								idPrefix="new"
-								selected={newWorkspaceGradient}
-								presets={gradientPresets}
-								onPick={onNewWorkspaceGradientChange}
-								className={styles["gradient-picker"]}
-								dotClassName={styles["gradient-dot"]}
-								activeDotClassName={styles["gradient-dot--active"]}
-							/>
+				<Dialog.Title className={styles["visually-hidden"]}>Switch Workspace</Dialog.Title>
+				<Dialog.Description className={styles["visually-hidden"]}>
+					Manage your productivity environments.
+				</Dialog.Description>
+				<WorkspaceManagerPanel
+					{...props}
+					closeAction={(
+						<Dialog.Close asChild>
 							<Button
-								type="submit"
-								variant="primary"
-								fontWeight={700}
-								disabled={isSaving}
-								className={styles["create-submit"]}
-							>
-								Create
-							</Button>
-						</div>
-					</form>
-				)}
-
-				{(localError || error) && <Text size="sm" className={styles["error-text"]}>{localError ?? error}</Text>}
+								type="button"
+								variant="ghost"
+								size="sm"
+								className={styles["manage-close"]}
+								aria-label="Close workspace manager"
+								icon="close"
+							/>
+						</Dialog.Close>
+					)}
+				/>
 			</Dialog.Content>
 		</Dialog.Portal>
 	);

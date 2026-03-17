@@ -8,36 +8,33 @@ type TaskItemProps = {
 	checked?: boolean;
 	onChange?: (checked: boolean) => void;
 	onEdit?: () => void;
-	onDelete?: () => void;
 };
 
 export function TaskItem(props: TaskItemProps) {
-	const { taskName, checked, onChange, onEdit, onDelete } = props;
+	const { taskName, checked, onChange, onEdit } = props;
 	return (
-		<div className={styles["task-item"]}>
-			<Checkbox label={taskName} checked={checked} onChange={onChange} />
-			<div className={styles["action-buttons"]}>
-				{onEdit && (
+		<div className={styles["task-item"]} data-checked={checked ? "true" : "false"}>
+			<Checkbox
+				label={taskName}
+				checked={checked}
+				onChange={onChange}
+				className={styles["task-checkbox"]}
+				checkmarkClassName={styles["task-checkmark"]}
+				labelClassName={styles["task-label"]}
+			/>
+			{onEdit && (
+				<div className={styles["action-buttons"]}>
 					<button
 						className={styles["edit-button"]}
 						onClick={onEdit}
+						onPointerDown={(event) => event.stopPropagation()}
 						aria-label="Edit task"
 						type="button"
 					>
-						<Icon name="pencil" />
+						<Icon name="pencil" size={18} />
 					</button>
-				)}
-				{onDelete && (
-					<button
-						className={styles["delete-button"]}
-						onClick={onDelete}
-						aria-label="Delete task"
-						type="button"
-					>
-						<Icon name="trash" />
-					</button>
-				)}
-			</div>
+				</div>
+			)}
 		</div>
 	);
 }

@@ -3,51 +3,102 @@
 @use "../../styles/typography" as typography;
 
 .task-item {
-	display: flex;
-	padding-inline: var(--space-lg);
-	padding-block: var(--space-xl);
-	border-radius: variables.$radius-md;
-	background: var(--color-surface);
-	box-shadow: 0 .1rem .1rem 0 var(--color-shadow-sm);
-	justify-content: space-between;
-	gap: var(--space-xl);
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: stretch;
+	gap: 0.65rem;
+	min-height: 5.9rem;
+	padding: 0.9rem 0.9rem 0.9rem 1.05rem;
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-xl);
+	background: var(--color-surface-subtle);
+	@include mixins.shadow-card;
+	transition:
+		transform variables.$transition-fast,
+		border-color variables.$transition-base,
+		box-shadow variables.$transition-base,
+		background-color variables.$transition-base;
+
+	&:hover {
+		transform: translateY(-0.04rem);
+		border-color: var(--color-primary);
+	}
+
+	&[data-checked="true"] {
+		background: var(--color-surface-muted);
+	}
+
+	.task-checkbox {
+		min-width: 0;
+		align-items: flex-start;
+		gap: 0.95rem;
+	}
+
+	.task-checkmark {
+		width: 2.05rem;
+		height: 2.05rem;
+		border-radius: var(--radius-lg);
+		border-color: var(--color-primary);
+		background: var(--color-surface-subtle);
+		box-shadow: inset 0 0 0 0.05rem var(--color-surface-border-strong);
+	}
+
+	.task-label {
+		@include typography.text-lg;
+		display: block;
+		min-width: 0;
+		font-weight: 700;
+		line-height: 1.28;
+		color: var(--color-text-primary);
+		white-space: normal;
+		overflow: visible;
+		text-overflow: clip;
+		overflow-wrap: anywhere;
+	}
+
+	&[data-checked="true"] .task-label {
+		color: var(--color-text-muted);
+		text-decoration: line-through;
+		text-decoration-thickness: 0.08em;
+		text-decoration-color: var(--color-text-muted);
+	}
 
 	.action-buttons {
 		display: flex;
-		align-items: center;
-		gap: var(--space-sm);
+		align-self: stretch;
+		align-items: stretch;
+		flex-shrink: 0;
 	}
 
-	.edit-button,
-	.delete-button {
-		width: 2.45rem;
-		height: 2.45rem;
-		background-color: transparent;
-		color: var(--color-text);
-		cursor: pointer;
-		border: none;
-		border-radius: variables.$radius-md;
+	.edit-button {
+		width: 2.95rem;
+		flex: 1 1 auto;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		transition: background-color variables.$transition-fast, color variables.$transition-fast;
+		flex-shrink: 0;
+		border: var(--border-width-base) solid var(--color-primary);
+		border-radius: var(--radius-lg);
+		background-color: var(--color-primary);
+		color: var(--color-text-primary);
+		cursor: pointer;
+		transition:
+			background-color variables.$transition-fast,
+			color variables.$transition-fast,
+			border-color variables.$transition-fast,
+			transform variables.$transition-fast;
 
-		&:hover, &:focus-visible {
-			background: color-mix(in srgb, var(--color-text) 10%, transparent);
-			color: var(--color-primary);
+		&:hover,
+		&:focus-visible {
+			background: var(--color-primary-hover);
+			border-color: var(--color-primary-hover);
+			color: var(--color-text-primary);
+			transform: translateY(-0.03rem);
 		}
 
 		&:focus-visible {
 			outline: none;
-			border-radius: variables.$radius-sm;
-		}
-	}
-
-	.delete-button {
-		&:hover,
-		&:focus-visible {
-			background: color-mix(in srgb, var(--color-error) 16%, transparent);
-			color: var(--color-error);
+			box-shadow: var(--ring-primary-soft);
 		}
 	}
 }

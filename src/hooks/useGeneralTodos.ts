@@ -84,7 +84,7 @@ export function useGeneralTodos() {
 
 		const requestId = ++requestCounterRef.current;
 		try {
-			const data = await loadWorkspaceTodos({ workspaceId: activeWorkspaceId });
+			const data = await loadWorkspaceTodos({ workspaceId: activeWorkspaceId, force: true });
 			if (requestId !== requestCounterRef.current) return;
 			setTodos(data.map(toGeneralTodo));
 		} catch (fetchError) {

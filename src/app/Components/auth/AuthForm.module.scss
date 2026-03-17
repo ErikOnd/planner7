@@ -4,11 +4,11 @@
 .form {
 	@include mixins.shadow-lg;
 	background: var(--color-surface);
-	border-radius: variables.$radius-xl;
+	border-radius: var(--radius-xl);
 	padding: var(--space-2xl);
 	max-width: 28rem;
 	width: 100%;
-	border: 0.1rem solid var(--color-border-light);
+	border: var(--border-width-base) solid var(--color-border-light);
 	transition: box-shadow variables.$transition-smooth;
 
 	@media (max-width: 40rem) {
@@ -60,17 +60,20 @@
 }
 
 .consent-text {
-	color: var(--color-text-muted);
+	color: var(--color-text-secondary);
+	font-weight: 500;
 	line-height: 1.5;
 }
 
 .legal-link {
-	color: var(--color-primary);
+	color: var(--color-primary-active);
+	font-weight: 600;
 	text-underline-offset: 0.12rem;
 }
 
 .legal-note {
-	color: var(--color-text-muted);
+	color: var(--color-text-secondary);
+	font-weight: 500;
 	line-height: 1.5;
 	margin-top: var(--space-md);
 	text-align: center;
@@ -105,7 +108,7 @@
 	&::after {
 		content: '';
 		flex: 1;
-		border-bottom: 0.1rem solid var(--color-border-light);
+		border-bottom: var(--border-width-base) solid var(--color-border-light);
 	}
 
 	span {

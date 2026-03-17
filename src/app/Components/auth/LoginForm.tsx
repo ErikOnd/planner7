@@ -96,7 +96,7 @@ export function LoginForm() {
 					)}
 				</GoogleIdentityButton>
 			</div>
-			<Text size="xs" className={styles["legal-note"]}>
+			<Text size="sm" fontWeight={500} className={styles["legal-note"]}>
 				By continuing, you agree to our <Link href="/terms" className={styles["legal-link"]}>Terms of Service</Link> and
 				{" "}
 				<Link href="/privacy" className={styles["legal-link"]}>Privacy Policy</Link>.

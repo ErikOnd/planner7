@@ -22,15 +22,16 @@ export function getCurrentWeek(baseDate: Date) {
 	}
 
 	const sunday = new Date(monday.getTime() + 6 * 86400000);
-	const rangeLabel = `${
-		monday.toLocaleString("en-US", {
-			month: "short",
-		})
-	} ${monday.getDate()} - ${
-		sunday.toLocaleString("en-US", {
-			month: "short",
-		})
-	} ${sunday.getDate()}, ${sunday.getFullYear()}`;
+	const mondayMonth = monday.toLocaleString("en-US", { month: "short" });
+	const sundayMonth = sunday.toLocaleString("en-US", { month: "short" });
+	const isSameMonth = monday.getMonth() === sunday.getMonth() && monday.getFullYear() === sunday.getFullYear();
+	const isSameYear = monday.getFullYear() === sunday.getFullYear();
+
+	const rangeLabel = isSameMonth
+		? `${mondayMonth} ${monday.getDate()}-${sunday.getDate()}, ${sunday.getFullYear()}`
+		: isSameYear
+			? `${mondayMonth} ${monday.getDate()} - ${sundayMonth} ${sunday.getDate()}, ${sunday.getFullYear()}`
+			: `${mondayMonth} ${monday.getDate()}, ${monday.getFullYear()} - ${sundayMonth} ${sunday.getDate()}, ${sunday.getFullYear()}`;
 
 	return { days: week, rangeLabel };
 }

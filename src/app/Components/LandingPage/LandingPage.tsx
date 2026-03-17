@@ -108,8 +108,8 @@ export function LandingPage() {
 	};
 
 	return (
-		<>
-			<header>
+		<div className={styles["landing-page"]}>
+			<header className={styles.header}>
 				<motion.nav
 					className={styles.nav}
 					initial="hidden"
@@ -127,7 +127,7 @@ export function LandingPage() {
 				</motion.nav>
 			</header>
 
-			<main>
+			<main className={styles.main}>
 				<motion.section
 					className={styles.hero}
 					initial="hidden"
@@ -227,6 +227,6 @@ export function LandingPage() {
 					<Link href="/terms" className={styles["footer-link"]}>Terms of Service</Link>
 				</div>
 			</footer>
-		</>
+		</div>
 	);
 }

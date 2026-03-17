@@ -1,15 +1,20 @@
 "use client";
 
-import { Button } from "@atoms/Button/Button";
+import { Icon } from "@atoms/Icons/Icon";
 import * as Dialog from "@radix-ui/react-dialog";
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./CalendarOverlay.module.scss";
 
-type CalendarOverlayProps = {
-	children: React.ReactNode;
+type CalendarBaseProps = {
 	onDateSelect: (date: Date) => void;
+	activeDate?: Date;
 	showWeekends?: boolean;
+	className?: string;
+};
+
+type CalendarOverlayProps = CalendarBaseProps & {
+	children: React.ReactNode;
 };
 
 const MONTHS = [
@@ -29,11 +34,47 @@ const MONTHS = [
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-export function CalendarOverlay({ children, onDateSelect, showWeekends = true }: CalendarOverlayProps) {
-	const [open, setOpen] = useState(false);
+function isSameDay(left: Date, right: Date) {
+	return left.getFullYear() === right.getFullYear()
+		&& left.getMonth() === right.getMonth()
+		&& left.getDate() === right.getDate();
+}
+
+function useCalendarState(activeDate?: Date) {
 	const now = new Date();
-	const [currentMonth, setCurrentMonth] = useState(now.getMonth());
-	const [currentYear, setCurrentYear] = useState(now.getFullYear());
+	const visibleDate = activeDate ?? now;
+	const [currentMonth, setCurrentMonth] = useState(visibleDate.getMonth());
+	const [currentYear, setCurrentYear] = useState(visibleDate.getFullYear());
+
+	useEffect(() => {
+		setCurrentMonth(visibleDate.getMonth());
+		setCurrentYear(visibleDate.getFullYear());
+	}, [visibleDate]);
+
+	return {
+		now,
+		visibleDate,
+		currentMonth,
+		currentYear,
+		setCurrentMonth,
+		setCurrentYear,
+	};
+}
+
+export function CalendarPanel({
+	onDateSelect,
+	activeDate,
+	showWeekends = true,
+	className,
+}: CalendarBaseProps) {
+	const {
+		now,
+		visibleDate,
+		currentMonth,
+		currentYear,
+		setCurrentMonth,
+		setCurrentYear,
+	} = useCalendarState(activeDate);
 
 	const getDaysInMonth = (month: number, year: number) => {
 		return new Date(year, month + 1, 0).getDate();
@@ -41,14 +82,7 @@ export function CalendarOverlay({ children, onDateSelect, showWeekends = true }:
 
 	const getFirstDayOfMonth = (month: number, year: number) => {
 		const day = new Date(year, month, 1).getDay();
-		// Convert Sunday (0) to 7, and shift so Monday is 1
 		return day === 0 ? 6 : day - 1;
-	};
-
-	const handleDateClick = (day: number) => {
-		const selectedDate = new Date(currentYear, currentMonth, day);
-		onDateSelect(selectedDate);
-		setOpen(false);
 	};
 
 	const handlePreviousMonth = () => {
@@ -82,35 +116,34 @@ export function CalendarOverlay({ children, onDateSelect, showWeekends = true }:
 		const firstDay = getFirstDayOfMonth(currentMonth, currentYear);
 		const days = [];
 
-		// Empty cells before first day
 		for (let i = 0; i < firstDay; i++) {
 			days.push(<div key={`empty-start-${i}`} className={styles["calendar-day-empty"]} />);
 		}
 
-		// Days of the month
 		for (let day = 1; day <= daysInMonth; day++) {
 			const currentDate = new Date(currentYear, currentMonth, day);
 			const dayOfWeek = currentDate.getDay();
 			const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 			const isDisabled = !showWeekends && isWeekend;
-			const isToday = day === now.getDate()
-				&& currentMonth === now.getMonth()
-				&& currentYear === now.getFullYear();
+			const isSelected = isSameDay(currentDate, visibleDate);
+			const isToday = isSameDay(currentDate, now);
 
 			days.push(
 				<button
 					key={`${currentYear}-${currentMonth}-${day}`}
 					className={clsx(styles["calendar-day"], {
-						[styles["calendar-day--today"]]: isToday,
+						[styles["calendar-day--selected"]]: isSelected,
+						[styles["calendar-day--today"]]: isToday && !isSelected,
 						[styles["calendar-day--disabled"]]: isDisabled,
 					})}
 					onClick={() => {
 						if (!isDisabled) {
-							handleDateClick(day);
+							onDateSelect(currentDate);
 						}
 					}}
 					disabled={isDisabled}
 					aria-disabled={isDisabled}
+					aria-current={isSelected ? "date" : undefined}
 					type="button"
 				>
 					{day}
@@ -118,7 +151,6 @@ export function CalendarOverlay({ children, onDateSelect, showWeekends = true }:
 			);
 		}
 
-		// Fill remaining cells to complete 6 rows (42 total cells)
 		const totalCells = firstDay + daysInMonth;
 		const remainingCells = 42 - totalCells;
 		for (let i = 0; i < remainingCells; i++) {
@@ -128,58 +160,99 @@ export function CalendarOverlay({ children, onDateSelect, showWeekends = true }:
 		return days;
 	};
 
+	const handleGoToToday = () => {
+		onDateSelect(now);
+	};
+
 	return (
-		<Dialog.Root open={open} onOpenChange={setOpen}>
+		<div className={clsx(styles["calendar-panel"], className)}>
+			<div className={styles["calendar-header"]}>
+				<button
+					type="button"
+					className={styles["calendar-nav-button"]}
+					onClick={handlePreviousYear}
+					aria-label="Previous year"
+				>
+					<Icon name="double-chevron-left" size={22} />
+				</button>
+				<button
+					type="button"
+					className={styles["calendar-nav-button"]}
+					onClick={handlePreviousMonth}
+					aria-label="Previous month"
+				>
+					<Icon name="chevron-left" size={22} />
+				</button>
+				<h2 className={styles["calendar-title"]}>
+					{MONTHS[currentMonth]} {currentYear}
+				</h2>
+				<button
+					type="button"
+					className={styles["calendar-nav-button"]}
+					onClick={handleNextMonth}
+					aria-label="Next month"
+				>
+					<Icon name="chevron-right" size={22} />
+				</button>
+				<button
+					type="button"
+					className={styles["calendar-nav-button"]}
+					onClick={handleNextYear}
+					aria-label="Next year"
+				>
+					<Icon name="double-chevron-right" size={22} />
+				</button>
+			</div>
+
+			<div className={styles["calendar-grid"]}>
+				<div className={styles["calendar-weekdays"]}>
+					{DAYS.map(day => (
+						<div key={day} className={styles["calendar-weekday"]}>
+							{day}
+						</div>
+					))}
+				</div>
+				<div className={styles["calendar-days"]}>
+					{renderCalendar()}
+				</div>
+			</div>
+
+			<div className={styles["calendar-footer"]}>
+				<button
+					type="button"
+					className={styles["calendar-today-button"]}
+					onClick={handleGoToToday}
+				>
+					Go to Today
+				</button>
+			</div>
+		</div>
+	);
+}
+
+export function CalendarOverlay({
+	children,
+	onDateSelect,
+	activeDate,
+	showWeekends = true,
+}: CalendarOverlayProps) {
+	return (
+		<Dialog.Root>
 			<Dialog.Trigger asChild>
 				{children}
 			</Dialog.Trigger>
 			<Dialog.Portal>
 				<Dialog.Overlay className={styles["dialog-overlay"]} />
 				<Dialog.Content className={styles["dialog-content"]}>
-					<div className={styles["calendar-header"]}>
-						<Button
-							variant="ghost"
-							icon="double-chevron-left"
-							onClick={handlePreviousYear}
-							aria-label="Previous year"
-						/>
-						<Button
-							variant="ghost"
-							icon="chevron-left"
-							onClick={handlePreviousMonth}
-							aria-label="Previous month"
-						/>
-						<Dialog.Title asChild>
-							<h2 className={styles["calendar-title"]}>
-								{MONTHS[currentMonth]} {currentYear}
-							</h2>
-						</Dialog.Title>
-						<Button
-							variant="ghost"
-							icon="chevron-right"
-							onClick={handleNextMonth}
-							aria-label="Next month"
-						/>
-						<Button
-							variant="ghost"
-							icon="double-chevron-right"
-							onClick={handleNextYear}
-							aria-label="Next year"
-						/>
-					</div>
-
-					<div className={styles["calendar-grid"]}>
-						<div className={styles["calendar-weekdays"]}>
-							{DAYS.map(day => (
-								<div key={day} className={styles["calendar-weekday"]}>
-									{day}
-								</div>
-							))}
-						</div>
-						<div className={styles["calendar-days"]}>
-							{renderCalendar()}
-						</div>
-					</div>
+					<Dialog.Title className={styles["visually-hidden"]}>Calendar</Dialog.Title>
+					<Dialog.Description className={styles["visually-hidden"]}>
+						Select a date from the month view.
+					</Dialog.Description>
+					<CalendarPanel
+						onDateSelect={onDateSelect}
+						activeDate={activeDate}
+						showWeekends={showWeekends}
+					/>
 				</Dialog.Content>
 			</Dialog.Portal>
 		</Dialog.Root>

@@ -11,17 +11,11 @@
 	flex-direction: column;
 	background-color: var(--color-bg-sidebar);
 	width: 30vw;
-	min-width: 20rem;
+	min-width: 16rem;
 	max-width: 30rem;
-	border-right: 0.1rem solid color-mix(in srgb, var(--color-text-inverse) 6%, transparent);
+	border-right: var(--border-width-base) solid var(--color-sidebar-border);
 	overflow: hidden;
 	flex-shrink: 0;
-	--sidebar-radius: #{variables.$radius-lg};
-	--sidebar-border: 0.1rem solid color-mix(in srgb, var(--color-text-inverse) 10%, transparent);
-	--sidebar-panel-bg: color-mix(in srgb, var(--color-text-inverse) 4%, var(--color-bg-sidebar));
-	--sidebar-panel-bg-hover: color-mix(in srgb, var(--color-text-inverse) 6%, var(--color-bg-sidebar));
-	--sidebar-text: var(--color-text-inverse);
-	--sidebar-muted: color-mix(in srgb, var(--color-text-inverse) 58%, var(--color-bg-sidebar));
 
 	.sticky-section {
 		position: sticky;
@@ -54,61 +48,30 @@
 	.brand {
 		display: flex;
 		align-items: center;
-		gap: 0.65rem;
-		color: var(--sidebar-text);
+		justify-content: flex-start;
+		width: 100%;
+		padding: 0.2rem 0;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
 	}
 
 	.brand-logo {
 		display: block;
-		width: 2rem;
-		height: 2rem;
+		width: min(100%, 11.75rem);
+		height: auto;
 		flex: 0 0 auto;
-	}
-
-	.brand-greeting {
-		display: flex;
-		flex-direction: column;
-		gap: 0.12rem;
-		min-width: 0;
-	}
-
-	.brand-greeting-title {
-		display: inline-flex;
-		align-items: baseline;
-		gap: 0.04rem;
-		font-size: 1.42rem;
-		font-weight: 700;
-		color: var(--sidebar-text);
-		line-height: 0.95;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.brand-wordmark {
-		color: var(--sidebar-text);
-	}
-
-	.brand-accent {
-		color: var(--color-primary);
-	}
-
-	.brand-greeting-subtitle {
-		font-size: 0.54rem;
-		letter-spacing: 0.12em;
-		color: color-mix(in srgb, var(--color-icon) 78%, var(--color-text-inverse));
-		font-weight: 700;
 	}
 
 	.quick-add {
 		width: 100%;
 		justify-content: center;
 		gap: 0.55rem;
-		min-height: 3rem;
+		min-height: var(--control-size-base);
 		padding: 0.8rem 1rem;
-		border-radius: variables.$radius-md;
+		border-radius: var(--radius-md);
 		background: var(--color-primary);
-		border: 0.1rem solid transparent;
+		border: var(--border-width-base) solid transparent;
 		color: var(--color-text-primary);
 		font-weight: 700;
 		cursor: pointer;
@@ -118,7 +81,7 @@
 		&:hover {
 			background-color: var(--color-primary-hover);
 			box-shadow: none;
-			transform: translateY(-1px);
+			transform: translateY(-0.0625rem);
 		}
 
 		&:focus-visible {
@@ -151,7 +114,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		color: color-mix(in srgb, var(--color-icon) 84%, var(--color-text-inverse));
+		color: var(--color-sidebar-icon-soft);
 		font-size: 0.78rem;
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
@@ -159,16 +122,16 @@
 	}
 
 	.backlog-title {
-		color: color-mix(in srgb, var(--color-icon) 84%, var(--color-text-inverse));
+		color: var(--color-sidebar-icon-soft);
 	}
 
 	.backlog-count {
-		background: var(--sidebar-panel-bg);
-		border: var(--sidebar-border);
-		border-radius: 999px;
+		background: var(--color-surface-sidebar);
+		border: var(--border-width-base) solid var(--color-sidebar-border);
+		border-radius: var(--radius-pill);
 		padding: 0.15rem 0.5rem;
 		font-size: 0.7rem;
-		color: var(--sidebar-muted);
+		color: var(--color-sidebar-text-muted);
 	}
 
 	.backlog-panel {
@@ -188,7 +151,7 @@
 		font-size: var(--font-size-sm);
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
-		color: var(--sidebar-muted);
+		color: var(--color-sidebar-text-muted);
 		font-weight: 600;
 	}
 
@@ -202,7 +165,7 @@
 	.remember-header {
 		font-size: 1.25rem;
 		font-weight: 700;
-		color: var(--sidebar-text);
+		color: var(--color-text-inverse);
 	}
 
 	.remember-actions {
@@ -213,7 +176,7 @@
 
 	.add-header-button {
 		padding: 0.65rem 1rem;
-		min-height: 3rem;
+		min-height: var(--control-size-base);
 		font-size: var(--font-size-sm);
 	}
 
@@ -234,21 +197,27 @@
 		}
 
 		&::-webkit-scrollbar-thumb {
-			background: color-mix(in srgb, var(--color-text-inverse) 12%, transparent);
+			background: var(--color-surface-sidebar-active);
 			border-radius: var(--space-sm);
 		}
 	}
 
 	.empty-state {
 		padding: var(--space-md);
-		border-radius: variables.$radius-md;
-		background: var(--sidebar-panel-bg-hover);
-		border: 0.1rem dashed var(--color-border-light);
+		border-radius: var(--radius-md);
+		background: var(--color-surface-sidebar-hover);
+		border: var(--border-width-base) dashed var(--color-border-light);
 		text-align: center;
+		color: var(--color-text-inverse);
+	}
+
+	.empty-state-title {
+		color: var(--color-text-inverse);
+		font-weight: 700;
 	}
 
 	.empty-state-meta {
-		color: var(--sidebar-muted);
+		color: var(--color-sidebar-text-muted);
 		margin-top: 0.2rem;
 	}
 
@@ -257,12 +226,12 @@
 		align-items: center;
 		justify-content: flex-start;
 		gap: 0.95rem;
-		min-height: 3.7rem;
+		min-height: var(--control-size-xl);
 		padding-inline: 1.2rem;
-		background: color-mix(in srgb, var(--color-text-inverse) 1.2%, transparent);
-		border: 0.12rem solid color-mix(in srgb, var(--color-text-inverse) 12%, transparent);
-		border-radius: variables.$radius-lg;
-		color: color-mix(in srgb, var(--color-text-inverse) 92%, var(--color-bg-sidebar));
+		background: transparent;
+		border: 0.12rem solid var(--color-sidebar-border);
+		border-radius: var(--radius-lg);
+		color: var(--color-text-inverse);
 		width: 100%;
 		transition:
 			transform variables.$transition-fast,
@@ -271,9 +240,9 @@
 		box-shadow: none;
 
 		&:hover {
-			background: color-mix(in srgb, var(--color-text-inverse) 2.2%, transparent);
-			border-color: color-mix(in srgb, var(--color-text-inverse) 16%, transparent);
-			transform: translateY(-1px);
+			background: var(--color-surface-sidebar);
+			border-color: var(--color-sidebar-border-strong);
+			transform: translateY(-0.0625rem);
 			box-shadow: none;
 		}
 
@@ -287,9 +256,9 @@
 		position: relative;
 		width: 1.8rem;
 		height: 1.8rem;
-		border-radius: 999px;
+		border-radius: var(--radius-pill);
 		background: transparent;
-		border: 0.15rem solid color-mix(in srgb, var(--color-text-inverse) 80%, transparent);
+		border: 0.15rem solid var(--color-text-inverse);
 		flex: 0 0 auto;
 
 		&::after {
@@ -299,7 +268,7 @@
 			top: 50%;
 			width: 0.32rem;
 			height: 0.62rem;
-			border: solid color-mix(in srgb, var(--color-text-inverse) 88%, transparent);
+			border: solid var(--color-text-inverse);
 			border-width: 0 0.14rem 0.14rem 0;
 			transform: translate(-48%, -58%) rotate(45deg);
 		}
@@ -320,10 +289,10 @@
 		user-select: none;
 		background-color: var(--color-bg-surface);
 		color: var(--color-text-primary);
-		border: .1rem solid var(--color-border);
-		border-radius: variables.$radius-md;
+		border: var(--border-width-base) solid var(--color-border);
+		border-radius: var(--radius-md);
 		padding: var(--space-md);
-		box-shadow: 0 0.8rem 1.8rem var(--shadow-lg);
+		@include mixins.shadow-lg;
 	}
 }
 
@@ -340,15 +309,13 @@
 	left: 50%;
 	transform: translate(-50%, -50%);
 	background-color: var(--color-surface-elevated);
-	border: 0.1rem solid var(--color-border);
-	border-radius: variables.$radius-lg;
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-lg);
 	padding: var(--space-lg);
 	width: min(36rem, 94vw);
 	max-height: 85vh;
 	overflow: auto;
-	box-shadow:
-		0 1rem 3rem var(--shadow-xl),
-		0 0.5rem 1.5rem var(--shadow-lg);
+	box-shadow: var(--shadow-dialog);
 	z-index: var(--z-modal);
 }
 
@@ -369,7 +336,20 @@
 }
 
 .completed-close {
-	min-width: auto;
+	border: var(--border-width-base) solid var(--color-surface-border-strong);
+	border-radius: var(--radius-md);
+	background: var(--color-surface-subtle);
+	color: var(--color-text-secondary);
+	box-shadow: var(--shadow-control);
+
+	&:hover:not(:disabled),
+	&:focus-visible:not(:disabled) {
+		background: var(--color-surface-primary-subtle);
+		border-color: var(--color-primary-hover);
+		color: var(--color-text-primary);
+		box-shadow: var(--shadow-control-hover);
+		outline: none;
+	}
 }
 
 .completed-table {
@@ -385,7 +365,7 @@
 	flex-direction: column;
 	gap: 0.25rem;
 	padding: 0.75rem 0;
-	border-bottom: 0.1rem solid color-mix(in srgb, var(--color-border-light) 70%, transparent);
+	border-bottom: var(--border-width-base) solid var(--color-border-light);
 }
 
 .completed-checkbox {

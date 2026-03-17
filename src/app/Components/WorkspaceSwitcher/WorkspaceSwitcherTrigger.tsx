@@ -2,13 +2,14 @@
 
 import { Button } from "@atoms/Button/Button";
 import * as Dialog from "@radix-ui/react-dialog";
+import clsx from "clsx";
 import { ReactNode } from "react";
 import type { WorkspaceSummary } from "../../actions/workspaces";
 import styles from "./WorkspaceSwitcherTrigger.module.scss";
 
 type WorkspaceSwitcherTriggerProps = {
 	compact: boolean;
-	variant: "default" | "sidebar" | "chip" | "tab";
+	variant: "default" | "sidebar" | "chip" | "tab" | "nav";
 	workspaces: WorkspaceSummary[];
 	activeWorkspaceId: string | null;
 	activeLabel: string;
@@ -97,6 +98,25 @@ export function WorkspaceSwitcherTrigger(props: WorkspaceSwitcherTriggerProps) {
 								aria-label={`Open workspace switcher, active workspace ${activeLabel}`}
 							>
 								<span className={styles["workspace-tab-label"]}>{activeLabel}</span>
+							</button>
+						</Dialog.Trigger>
+						{manageContent}
+					</Dialog.Root>
+				)
+				: variant === "nav"
+				? (
+					<Dialog.Root open={isManageOpen} onOpenChange={onOpenManage}>
+						<Dialog.Trigger asChild>
+							<button
+								type="button"
+								className={clsx(
+									styles["workspace-nav-trigger"],
+									isManageOpen && styles["workspace-nav-trigger--open"],
+								)}
+								aria-label={`Open workspace switcher, active workspace ${activeLabel}`}
+							>
+								<span className={styles["workspace-nav-avatar"]}>{activeInitials}</span>
+								<span className={styles["workspace-nav-label"]}>Workspace</span>
 							</button>
 						</Dialog.Trigger>
 						{manageContent}
