@@ -36,6 +36,7 @@ export function DraggableTaskItem({
 		isDragging,
 	} = useSortable({ id });
 	const touchStartRef = useRef<{ x: number; y: number; startedAt: number } | null>(null);
+	const { onTouchStart: dndTouchStart, ...restListeners } = listeners ?? {};
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
@@ -81,11 +82,14 @@ export function DraggableTaskItem({
 			ref={setNodeRef}
 			style={style}
 			{...attributes}
-			{...listeners}
+			{...restListeners}
 			className={clsx(styles["draggable-task"], {
 				[styles["dragging"]]: isDragging,
 			})}
-			onTouchStart={handleTouchStart}
+			onTouchStart={(e) => {
+				dndTouchStart?.(e);
+				handleTouchStart(e);
+			}}
 			onTouchEnd={handleTouchEnd}
 			onTouchCancel={() => {
 				touchStartRef.current = null;
