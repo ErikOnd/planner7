@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { withWorkspace } from "@/lib/serverActionContext";
+import { Prisma } from "@prisma/client";
 
 export type FormState = {
 	message?: string;
@@ -28,23 +29,29 @@ async function createGeneralTodo(_prevState: FormState, formData: FormData): Pro
 
 	return withWorkspace<FormState>({
 		run: async (context) => {
-			const maxOrder = await prisma.generalTodo.findFirst({
-				where: {
-					userId: context.userId,
-					workspaceId: context.activeWorkspaceId,
-				},
-				orderBy: { order: "desc" },
-				select: { order: true },
-			});
+			// Serializable transaction prevents duplicate order values under concurrent creates.
+			await prisma.$transaction(
+				async (tx) => {
+					const maxOrder = await tx.generalTodo.findFirst({
+						where: {
+							userId: context.userId,
+							workspaceId: context.activeWorkspaceId,
+						},
+						orderBy: { order: "desc" },
+						select: { order: true },
+					});
 
-			await prisma.generalTodo.create({
-				data: {
-					userId: context.userId,
-					workspaceId: context.activeWorkspaceId,
-					text: text.trim(),
-					order: (maxOrder?.order ?? -1) + 1,
+					await tx.generalTodo.create({
+						data: {
+							userId: context.userId,
+							workspaceId: context.activeWorkspaceId,
+							text: text.trim(),
+							order: (maxOrder?.order ?? -1) + 1,
+						},
+					});
 				},
-			});
+				{ isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+			);
 
 			return {
 				message: "Task created successfully",
@@ -170,19 +177,36 @@ async function updateGeneralTodo(_prevState: FormState, formData: FormData): Pro
 export async function reorderGeneralTodos(todoIds: string[]): Promise<FormState> {
 	return withWorkspace<FormState>({
 		run: async (context) => {
-			await prisma.$transaction(
-				todoIds.map((id, index) =>
-					prisma.generalTodo.updateMany({
-						where: {
-							id,
-							userId: context.userId,
-							workspaceId: context.activeWorkspaceId,
-						},
-						data: {
-							order: index,
-						},
-					})
-				),
+			if (todoIds.length === 0) {
+				return { message: "Tasks reordered successfully", success: true };
+			}
+
+			// Single UPDATE with CASE expression — replaces N individual updates.
+			// Parameterised via $executeRawUnsafe: only indices are interpolated
+			// into the SQL string; all values use $N placeholders.
+			const orderCases = todoIds
+				.map((_, i) => `WHEN id = $${i + 1}::uuid THEN ${i}`)
+				.join("\n\t\t\t\t");
+
+			const idParams = todoIds
+				.map((_, i) => `$${i + 1}::uuid`)
+				.join(", ");
+
+			const userIdIdx = todoIds.length + 1;
+			const workspaceIdIdx = todoIds.length + 2;
+
+			await prisma.$executeRawUnsafe(
+				`UPDATE "GeneralTodo"
+				SET "order" = CASE id
+					${orderCases}
+					ELSE "order"
+				END
+				WHERE id = ANY(ARRAY[${idParams}])
+					AND "userId" = $${userIdIdx}::uuid
+					AND "workspaceId" = $${workspaceIdIdx}::uuid`,
+				...todoIds,
+				context.userId,
+				context.activeWorkspaceId,
 			);
 
 			return {

@@ -16,6 +16,7 @@ type WorkspaceSwitcherProps = {
 
 type WorkspacePanelProps = {
 	className?: string;
+	onAfterSwitch?: () => void;
 };
 
 function getWorkspaceInitials(label: string) {
@@ -27,7 +28,7 @@ function getWorkspaceInitials(label: string) {
 		.join("") || "P";
 }
 
-function useWorkspaceManagerController() {
+function useWorkspaceManagerController(onAfterSwitch?: () => void) {
 	const {
 		workspaces,
 		activeWorkspaceId,
@@ -68,6 +69,7 @@ function useWorkspaceManagerController() {
 
 	const onQuickSwitchWorkspace = async (workspaceId: string) => {
 		setLocalError(null);
+		onAfterSwitch?.();
 		setSwitchingWorkspaceId(workspaceId);
 		const result = await switchWorkspace(workspaceId);
 		setSwitchingWorkspaceId(null);
@@ -170,8 +172,8 @@ function useWorkspaceManagerController() {
 	};
 }
 
-export function WorkspacePanel({ className }: WorkspacePanelProps) {
-	const { managerProps } = useWorkspaceManagerController();
+export function WorkspacePanel({ className, onAfterSwitch }: WorkspacePanelProps) {
+	const { managerProps } = useWorkspaceManagerController(onAfterSwitch);
 
 	return (
 		<div className={styles["workspace-switcher-wrapper"]}>
@@ -184,6 +186,8 @@ export function WorkspacePanel({ className }: WorkspacePanelProps) {
 }
 
 export function WorkspaceSwitcher({ compact = false, variant = "default" }: WorkspaceSwitcherProps) {
+	const [isManageOpen, setIsManageOpen] = useState(false);
+
 	const {
 		activeWorkspaceId,
 		activeLabel,
@@ -194,8 +198,7 @@ export function WorkspaceSwitcher({ compact = false, variant = "default" }: Work
 		managerProps,
 		switchWorkspace,
 		workspaces,
-	} = useWorkspaceManagerController();
-	const [isManageOpen, setIsManageOpen] = useState(false);
+	} = useWorkspaceManagerController(() => setIsManageOpen(false));
 
 	const handleManageOpenChange = (open: boolean) => {
 		setIsManageOpen(open);

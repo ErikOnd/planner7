@@ -322,7 +322,7 @@ export async function deleteUserAccount() {
 
 			if (s3Client && BUCKET_NAME && uploads.length > 0) {
 				const deletions = uploads.map((upload) =>
-					s3Client.send(
+					s3Client!.send(
 						new DeleteObjectCommand({
 							Bucket: BUCKET_NAME,
 							Key: upload.key,
@@ -337,28 +337,13 @@ export async function deleteUserAccount() {
 			}
 
 			await prisma.$transaction(async (tx) => {
-				// Break potential FK cycles in databases that still have an activeWorkspaceId FK.
+				// Clear activeWorkspaceId to break any FK cycle before cascade delete.
 				await tx.profile.updateMany({
 					where: { id: userId },
 					data: { activeWorkspaceId: null },
 				});
 
-				await tx.dailyNote.deleteMany({
-					where: { userId },
-				});
-
-				await tx.generalTodo.deleteMany({
-					where: { userId },
-				});
-
-				await tx.workspace.deleteMany({
-					where: { userId },
-				});
-
-				await tx.uploadedImage.deleteMany({
-					where: { userId },
-				});
-
+				// Deleting the profile cascades to workspaces, notes, todos, and images.
 				const deleted = await tx.profile.deleteMany({
 					where: { id: userId },
 				});

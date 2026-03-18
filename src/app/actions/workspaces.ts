@@ -158,19 +158,16 @@ export async function renameWorkspace(workspaceId: string, name: string): Promis
 		}
 
 		const session = await requireWorkspaceSession();
-		const workspace = await prisma.workspace.findFirst({
+
+		// Single query: updateMany with ownership check, no separate existence lookup.
+		const result = await prisma.workspace.updateMany({
 			where: { id: workspaceId, userId: session.userId },
-			select: { id: true },
-		});
-
-		if (!workspace) {
-			return { success: false, error: "Workspace not found" };
-		}
-
-		await prisma.workspace.update({
-			where: { id: workspace.id },
 			data: { name: validation.name },
 		});
+
+		if (result.count === 0) {
+			return { success: false, error: "Workspace not found" };
+		}
 
 		return { success: true };
 	} catch (error) {

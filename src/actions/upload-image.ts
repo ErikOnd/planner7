@@ -12,14 +12,17 @@ const DO_SECRET = process.env.DIGITALOCEAN_SPACES_SECRET || "";
 const BUCKET_NAME = process.env.DIGITALOCEAN_SPACES_BUCKET || "";
 const CDN_URL = process.env.DIGITALOCEAN_SPACES_CDN_URL || "";
 
-const s3Client = new S3Client({
-	endpoint: DO_ENDPOINT,
-	region: DO_REGION,
-	credentials: {
-		accessKeyId: DO_KEY,
-		secretAccessKey: DO_SECRET,
-	},
-});
+// Guard: only create the S3 client when credentials are present (mirrors profile.ts pattern).
+const s3Client = DO_ENDPOINT && DO_REGION && DO_KEY && DO_SECRET
+	? new S3Client({
+		endpoint: DO_ENDPOINT,
+		region: DO_REGION,
+		credentials: {
+			accessKeyId: DO_KEY,
+			secretAccessKey: DO_SECRET,
+		},
+	})
+	: null;
 
 const MAX_TOTAL_STORAGE_BYTES = 100 * 1024 * 1024;
 const MAX_IMAGE_UPLOAD_SIZE = 5 * 1024 * 1024;
@@ -102,7 +105,7 @@ export async function uploadImage(
 			};
 		}
 
-		if (!DO_ENDPOINT || !DO_REGION || !DO_KEY || !DO_SECRET || !BUCKET_NAME || !CDN_URL) {
+		if (!s3Client || !CDN_URL) {
 			return {
 				success: false,
 				error: "DigitalOcean Spaces env vars are missing. Check DIGITALOCEAN_SPACES_* settings.",
@@ -167,7 +170,7 @@ export async function deleteUploadedImageByUrl(
 			return { success: true };
 		}
 
-		if (!DO_ENDPOINT || !DO_REGION || !DO_KEY || !DO_SECRET || !BUCKET_NAME || !CDN_URL) {
+		if (!s3Client || !CDN_URL) {
 			return {
 				success: false,
 				error: "DigitalOcean Spaces env vars are missing. Check DIGITALOCEAN_SPACES_* settings.",
@@ -222,7 +225,7 @@ export async function deleteUploadedImageById(
 			return { success: false, error: "Image not found." };
 		}
 
-		if (!DO_ENDPOINT || !DO_REGION || !DO_KEY || !DO_SECRET || !BUCKET_NAME || !CDN_URL) {
+		if (!s3Client || !CDN_URL) {
 			return {
 				success: false,
 				error: "DigitalOcean Spaces env vars are missing. Check DIGITALOCEAN_SPACES_* settings.",
@@ -275,19 +278,26 @@ export async function getUploadedImagesOverview(): Promise<
 			return { success: false, error: "Unauthorized" };
 		}
 
-		const images = await prisma.uploadedImage.findMany({
-			where: { userId: user.id },
-			orderBy: { createdAt: "desc" },
-			select: {
-				id: true,
-				url: true,
-				fileSize: true,
-				mimeType: true,
-				createdAt: true,
-			},
-		});
+		// Fetch image list and storage total in parallel (avoids loading all rows just to sum).
+		const [images, storageResult] = await Promise.all([
+			prisma.uploadedImage.findMany({
+				where: { userId: user.id },
+				orderBy: { createdAt: "desc" },
+				select: {
+					id: true,
+					url: true,
+					fileSize: true,
+					mimeType: true,
+					createdAt: true,
+				},
+			}),
+			prisma.uploadedImage.aggregate({
+				where: { userId: user.id },
+				_sum: { fileSize: true },
+			}),
+		]);
 
-		const storageUsedBytes = images.reduce((sum, image) => sum + image.fileSize, 0);
+		const storageUsedBytes = storageResult._sum.fileSize ?? 0;
 		const remainingBytes = Math.max(0, MAX_TOTAL_STORAGE_BYTES - storageUsedBytes);
 
 		return {
@@ -322,7 +332,7 @@ export async function cleanupUnusedImages(): Promise<
 			return { success: false, error: "Unauthorized" };
 		}
 
-		if (!DO_ENDPOINT || !DO_REGION || !DO_KEY || !DO_SECRET || !BUCKET_NAME || !CDN_URL) {
+		if (!s3Client || !CDN_URL) {
 			return {
 				success: false,
 				error: "DigitalOcean Spaces env vars are missing. Check DIGITALOCEAN_SPACES_* settings.",
@@ -342,14 +352,17 @@ export async function cleanupUnusedImages(): Promise<
 				)
 		`;
 
-		for (const image of candidates) {
-			await s3Client.send(
-				new DeleteObjectCommand({
-					Bucket: BUCKET_NAME,
-					Key: image.key,
-				}),
-			);
-		}
+		// Delete all S3 objects in parallel instead of sequentially.
+		await Promise.allSettled(
+			candidates.map((image) =>
+				s3Client!.send(
+					new DeleteObjectCommand({
+						Bucket: BUCKET_NAME,
+						Key: image.key,
+					}),
+				)
+			),
+		);
 
 		if (candidates.length > 0) {
 			await prisma.uploadedImage.deleteMany({

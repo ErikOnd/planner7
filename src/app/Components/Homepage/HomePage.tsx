@@ -184,7 +184,12 @@ export default function HomePage() {
 					/>
 				);
 			case "workspace":
-				return <WorkspacePanel className={styles["mobile-workspace-panel"]} />;
+				return (
+					<WorkspacePanel
+						className={styles["mobile-workspace-panel"]}
+						onAfterSwitch={() => setSelectedContent("weekly")}
+					/>
+				);
 			case "profile":
 				return <ProfileContent />;
 			default:

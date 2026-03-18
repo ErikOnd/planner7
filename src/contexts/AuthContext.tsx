@@ -3,7 +3,6 @@
 import { clearAppBootstrapCache } from "@/lib/clientBootstrap";
 import { createClient } from "@utils/supabase/client";
 import { createContext, ReactNode, useContext, useEffect, useMemo } from "react";
-import { checkUserExists } from "../app/actions/profile";
 
 export type AuthResult = {
 	success: boolean;
@@ -59,22 +58,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	}, [supabase]);
 
 	const value = useMemo<AuthContextValue>(() => {
-		const syncUserProfile = async (): Promise<AuthResult> => {
-			await checkUserExists();
-			return successResult();
-		};
-
 		return {
 			logInWithPassword: async (email, password, captchaToken) => {
 				const { error } = await supabase.auth.signInWithPassword({
 					email,
 					password,
-					options: {
-						captchaToken,
-					},
+					options: { captchaToken },
 				});
 				if (error) return errorResult(error);
-				return syncUserProfile();
+				return successResult();
 			},
 			signUpWithPassword: async (email, password, displayName, captchaToken) => {
 				const { data, error } = await supabase.auth.signUp({
@@ -93,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 					return { ...successResult(), userNeedsConfirmation: true };
 				}
 
-				return syncUserProfile();
+				return successResult();
 			},
 			sendResetPasswordEmail: async (email, captchaToken) => {
 				const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -107,12 +99,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				const { error } = await supabase.auth.signInWithIdToken({
 					provider: "google",
 					token: idToken,
-					options: {
-						captchaToken,
-					},
+					options: { captchaToken },
 				});
 				if (error) return errorResult(error);
-				return syncUserProfile();
+				return successResult();
 			},
 			signOut: async () => {
 				const { error } = await supabase.auth.signOut();

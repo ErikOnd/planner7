@@ -65,6 +65,7 @@ export async function getDailyNote(date: string) {
 						date: noteDate,
 					},
 				},
+				select: { content: true },
 			});
 		},
 		onAuthError: () => null,

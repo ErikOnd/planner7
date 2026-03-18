@@ -28,7 +28,6 @@ model Workspace {
   userId    String   @db.Uuid
   name      String
   gradientPreset String @default("violet")
-  showWeekends Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
