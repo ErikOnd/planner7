@@ -25,23 +25,22 @@
 		padding-top: 1rem;
 	}
 
+	.mobile-content--page {
+		padding-top: 1rem;
+		padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+	}
+
 	.mobile-feedback-panel {
 		padding: 0;
 		min-height: 0;
 	}
 
-	.mobile-calendar-panel,
 	.mobile-workspace-panel {
 		min-height: 100%;
 	}
 
 	.desktop-view {
 		display: none;
-	}
-
-	.sidebar-content-section {
-		display: flex;
-		min-height: 100dvh;
 	}
 
 	.desktop-layout {

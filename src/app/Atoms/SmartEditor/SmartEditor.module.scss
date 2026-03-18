@@ -92,7 +92,6 @@
 	line-height: 1;
 	cursor: pointer;
 	flex: 0 0 auto;
-	flex-shrink: 0;
 	white-space: nowrap;
 	transition:
 		background-color variables.$transition-base,
@@ -156,10 +155,36 @@
 	stroke-linejoin: round;
 }
 
+.smart-editor__content-area {
+	position: relative;
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.smart-editor__placeholder {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	padding: 1.45rem 1.75rem 0 2.2rem;
+	color: var(--color-text-placeholder);
+	font-size: 1.02rem;
+	line-height: 1.68;
+	pointer-events: none;
+	user-select: none;
+
+	@media (max-width: 39.9375rem) {
+		padding: 1rem;
+		font-size: 1rem;
+		line-height: 1.62;
+	}
+}
+
 .smart-editor__contenteditable {
 	background-color: var(--color-surface);
 	color: var(--color-text-primary);
-	padding: 1.45rem 1.75rem 2.2rem;
+	padding: 1.45rem 1.75rem 2.2rem 2.2rem;
 	min-height: 13.5rem;
 	flex: 1 1 auto;
 	position: relative;

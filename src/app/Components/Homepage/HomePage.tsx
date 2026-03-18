@@ -8,10 +8,10 @@ import { useProfile } from "@/contexts/ProfileContext";
 import { logClientPerf } from "@/lib/perf";
 import { Button } from "@atoms/Button/Button";
 import { CalendarPanel } from "@atoms/CalendarOverlay/CalendarOverlay";
-import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
 import { DesktopContent } from "@components/DesktopContent/DesktopContent";
 import { DesktopNavigation } from "@components/DesktopNavigation/DesktopNavigation";
 import { FeedbackPanel } from "@components/FeedbackDialog/FeedbackDialog";
+import { MobileAddTaskPage } from "@components/MobileAddTaskPage/MobileAddTaskPage";
 import { MobileNavigation, type MobileSection } from "@components/MobileNavigation/MobileNavigation";
 import { ProfileContent } from "@components/ProfileContent/ProfileContent";
 import { RememberContent } from "@components/RememberContent/RememberContent";
@@ -31,7 +31,6 @@ export default function HomePage() {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [baseDate, setBaseDate] = useState<Date>(new Date());
 	const [highlightedDate, setHighlightedDate] = useState<Date | null>(null);
-	const [isMobileAddOpen, setIsMobileAddOpen] = useState(false);
 	const [isNamePromptOpen, setIsNamePromptOpen] = useState(false);
 	const [nameInput, setNameInput] = useState("");
 	const [isSavingName, setIsSavingName] = useState(false);
@@ -172,6 +171,14 @@ export default function HomePage() {
 				return <WeeklyContent selectedDate={selectedDate} />;
 			case "remember":
 				return <RememberContent />;
+			case "add-task":
+				return (
+					<MobileAddTaskPage
+						onDone={() => setSelectedContent("remember")}
+						onOptimisticAdd={addTodo}
+						onSuccess={silentRefresh}
+					/>
+				);
 			case "feedback":
 				return <FeedbackPanel className={styles["mobile-feedback-panel"]} />;
 			case "calendar":
@@ -180,7 +187,7 @@ export default function HomePage() {
 						onDateSelect={handleMobileCalendarDateSelect}
 						activeDate={selectedDate}
 						showWeekends={showWeekends}
-						className={styles["mobile-calendar-panel"]}
+						page
 					/>
 				);
 			case "workspace":
@@ -210,25 +217,18 @@ export default function HomePage() {
 							baseDate={baseDate}
 							setBaseDateAction={handleMobileWeekChange}
 							showWeekends={showWeekends}
-							onOpenAddAction={() => setIsMobileAddOpen(true)}
+							onOpenAddAction={() => setSelectedContent("add-task")}
 						/>
 						<div
 							className={clsx(
 								styles["mobile-content"],
-								selectedContent === "weekly"
-									? styles["mobile-content--planner"]
-									: styles["mobile-content--secondary"],
+								selectedContent === "weekly" && styles["mobile-content--planner"],
+								selectedContent !== "weekly" && styles["mobile-content--secondary"],
+								(selectedContent === "calendar" || selectedContent === "add-task") && styles["mobile-content--page"],
 							)}
 						>
 							{renderMobileContent()}
 						</div>
-						<AddTaskModal
-							open={isMobileAddOpen}
-							onOpenAction={setIsMobileAddOpen}
-							renderTrigger={false}
-							onOptimisticAdd={addTodo}
-							onSuccess={silentRefresh}
-						/>
 					</div>
 				)
 				: (

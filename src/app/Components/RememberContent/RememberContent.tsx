@@ -5,9 +5,9 @@ import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { Button } from "@atoms/Button/Button";
 import Checkbox from "@atoms/Checkbox/Checkbox";
 import { Text } from "@atoms/Text/Text";
-import { AddTaskModal } from "@components/AddTaskModal/AddTaskModal";
 import { DeleteTodoDialog } from "@components/DeleteTodoDialog/DeleteTodoDialog";
 import { DraggableTaskItem } from "@components/DraggableTaskItem/DraggableTaskItem";
+import { MobileAddTaskPage } from "@components/MobileAddTaskPage/MobileAddTaskPage";
 import { closestCenter, DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useBacklogController } from "@hooks/useBacklogController";
@@ -16,7 +16,7 @@ import styles from "./RememberContent.module.scss";
 
 export function RememberContent() {
 	const todosState = useBacklog();
-	const { addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
+	const { updateTodo, updateTodoCompletion, silentRefresh } = todosState;
 	const { activeWorkspaceId } = useWorkspace();
 	const {
 		isAddOpen,
@@ -38,6 +38,17 @@ export function RememberContent() {
 		handleModalChange,
 		handleDelete,
 	} = useBacklogController(todosState, activeWorkspaceId);
+
+	if (isAddOpen && editingTodo) {
+		return (
+			<MobileAddTaskPage
+				editMode={{ todoId: editingTodo.id, initialText: editingTodo.text }}
+				onDone={() => handleModalChange(false)}
+				onOptimisticUpdate={updateTodo}
+				onSuccess={silentRefresh}
+			/>
+		);
+	}
 
 	return (
 		<div className={styles["remember-content"]}>
@@ -87,20 +98,6 @@ export function RememberContent() {
 			>
 				Completed ({completedTodos.length})
 			</button>
-			<AddTaskModal
-				open={isAddOpen}
-				onOpenAction={handleModalChange}
-				renderTrigger={false}
-				editMode={editingTodo
-					? {
-						todoId: editingTodo.id,
-						initialText: editingTodo.text,
-					}
-					: undefined}
-				onOptimisticAdd={addTodo}
-				onOptimisticUpdate={updateTodo}
-				onSuccess={silentRefresh}
-			/>
 			<Dialog.Root open={isCompletedOpen} onOpenChange={setIsCompletedOpen}>
 				<Dialog.Portal>
 					<Dialog.Overlay className={styles["completed-overlay"]} />

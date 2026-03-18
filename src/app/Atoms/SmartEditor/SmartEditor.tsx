@@ -212,9 +212,7 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 			}}
 		>
 			<LexicalComposer initialConfig={initialConfig}>
-				<div>
-					{showEditorToolbar && <ToolbarPlugin />}
-				</div>
+				{showEditorToolbar && <ToolbarPlugin />}
 				{activeImageUploads > 0 && (
 					<div className={styles["smart-editor__upload-status"]} role="status" aria-live="polite">
 						Uploading image{activeImageUploads > 1 ? "s" : ""}...
@@ -225,22 +223,28 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 						{imageUploadError}
 					</div>
 				)}
-				<RichTextPlugin
-					contentEditable={
-						<ContentEditable
-							className={styles["smart-editor__contenteditable"]}
-							aria-label={ariaLabel || "Text editor"}
-							spellCheck={true}
-							autoCorrect="on"
-							autoCapitalize="sentences"
-							data-gramm="false"
-							data-gramm_editor="false"
-							data-enable-grammarly="false"
-						/>
-					}
-					placeholder={null}
-					ErrorBoundary={LexicalErrorBoundary}
-				/>
+				<div className={styles["smart-editor__content-area"]}>
+					<RichTextPlugin
+						contentEditable={
+							<ContentEditable
+								className={styles["smart-editor__contenteditable"]}
+								aria-label={ariaLabel || "Text editor"}
+								spellCheck={true}
+								autoCorrect="on"
+								autoCapitalize="sentences"
+								data-gramm="false"
+								data-gramm_editor="false"
+								data-enable-grammarly="false"
+							/>
+						}
+						placeholder={
+							<div className={styles["smart-editor__placeholder"]}>
+								Start writing, or type / for commands…
+							</div>
+						}
+						ErrorBoundary={LexicalErrorBoundary}
+					/>
+				</div>
 				<HistoryPlugin />
 				<CodeHighlightingPlugin />
 				<TabIndentationPlugin />

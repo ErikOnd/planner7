@@ -11,6 +11,7 @@ type CalendarBaseProps = {
 	activeDate?: Date;
 	showWeekends?: boolean;
 	className?: string;
+	page?: boolean;
 };
 
 type CalendarOverlayProps = CalendarBaseProps & {
@@ -66,6 +67,7 @@ export function CalendarPanel({
 	activeDate,
 	showWeekends = true,
 	className,
+	page = false,
 }: CalendarBaseProps) {
 	const {
 		now,
@@ -142,7 +144,6 @@ export function CalendarPanel({
 						}
 					}}
 					disabled={isDisabled}
-					aria-disabled={isDisabled}
 					aria-current={isSelected ? "date" : undefined}
 					type="button"
 				>
@@ -160,12 +161,8 @@ export function CalendarPanel({
 		return days;
 	};
 
-	const handleGoToToday = () => {
-		onDateSelect(now);
-	};
-
 	return (
-		<div className={clsx(styles["calendar-panel"], className)}>
+		<div className={clsx(styles["calendar-panel"], page && styles["calendar-panel--page"], className)}>
 			<div className={styles["calendar-header"]}>
 				<button
 					type="button"
@@ -221,7 +218,7 @@ export function CalendarPanel({
 				<button
 					type="button"
 					className={styles["calendar-today-button"]}
-					onClick={handleGoToToday}
+					onClick={() => onDateSelect(now)}
 				>
 					Go to Today
 				</button>

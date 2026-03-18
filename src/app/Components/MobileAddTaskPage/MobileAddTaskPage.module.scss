@@ -1,0 +1,80 @@
+@use "../../styles/variables" as variables;
+
+.page {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+}
+
+.title {
+	font-size: 1.6rem;
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	color: var(--color-text);
+	margin: 0;
+}
+
+.description {
+	margin: 0;
+	font-size: 0.95rem;
+	color: var(--color-text-muted);
+	font-weight: 500;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.textarea {
+	width: 100%;
+	padding: 1rem;
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-xl);
+	background: var(--color-bg-surface);
+	color: var(--color-text-primary);
+	font: inherit;
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1.6;
+	resize: none;
+	transition:
+		border-color variables.$transition-base,
+		box-shadow variables.$transition-base;
+
+	&::placeholder {
+		color: var(--color-text-muted);
+	}
+
+	&:focus {
+		outline: none;
+		border-color: var(--color-primary-hover);
+		box-shadow: var(--ring-focus);
+	}
+}
+
+.actions {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+}
+
+.save-btn,
+.cancel-btn {
+	width: 100%;
+	border-radius: var(--radius-xl);
+}
+
+.cancel-btn {
+	border: var(--border-width-base) solid var(--color-border);
+	background: var(--color-bg-surface);
+	box-shadow: var(--shadow-control);
+	justify-content: center;
+}

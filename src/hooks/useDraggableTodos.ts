@@ -1,14 +1,7 @@
 "use client";
 
-import {
-	DragEndEvent,
-	DragStartEvent,
-	KeyboardSensor,
-	MouseSensor,
-	TouchSensor,
-	useSensor,
-	useSensors,
-} from "@dnd-kit/core";
+import { KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
+import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import type { GeneralTodo } from "@prisma/client";
 import { useEffect, useState } from "react";

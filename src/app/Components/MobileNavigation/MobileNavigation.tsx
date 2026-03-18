@@ -7,7 +7,7 @@ import clsx from "clsx";
 import { type CSSProperties, useEffect, useRef } from "react";
 import styles from "./MobileNavigation.module.scss";
 
-export type MobileSection = "weekly" | "remember" | "calendar" | "feedback" | "workspace" | "profile";
+export type MobileSection = "weekly" | "remember" | "calendar" | "feedback" | "workspace" | "profile" | "add-task";
 
 type MobileNavigationProps = {
 	content: MobileSection;
@@ -141,14 +141,16 @@ export function MobileNavigation(props: MobileNavigationProps) {
 				</div>
 			)}
 
-			<button
-				type="button"
-				className={styles["mobile-add-button"]}
-				onClick={onOpenAddAction}
-				aria-label="Add task"
-			>
-				<Icon name="plus" size={26} />
-			</button>
+			{content === "remember" && (
+				<button
+					type="button"
+					className={styles["mobile-add-button"]}
+					onClick={onOpenAddAction}
+					aria-label="Add task"
+				>
+					<Icon name="plus" size={26} />
+				</button>
+			)}
 
 			<div className={styles["bottom-nav"]}>
 				{appNavItems.slice(0, 3).map((item) => (
@@ -163,10 +165,9 @@ export function MobileNavigation(props: MobileNavigationProps) {
 						aria-label={item.label}
 						aria-current={item.value === content ? "page" : undefined}
 					>
-						<Icon name={item.icon} size={22} className={styles["bottom-nav-icon"]} />
+						<Icon name={item.icon} size={27} className={styles["bottom-nav-icon"]} />
 					</button>
 				))}
-				<div className={styles["bottom-nav-spacer"]} aria-hidden="true" />
 				{appNavItems.slice(3, 4).map((item) => (
 					<button
 						key={item.label}
@@ -179,7 +180,7 @@ export function MobileNavigation(props: MobileNavigationProps) {
 						aria-label={item.label}
 						aria-current={item.value === content ? "page" : undefined}
 					>
-						<Icon name={item.icon} size={22} className={styles["bottom-nav-icon"]} />
+						<Icon name={item.icon} size={27} className={styles["bottom-nav-icon"]} />
 					</button>
 				))}
 				<button
@@ -213,7 +214,7 @@ export function MobileNavigation(props: MobileNavigationProps) {
 						aria-label={item.label}
 						aria-current={item.value === content ? "page" : undefined}
 					>
-						<Icon name={item.icon} size={22} className={styles["bottom-nav-icon"]} />
+						<Icon name={item.icon} size={27} className={styles["bottom-nav-icon"]} />
 					</button>
 				))}
 			</div>

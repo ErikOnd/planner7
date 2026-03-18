@@ -194,6 +194,43 @@
 	}
 }
 
+.calendar-panel--page {
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+	padding: 0.5rem 0 0;
+	overflow: visible;
+	min-height: 0;
+
+	.calendar-header {
+		margin-bottom: 0.85rem;
+	}
+
+	.calendar-grid {
+		gap: 0.5rem;
+	}
+
+	.calendar-days {
+		grid-template-rows: repeat(6, minmax(2.6rem, auto));
+		gap: 0.15rem 0.1rem;
+	}
+
+	.calendar-day,
+	.calendar-day-empty {
+		min-height: 2.6rem;
+	}
+
+	.calendar-day {
+		font-size: 0.95rem;
+	}
+
+	.calendar-footer {
+		margin-top: 0.75rem;
+		padding-top: 0.75rem;
+	}
+}
+
 .calendar-footer {
 	margin-top: 1.5rem;
 	padding-top: 1.4rem;

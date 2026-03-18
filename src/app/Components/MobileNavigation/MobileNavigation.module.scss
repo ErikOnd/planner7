@@ -144,9 +144,9 @@
 
 .mobile-add-button {
 	position: fixed;
-	left: 50%;
-	bottom: calc(2.3rem + env(safe-area-inset-bottom));
-	transform: translateX(-50%);
+	right: 1.25rem;
+	bottom: calc(5rem + env(safe-area-inset-bottom));
+	transform: none;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -182,7 +182,7 @@
 	bottom: 0;
 	z-index: var(--z-sticky);
 	display: grid;
-	grid-template-columns: repeat(7, minmax(0, 1fr));
+	grid-template-columns: repeat(6, minmax(0, 1fr));
 	align-items: end;
 	gap: 0.1rem;
 	padding: 0.55rem 0.5rem calc(0.55rem + env(safe-area-inset-bottom));
@@ -253,18 +253,3 @@
 	border-color: var(--color-primary-hover);
 }
 
-.bottom-nav-label {
-	font-size: 0.58rem;
-	line-height: 1;
-	font-weight: 700;
-	letter-spacing: 0.03em;
-	text-transform: uppercase;
-}
-
-.bottom-nav-item--utility {
-	color: var(--color-sidebar-text-soft);
-}
-
-.bottom-nav-spacer {
-	visibility: hidden;
-}
