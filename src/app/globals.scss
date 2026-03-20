@@ -1,5 +1,6 @@
 @use "styles/mixins" as mixins;
 @use "styles/variables" as variables;
+@use "./styles/typography" as typography;
 
 @font-face {
 	font-family: 'Inter';
@@ -248,7 +249,7 @@
 }
 
 html {
-	font-size: 100%;
+	@include typography.root-size;
 	scroll-behavior: smooth;
 }
 

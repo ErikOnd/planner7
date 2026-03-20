@@ -127,7 +127,7 @@
 }
 
 .day-card-label {
-	font-size: 0.7rem;
+	@include typography.text-2xs;
 	font-weight: 800;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
@@ -135,7 +135,7 @@
 }
 
 .day-card-number {
-	font-size: 1.48rem;
+	@include typography.headline-3;
 	line-height: 1;
 	font-weight: 800;
 	letter-spacing: -0.05em;
@@ -238,7 +238,7 @@
 	border-radius: var(--radius-sm);
 	background: var(--color-surface-sidebar-active);
 	color: var(--color-text-inverse);
-	font-size: 0.78rem;
+	@include typography.text-xs;
 	font-weight: 800;
 	line-height: 1;
 	transition:
@@ -252,4 +252,3 @@
 	color: var(--color-text-primary);
 	border-color: var(--color-primary-hover);
 }
-

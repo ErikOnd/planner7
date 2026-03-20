@@ -1,5 +1,6 @@
 @use "../../styles/mixins" as mixins;
 @use "../../styles/variables" as variables;
+@use "../../styles/typography" as typography;
 
 .landing-page {
 	min-height: 100dvh;
@@ -47,12 +48,13 @@
 }
 
 .logo-main {
-	font-size: 1.5rem;
+	@include typography.headline-3;
+	color: inherit;
 	line-height: 1;
 }
 
 .logo-number {
-	font-size: 1rem;
+	@include typography.text-base;
 	font-weight: 500;
 	transform: translate(-0.4rem, 0.15rem);
 }
@@ -79,7 +81,7 @@
 
 .landing-page .hero .hero-headline {
 	margin-bottom: var(--space-2xl);
-	font-size: clamp(2.8rem, 10vw, 8rem);
+	@include typography.display-hero;
 	line-height: 1.06;
 	color: var(--color-text-inverse);
 }
@@ -105,7 +107,7 @@
 	margin-bottom: var(--space-md);
 	text-transform: uppercase;
 	letter-spacing: 0.08em;
-	font-size: 0.8125rem;
+	@include typography.text-xs;
 }
 
 .landing-page .section-title {
@@ -201,7 +203,7 @@
 	align-items: center;
 	justify-content: center;
 	font-weight: 700;
-	font-size: 1.125rem;
+	@include typography.text-xl;
 }
 
 .step-content {

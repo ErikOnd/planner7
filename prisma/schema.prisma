@@ -17,10 +17,12 @@ model Profile {
   activeWorkspaceId String?        @db.Uuid
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
-  workspaces       Workspace[]
-  dailyNotes       DailyNote[]
-  generalTodos     GeneralTodo[]
-  uploadedImages   UploadedImage[]
+  workspaces         Workspace[]
+  dailyNotes         DailyNote[]
+  generalTodos       GeneralTodo[]
+  uploadedImages     UploadedImage[]
+  pushSubscriptions  PushSubscription[]
+  reminders          Reminder[]
 }
 
 model Workspace {
@@ -72,6 +74,33 @@ model GeneralTodo {
 
   @@index([userId, workspaceId, completed, order])
   @@index([userId, workspaceId, updatedAt(sort: Desc)])
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  profile Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Reminder {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @db.Uuid
+  message     String
+  scheduledAt DateTime
+  sentAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  profile Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([scheduledAt, sentAt])
+  @@index([userId])
 }
 
 model UploadedImage {

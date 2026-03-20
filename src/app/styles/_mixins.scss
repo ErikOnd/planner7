@@ -32,14 +32,6 @@ $breakpoints: (
 	}
 }
 
-
-@mixin responsive-font(
-	$min-size,
-	$max-size,
-) {
-	font-size: clamp-builder($min-size, $max-size);
-}
-
 @function clamp-builder($min-size, $max-size) {
 	$min-vw: 76.7;
 	$max-vw: 160;

@@ -79,8 +79,7 @@
 	color: var(--color-text-primary);
 
 	:global(.text) {
-		@include typography.text-xl;
-		font-size: clamp(2.4rem, 4vw, 3.3rem);
+		@include typography.display-2xl;
 		font-weight: 800;
 		letter-spacing: -0.04em;
 		line-height: 1;
@@ -90,7 +89,7 @@
 .description {
 	margin: 0;
 	color: var(--color-text-secondary);
-	font-size: 1.15rem;
+	@include typography.text-xl;
 	font-weight: 500;
 	line-height: 1.45;
 }
@@ -117,7 +116,7 @@
 	background: var(--color-bg-main);
 	color: var(--color-text-primary);
 	font: inherit;
-	font-size: 1.05rem;
+	@include typography.text-lg;
 	font-weight: 500;
 	line-height: 1.6;
 	transition:
@@ -127,7 +126,7 @@
 
 	&::placeholder {
 		color: var(--color-text-muted);
-		font-size: 1.1rem;
+		@include typography.text-xl;
 	}
 
 	&:focus {
@@ -157,7 +156,7 @@
 	background: transparent;
 	box-shadow: none;
 	color: var(--color-text-secondary);
-	font-size: 1.15rem;
+	@include typography.text-xl;
 	font-weight: 700;
 	justify-content: flex-start;
 
@@ -201,19 +200,19 @@
 
 	.title {
 		:global(.text) {
-			font-size: 1.8rem;
+			@include typography.display-sm;
 		}
 	}
 
 	.description {
-		font-size: 0.98rem;
+		@include typography.text-base;
 	}
 
 	.task-input {
 		min-height: 8.3rem;
 		padding: 1.2rem 1rem;
 		border-radius: var(--radius-xl);
-		font-size: 1rem;
+		@include typography.text-base;
 	}
 
 	.button-group {
@@ -227,7 +226,7 @@
 		width: 100%;
 		min-width: 0;
 		border-radius: var(--radius-xl);
-		font-size: 1.05rem;
+		@include typography.text-lg;
 	}
 
 	.close-action {

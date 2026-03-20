@@ -105,7 +105,7 @@
 	.quick-add-text {
 		display: inline-flex;
 		align-items: center;
-		font-size: 1.02rem;
+		@include typography.text-lg;
 		font-weight: 700;
 		line-height: 1;
 	}
@@ -115,7 +115,7 @@
 		align-items: center;
 		justify-content: space-between;
 		color: var(--color-sidebar-icon-soft);
-		font-size: 0.78rem;
+		@include typography.text-xs;
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
 		font-weight: 700;
@@ -130,7 +130,7 @@
 		border: var(--border-width-base) solid var(--color-sidebar-border);
 		border-radius: var(--radius-pill);
 		padding: 0.15rem 0.5rem;
-		font-size: 0.7rem;
+		@include typography.text-2xs;
 		color: var(--color-sidebar-text-muted);
 	}
 
@@ -148,7 +148,7 @@
 	}
 
 	.section-title {
-		font-size: var(--font-size-sm);
+		@include typography.text-sm;
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
 		color: var(--color-sidebar-text-muted);
@@ -163,7 +163,7 @@
 	}
 
 	.remember-header {
-		font-size: 1.25rem;
+		@include typography.text-xl;
 		font-weight: 700;
 		color: var(--color-text-inverse);
 	}
@@ -177,7 +177,7 @@
 	.add-header-button {
 		padding: 0.65rem 1rem;
 		min-height: var(--control-size-base);
-		font-size: var(--font-size-sm);
+		@include typography.text-sm;
 	}
 
 	.add-label {
@@ -276,7 +276,7 @@
 	}
 
 	.completed-link-text {
-		font-size: 1.08rem;
+		@include typography.text-lg;
 		font-weight: 500;
 		letter-spacing: 0;
 	}
@@ -333,7 +333,7 @@
 	color: var(--color-text);
 	font-weight: 700;
 	letter-spacing: 0.01em;
-	font-size: 1.4rem;
+	@include typography.text-xl;
 }
 
 .completed-close {
@@ -381,7 +381,7 @@
 
 .completed-date {
 	color: var(--color-text-muted);
-	font-size: var(--font-size-xs);
+	@include typography.text-xs;
 	letter-spacing: 0.01em;
 	margin-left: 2.5rem;
 }

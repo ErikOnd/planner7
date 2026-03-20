@@ -1,4 +1,5 @@
 @use "../../styles/variables" as variables;
+@use "../../styles/typography" as typography;
 
 .image-library-overlay {
 	position: fixed;
@@ -48,7 +49,7 @@
 
 .image-library-title {
 	margin: 0;
-	font-size: 1.9rem;
+	@include typography.display-sm;
 	font-weight: 800;
 	letter-spacing: -0.03em;
 	color: var(--color-text-primary);
@@ -92,7 +93,7 @@
 }
 
 .image-library-storage-text {
-	font-size: 0.96rem;
+	@include typography.text-base;
 	font-weight: 600;
 	color: var(--color-text-secondary);
 }
@@ -173,7 +174,7 @@
 }
 
 .image-library-file-name {
-	font-size: 0.96rem;
+	@include typography.text-base;
 	font-weight: 700;
 	line-height: 1.2;
 	color: var(--color-text-primary);
@@ -187,7 +188,7 @@
 	align-items: center;
 	flex-wrap: nowrap;
 	gap: 0.3rem;
-	font-size: var(--font-size-2xs);
+	@include typography.text-2xs;
 	font-weight: 550;
 	color: var(--color-text-muted);
 	line-height: 1.2;
@@ -247,7 +248,7 @@
 	padding: 1rem 1.6rem 1.2rem;
 	border-top: var(--border-width-base) solid var(--color-border);
 	text-align: center;
-	font-size: 0.85rem;
+	@include typography.text-sm;
 	font-weight: 600;
 	color: var(--color-text-muted);
 }
@@ -264,7 +265,7 @@
 	}
 
 	.image-library-title {
-		font-size: 1.45rem;
+		@include typography.headline-2;
 	}
 
 	.image-library-storage {

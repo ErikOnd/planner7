@@ -19,6 +19,7 @@ import { Sidebar } from "@components/SideBar/Sidebar";
 import { WeeklyContent } from "@components/WeeklyContent/WeeklyContent";
 import { WorkspacePanel } from "@components/WorkspaceSwitcher/WorkspaceSwitcher";
 import { useMediaQuery } from "@hooks/useMediaQuery";
+import { usePushSubscription } from "@hooks/usePushSubscription";
 import { useWeekDisplayPreference } from "@hooks/useWeekDisplayPreference";
 import * as Dialog from "@radix-ui/react-dialog";
 import { getCurrentWeek } from "@utils/getCurrentWeek";
@@ -26,6 +27,7 @@ import clsx from "clsx";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
 export default function HomePage() {
+	usePushSubscription();
 	const isMobile = useMediaQuery("(max-width: 767px)");
 	const [selectedContent, setSelectedContent] = useState<MobileSection>("weekly");
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());

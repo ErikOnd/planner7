@@ -1,4 +1,5 @@
 @use "../../styles/variables" as variables;
+@use "../../styles/typography" as typography;
 
 @mixin button-base {
 	display: inline-flex;
@@ -27,10 +28,9 @@
 	}
 }
 
-@mixin button-size($height-var, $padding-var, $font-size: var(--font-size-base)) {
+@mixin button-size($height-var, $padding-var) {
 	min-height: var(#{$height-var});
 	padding-inline: var(#{$padding-var});
-	font-size: $font-size;
 }
 
 @mixin button-primary {
@@ -142,6 +142,7 @@
 .button {
 	@include button-base;
 	@include button-size("--button-height-base", "--button-padding-inline-base");
+	@include typography.text-base;
 }
 
 .button-content {
@@ -152,15 +153,18 @@
 }
 
 .size-sm {
-	@include button-size("--button-height-sm", "--button-padding-inline-sm", var(--font-size-sm));
+	@include button-size("--button-height-sm", "--button-padding-inline-sm");
+	@include typography.text-sm;
 }
 
 .size-base {
 	@include button-size("--button-height-base", "--button-padding-inline-base");
+	@include typography.text-base;
 }
 
 .size-lg {
-	@include button-size("--button-height-lg", "--button-padding-inline-lg", var(--font-size-base));
+	@include button-size("--button-height-lg", "--button-padding-inline-lg");
+	@include typography.text-base;
 }
 
 .icon-button {

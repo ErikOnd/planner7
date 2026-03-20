@@ -152,7 +152,7 @@
 	justify-content: center;
 	background: var(--color-surface-sidebar-active);
 	color: var(--color-text-inverse);
-	font-size: 0.72rem;
+	@include typography.text-2xs;
 	font-weight: 800;
 	line-height: 1;
 	transition:
@@ -162,7 +162,7 @@
 }
 
 .workspace-nav-label {
-	font-size: 0.58rem;
+	@include typography.text-2xs;
 	line-height: 1;
 	font-weight: 700;
 	letter-spacing: 0.03em;
@@ -226,7 +226,7 @@
 	align-items: center;
 	justify-content: center;
 	font-weight: 700;
-	font-size: 1.32rem;
+	@include typography.text-xl;
 	line-height: 1;
 	color: var(--color-text-primary);
 	background: var(--color-primary);
@@ -256,7 +256,7 @@
 .workspace-card-name {
 	@include typography.text-lg;
 	font-weight: 700;
-	font-size: 1.02rem;
+	@include typography.text-lg;
 	color: var(--color-text);
 	white-space: nowrap;
 	overflow: hidden;

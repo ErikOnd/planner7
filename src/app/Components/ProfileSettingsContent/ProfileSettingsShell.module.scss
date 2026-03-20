@@ -68,7 +68,7 @@
 	border-radius: var(--radius-lg);
 	cursor: pointer;
 	color: var(--color-text-secondary);
-	font-size: var(--font-size-base);
+	@include typography.text-base;
 	font-weight: 600;
 	transition:
 		background-color variables.$transition-base,
@@ -480,7 +480,7 @@
 	border-radius: var(--radius-md);
 	background-color: var(--color-surface-control);
 	color: var(--color-text);
-	font-size: var(--font-size-base);
+	@include typography.text-base;
 	transition:
 		border-color variables.$transition-base,
 		box-shadow variables.$transition-base,
@@ -716,7 +716,7 @@
 		border-color: transparent;
 		background: transparent;
 		color: var(--color-text-muted);
-		font-size: var(--font-size-sm);
+		@include typography.text-sm;
 		font-weight: 700;
 		box-shadow: none;
 
@@ -757,7 +757,7 @@
 	.mobile-section-label {
 		display: block;
 		padding-inline: 0.15rem;
-		font-size: var(--font-size-2xs);
+		@include typography.text-2xs;
 		color: var(--color-text-muted);
 		font-weight: 800;
 		letter-spacing: 0.08em;
@@ -785,7 +785,7 @@
 	}
 
 	.form-label {
-		font-size: 0.68rem;
+		@include typography.text-2xs;
 	}
 
 	.form-input {
@@ -800,18 +800,18 @@
 	}
 
 	.notification-label {
-		font-size: var(--font-size-sm);
+		@include typography.text-sm;
 		font-weight: 700;
 	}
 
 	.notification-description {
-		font-size: var(--font-size-xs);
+		@include typography.text-xs;
 	}
 
 	.notification-badge-mobile {
 		display: inline-flex;
 		padding: 0.24rem 0.42rem;
-		font-size: 0.62rem;
+		@include typography.text-2xs;
 	}
 
 	.mobile-card-note {

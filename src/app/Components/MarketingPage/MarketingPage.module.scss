@@ -1,5 +1,6 @@
 @use "../../styles/mixins" as mixins;
 @use "../../styles/variables" as variables;
+@use "../../styles/typography" as typography;
 
 .page {
 	min-height: 100dvh;
@@ -59,7 +60,7 @@
 	font-weight: 700;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
-	font-size: 0.8125rem;
+	@include typography.text-xs;
 }
 
 .eyebrow {
@@ -192,7 +193,7 @@
 	background: var(--color-primary);
 	color: var(--color-bg-sidebar);
 	font-weight: 700;
-	font-size: 1rem;
+	@include typography.text-base;
 }
 
 .timelineText {

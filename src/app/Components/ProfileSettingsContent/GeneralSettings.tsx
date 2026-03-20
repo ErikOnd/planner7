@@ -251,6 +251,39 @@ export function GeneralSettings({
 				</section>
 			</div>
 
+			{handleLogout && (
+				<div className={styles["mobile-section-block"]}>
+					<div className={styles["mobile-section-label"]}>Sign Out</div>
+					<section className={clsx(styles["settings-section"], styles["settings-section--mobile-compact"])}>
+						<div className={styles["section-card-header"]}>
+							<div className={styles["section-title-group"]}>
+								<span className={styles["section-icon"]}>
+									<Icon name="log-out" size={sectionIconSize} className={styles["section-icon-glyph"]} />
+								</span>
+								<div className={styles["section-title-stack"]}>
+									<h3 className={styles["section-heading"]}>Sign Out</h3>
+									<p className={styles["section-description"]}>End your current Planner7 session on this device.</p>
+								</div>
+							</div>
+						</div>
+						<div className={styles["section-content"]}>
+							<p className={styles["mobile-card-note"]}>Sign out of your account</p>
+							<div className={`${styles["form-actions"]} ${styles["form-actions--start"]}`}>
+								<Button
+									variant="primary"
+									size="lg"
+									disabled={isLoggingOut}
+									onClick={handleLogoutClick}
+									className={styles["mobile-primary-cta"]}
+								>
+									{isLoggingOut ? "Logging out..." : "Logout"}
+								</Button>
+							</div>
+						</div>
+					</section>
+				</div>
+			)}
+
 			<div className={styles["mobile-section-block"]}>
 				<div className={styles["mobile-section-label"]}>Delete Account</div>
 				<section className={clsx(styles["settings-section"], styles["settings-section--mobile-compact"])}>
@@ -333,39 +366,6 @@ export function GeneralSettings({
 					</div>
 				</section>
 			</div>
-
-			{handleLogout && (
-				<div className={styles["mobile-section-block"]}>
-					<div className={styles["mobile-section-label"]}>Sign Out</div>
-					<section className={clsx(styles["settings-section"], styles["settings-section--mobile-compact"])}>
-						<div className={styles["section-card-header"]}>
-							<div className={styles["section-title-group"]}>
-								<span className={styles["section-icon"]}>
-									<Icon name="log-out" size={sectionIconSize} className={styles["section-icon-glyph"]} />
-								</span>
-								<div className={styles["section-title-stack"]}>
-									<h3 className={styles["section-heading"]}>Sign Out</h3>
-									<p className={styles["section-description"]}>End your current Planner7 session on this device.</p>
-								</div>
-							</div>
-						</div>
-						<div className={styles["section-content"]}>
-							<p className={styles["mobile-card-note"]}>Sign out of your account</p>
-							<div className={`${styles["form-actions"]} ${styles["form-actions--start"]}`}>
-								<Button
-									variant="primary"
-									size="lg"
-									disabled={isLoggingOut}
-									onClick={handleLogoutClick}
-									className={styles["mobile-primary-cta"]}
-								>
-									{isLoggingOut ? "Logging out..." : "Logout"}
-								</Button>
-							</div>
-						</div>
-					</section>
-				</div>
-			)}
 		</div>
 	);
 }

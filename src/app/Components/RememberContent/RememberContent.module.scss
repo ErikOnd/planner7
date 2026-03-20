@@ -1,5 +1,6 @@
 @use "../../styles/mixins" as mixins;
 @use "../../styles/variables" as variables;
+@use "../../styles/typography" as typography;
 
 .remember-content {
 	display: flex;
@@ -93,7 +94,7 @@
 
 .completed-title {
 	font-weight: 700;
-	font-size: var(--font-size-xl);
+	@include typography.text-xl;
 	color: var(--color-text);
 }
 
@@ -142,7 +143,7 @@
 
 .completed-date {
 	color: var(--color-text-muted);
-	font-size: var(--font-size-xs);
+	@include typography.text-xs;
 	letter-spacing: 0.01em;
 	margin-left: 2.5rem;
 }

@@ -1,5 +1,4 @@
 @use "../../styles/mixins" as mixins;
-@use "../../styles/variables" as variables;
 
 .spinner {
 	position: relative;
@@ -10,102 +9,22 @@
 	min-height: 4.375rem;
 }
 
-.pac-man {
-	position: relative;
+.wheel {
 	display: block;
-	width: 4.375rem;
-	height: 2.1875rem;
-	margin: 0 auto;
-	border-radius: 100em 100em 0 0;
-	background: var(--color-primary);
-	transform-origin: bottom;
-	animation: eating-top 0.5s infinite;
-}
-
-.pac-man::before {
-	content: "";
-	position: absolute;
-	left: 0;
-	top: 2.1875rem;
-	display: block;
-	width: 4.375rem;
-	height: 2.1875rem;
-	border-radius: 0 0 100em 100em;
-	background: var(--color-primary);
-	transform-origin: top;
-	transform: rotate(80deg);
-	animation: eating-bottom 0.5s infinite;
-}
-
-.pac-man::after {
-	content: "";
-	position: absolute;
-	left: 1.5625rem;
-	top: 1.5625rem;
-	display: block;
-	width: 1.25rem;
-	height: 1.25rem;
-	border-radius: var(--radius-rounded);
-	transform-origin: center;
-	animation:
-		center 0.5s infinite,
-		ball 0.5s -0.33s infinite linear;
+	width: 2.5rem;
+	height: 2.5rem;
+	border: 3px solid #e5e5e5;
+	border-top-color: #3a3b39;
+	border-radius: 50%;
+	animation: spin 0.75s linear infinite;
 }
 
 .visuallyHidden {
 	@include mixins.visually-hidden;
 }
 
-@keyframes eating-top {
-	0% {
-		transform: rotate(-40deg);
-	}
-	50% {
-		transform: rotate(0deg);
-	}
-	100% {
-		transform: rotate(-40deg);
-	}
-}
-
-@keyframes eating-bottom {
-	0% {
-		transform: rotate(80deg);
-	}
-	50% {
-		transform: rotate(0deg);
-	}
-	100% {
-		transform: rotate(80deg);
-	}
-}
-
-@keyframes center {
-	0% {
-		transform: rotate(40deg);
-	}
-	50% {
-		transform: rotate(0deg);
-	}
-	100% {
-		transform: rotate(40deg);
-	}
-}
-
-@keyframes ball {
-	0% {
-		opacity: 0.7;
-		box-shadow:
-			4.375rem 0 0 0 var(--color-primary),
-			7.5rem 0 0 0 var(--color-primary),
-			10.625rem 0 0 0 var(--color-primary),
-			13.75rem 0 0 0 var(--color-primary);
-	}
-	100% {
-		box-shadow:
-			1.25rem 0 0 0 var(--color-primary),
-			4.375rem 0 0 0 var(--color-primary),
-			7.5rem 0 0 0 var(--color-primary),
-			10.625rem 0 0 0 var(--color-primary);
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
 	}
 }

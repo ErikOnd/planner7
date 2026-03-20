@@ -214,7 +214,7 @@
 	border-radius: var(--radius-pill);
 	background: var(--color-surface-primary-selected);
 	color: var(--color-primary-active);
-	font-size: 1rem;
+	@include typography.text-base;
 	font-weight: 800;
 	letter-spacing: -0.03em;
 	box-shadow: inset 0 0 0 0.06rem var(--color-surface-border-strong);
@@ -380,7 +380,8 @@
 		width: clamp(5.75rem, 9vw, 6.75rem);
 		height: clamp(5.75rem, 9vw, 6.75rem);
 		border-radius: clamp(1.35rem, 2vw, 1.7rem);
-		font-size: clamp(2.1rem, 3vw, 2.4rem);
+		@include typography.display-xl;
+		line-height: 1;
 	}
 
 	.workspace-detail-copy {
@@ -388,12 +389,12 @@
 	}
 
 	.workspace-detail-title {
-		font-size: clamp(1.9rem, 2.6vw, 2.25rem);
+		@include typography.display-lg;
 	}
 
 	.workspace-status-pill {
 		padding: 0.42rem 0.85rem;
-		font-size: var(--font-size-xs);
+		@include typography.text-xs;
 	}
 
 	.workspace-detail-actions {
@@ -405,7 +406,7 @@
 	.detail-secondary-action,
 	.detail-danger-action {
 		min-height: var(--button-height-base);
-		font-size: 1.08rem;
+		@include typography.text-lg;
 	}
 }
 
@@ -449,9 +450,10 @@
 	border-radius: 2rem;
 	background: var(--color-primary-soft);
 	color: var(--color-primary-active);
-	font-size: 2.75rem;
+	@include typography.display-2xl;
 	font-weight: 800;
 	letter-spacing: -0.04em;
+	line-height: 1;
 	box-shadow: inset 0 0 0 var(--border-width-base) var(--color-border);
 }
 
@@ -463,8 +465,7 @@
 }
 
 .workspace-detail-title {
-	@include typography.text-xl;
-	font-size: clamp(2rem, 3vw, 2.5rem);
+	@include typography.display-xl;
 	font-weight: 800;
 	line-height: 1.05;
 	color: var(--color-text-primary);
@@ -484,8 +485,7 @@
 }
 
 .workspace-delete-title {
-	@include typography.text-xl;
-	font-size: clamp(1.8rem, 2.5vw, 2.25rem);
+	@include typography.display-lg;
 	font-weight: 800;
 	line-height: 1.08;
 	color: var(--color-text-primary);
@@ -498,7 +498,7 @@
 	border-radius: var(--radius-xl);
 	background: var(--color-danger-surface);
 	color: var(--color-danger);
-	font-size: 0.94rem;
+	@include typography.text-base;
 	font-weight: 600;
 	line-height: 1.45;
 
@@ -535,7 +535,7 @@
 }
 
 .delete-warning-mark {
-	font-size: 1.2rem;
+	@include typography.text-xl;
 	font-weight: 800;
 	line-height: 1;
 	color: var(--color-text-inverse);
@@ -550,7 +550,7 @@
 	border-radius: var(--radius-pill);
 	background: var(--color-primary-soft);
 	color: var(--color-primary-active);
-	font-size: var(--font-size-sm);
+	@include typography.text-sm;
 	font-weight: 700;
 	letter-spacing: 0.05em;
 	text-transform: uppercase;
@@ -566,7 +566,7 @@
 
 .detail-primary-action {
 	width: 100%;
-	font-size: 1.3rem;
+	@include typography.text-xl;
 }
 
 .detail-secondary-action {
@@ -575,7 +575,7 @@
 
 .detail-danger-action {
 	width: 100%;
-	font-size: 1.2rem;
+	@include typography.text-xl;
 }
 
 .workspace-field {
@@ -588,7 +588,7 @@
 }
 
 .workspace-field-label {
-	font-size: var(--font-size-xs);
+	@include typography.text-xs;
 	font-weight: 700;
 	letter-spacing: 0.05em;
 	text-transform: uppercase;
@@ -603,7 +603,7 @@
 	background: var(--color-bg-surface);
 	color: var(--color-text-primary);
 	padding: 0.85rem 1rem;
-	font-size: 1rem;
+	@include typography.text-base;
 	font-weight: 600;
 
 	&::placeholder {
@@ -623,7 +623,7 @@
 }
 
 .workspace-delete-label {
-	font-size: var(--font-size-sm);
+	@include typography.text-sm;
 	font-weight: 800;
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
@@ -633,7 +633,7 @@
 .workspace-delete-input {
 	min-height: 3.6rem;
 	text-align: center;
-	font-size: 0.98rem;
+	@include typography.text-base;
 
 	&::placeholder {
 		color: var(--color-disabled-text);
@@ -726,12 +726,12 @@
 	}
 
 	.manage-title {
-		font-size: 1.65rem;
+		@include typography.display-sm;
 		line-height: 1.05;
 	}
 
 	.manage-subtitle {
-		font-size: 0.93rem;
+		@include typography.text-base;
 		line-height: 1.36;
 	}
 
@@ -754,7 +754,7 @@
 	.workspace-row-avatar {
 		width: 2.65rem;
 		height: 2.65rem;
-		font-size: 0.92rem;
+		@include typography.text-base;
 	}
 
 	.workspace-row-copy {
@@ -762,12 +762,12 @@
 	}
 
 	.workspace-row-title {
-		font-size: 1.04rem;
+		@include typography.text-lg;
 	}
 
 	.workspace-row-status {
 		display: block;
-		font-size: 0.9rem;
+		@include typography.text-sm;
 		font-weight: 600;
 		letter-spacing: 0;
 		text-transform: none;
@@ -805,7 +805,7 @@
 
 	.new-workspace-button {
 		min-height: 4rem;
-		font-size: 1rem;
+		@include typography.text-base;
 	}
 
 	.workspace-detail-panel {
@@ -826,12 +826,13 @@
 	.workspace-detail-avatar {
 		width: 5.5rem;
 		height: 5.5rem;
-		font-size: 2rem;
+		@include typography.display-sm;
 		border-radius: 1.35rem;
+		line-height: 1;
 	}
 
 	.workspace-detail-title {
-		font-size: 1.55rem;
+		@include typography.headline-2;
 	}
 
 	.workspace-detail {
@@ -845,27 +846,27 @@
 
 	.detail-primary-action {
 		min-height: 3.75rem;
-		font-size: 1.02rem;
+		@include typography.text-lg;
 	}
 
 	.detail-danger-action {
-		font-size: 1.02rem;
+		@include typography.text-lg;
 	}
 
 	.workspace-delete-title {
-		font-size: 1.75rem;
+		@include typography.display-sm;
 	}
 
 	.workspace-delete-alert {
 		padding: 1.1rem 1rem;
-		font-size: 0.96rem;
+		@include typography.text-base;
 	}
 
 	.workspace-delete-input,
 	.workspace-delete-cancel,
 	.workspace-delete-confirm {
 		min-height: 3.85rem;
-		font-size: 1rem;
+		@include typography.text-base;
 	}
 
 	.workspace-delete-actions {

@@ -82,7 +82,7 @@
 		background: var(--color-surface-primary-selected);
 		border: var(--border-width-base) solid var(--color-primary);
 		color: var(--color-text-primary);
-		font-size: 0.74rem;
+		@include typography.text-2xs;
 		font-weight: 800;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
@@ -90,7 +90,7 @@
 	}
 
 	.mobile-date-label {
-		font-size: 1rem;
+		@include typography.text-base;
 		font-weight: 800;
 		color: var(--color-text-primary);
 		letter-spacing: -0.02em;
@@ -113,7 +113,7 @@
 	}
 
 	.month-and-day {
-		font-size: 1.08rem;
+		@include typography.text-lg;
 		font-weight: 800;
 		color: var(--color-text-primary);
 		letter-spacing: -.02em;
@@ -123,7 +123,7 @@
 	.month-label {
 		display: block;
 		width: 100%;
-		font-size: .74rem;
+		@include typography.text-2xs;
 		font-weight: 700;
 		letter-spacing: .08em;
 		color: var(--color-text-secondary);
@@ -134,7 +134,7 @@
 	.day-number {
 		display: block;
 		width: 100%;
-		font-size: 1.85rem;
+		@include typography.display-sm;
 		font-weight: 800;
 		letter-spacing: -.05em;
 		color: var(--color-text-primary);
@@ -265,12 +265,12 @@
 			min-height: 1.55rem;
 			padding: 0.16rem 0.5rem;
 			border-radius: var(--radius-sm);
-			font-size: 0.64rem;
+			@include typography.text-2xs;
 			letter-spacing: 0.06em;
 		}
 
 		.mobile-date-label {
-			font-size: 0.94rem;
+			@include typography.text-base;
 			line-height: 1.05;
 		}
 
@@ -287,15 +287,15 @@
 		}
 
 		.month-and-day {
-			font-size: 1.02rem;
+			@include typography.text-lg;
 		}
 
 		.month-label {
-			font-size: .72rem;
+			@include typography.text-2xs;
 		}
 
 		.day-number {
-			font-size: 1.75rem;
+			@include typography.display-sm;
 		}
 	}
 }

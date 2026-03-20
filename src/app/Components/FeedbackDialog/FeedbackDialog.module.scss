@@ -134,7 +134,7 @@ $mobile-nav-reserve: calc(6.15rem + env(safe-area-inset-bottom));
 	border-radius: var(--radius-xl);
 	background: transparent;
 	color: var(--color-text-secondary);
-	font-size: var(--font-size-base);
+	@include typography.text-base;
 	font-weight: 700;
 	letter-spacing: -0.01em;
 	cursor: pointer;
@@ -229,7 +229,7 @@ $mobile-nav-reserve: calc(6.15rem + env(safe-area-inset-bottom));
 	border-radius: var(--radius-sm);
 	background: var(--color-surface-primary-subtle);
 	color: var(--color-primary-active);
-	font-size: 0.78rem;
+	@include typography.text-xs;
 	font-weight: 800;
 	line-height: 1;
 }
@@ -301,18 +301,18 @@ $mobile-nav-reserve: calc(6.15rem + env(safe-area-inset-bottom));
 	}
 
 	.title {
-		font-size: clamp(2rem, 8vw, 2.4rem);
+		@include typography.display-xl;
 		line-height: 1.04;
 	}
 
 	.subtitle {
-		font-size: 1rem;
+		@include typography.text-base;
 		line-height: 1.45;
 		max-width: none;
 	}
 
 	.segmented-option-label {
-		font-size: 1rem;
+		@include typography.text-base;
 		line-height: 1.25;
 		text-align: center;
 	}
@@ -325,7 +325,7 @@ $mobile-nav-reserve: calc(6.15rem + env(safe-area-inset-bottom));
 		min-height: 11.25rem;
 		padding: 1rem 1rem 1.1rem;
 		border-radius: var(--radius-lg);
-		font-size: 1rem;
+		@include typography.text-base;
 		line-height: 1.45;
 	}
 

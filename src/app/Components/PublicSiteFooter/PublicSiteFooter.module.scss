@@ -1,4 +1,5 @@
-@use "../../styles/variables" as variables;
+@use "../../styles/mixins" as mixins;
+@use "../../styles/typography" as typography;
 
 .footer {
 	max-width: 75rem;
@@ -8,29 +9,38 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: var(--space-md);
+	justify-content: center;
+	gap: var(--space-lg);
 	text-align: center;
-}
 
-.footerMeta {
-	color: var(--color-sidebar-text-soft);
+	@include mixins.phone {
+		flex-direction: row;
+		text-align: center;
+		gap: var(--space-md);
+	}
 }
 
 .footerLinks {
 	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
 	flex-wrap: wrap;
-	justify-content: center;
-	gap: var(--space-lg);
+	align-items: center;
+
+	@include mixins.phone {
+		flex-direction: row;
+		gap: var(--space-lg);
+		align-items: center;
+		justify-content: center;
+	}
 }
 
 .footerLink {
-	color: var(--color-primary);
-	text-decoration: none;
+	@include typography.text-xs;
+	color: var(--color-sidebar-text-soft);
 	text-underline-offset: 0.14rem;
-	font-weight: 600;
-	transition: color variables.$transition-base;
 
 	&:hover {
-		color: var(--color-primary-hover);
+		color: var(--color-primary);
 	}
 }
