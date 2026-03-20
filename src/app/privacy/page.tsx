@@ -2,7 +2,16 @@ import styles from "../legal/LegalPage.module.scss";
 
 import { Headline } from "@atoms/Headline/Headline";
 import { Text } from "@atoms/Text/Text";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+	title: "Privacy Policy",
+	description: "Read how Planner7 handles account data, privacy, security, and retention.",
+	alternates: {
+		canonical: "/privacy",
+	},
+};
 
 export default function PrivacyPage() {
 	return (

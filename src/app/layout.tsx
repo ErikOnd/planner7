@@ -1,49 +1,53 @@
 import type { Metadata } from "next";
 import "./globals.scss";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import React, { ReactNode } from "react";
 import ToastProvider from "./Providers/ToastProvider";
 
 export const metadata: Metadata = {
-	metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-	title: "Planner7",
-	description:
-		"Planner7 is a weekly planner with a rich text planning area for each day plus tasks. Plan your work, not just check boxes.",
-	applicationName: "Planner7",
+	metadataBase: new URL(SITE_URL),
+	title: {
+		default: `${SITE_NAME} | Weekly Planner for Rich Daily Notes and Tasks`,
+		template: `%s | ${SITE_NAME}`,
+	},
+	description: SITE_DESCRIPTION,
+	applicationName: SITE_NAME,
 	icons: {
 		icon: [
-			{ url: "/favicon.ico", sizes: "any" },
+			{ url: "/favicon-96x96.png", type: "image/png", sizes: "96x96" },
+			{ url: "/favicon-48x48.png", type: "image/png", sizes: "48x48" },
 			{ url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
 			{ url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+			{ url: "/favicon.ico", sizes: "any" },
 		],
 		shortcut: ["/favicon.ico"],
 		apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
 	},
 	openGraph: {
-		title: "Planner7",
-		description:
-			"Planner7 is a weekly planner with a rich text planning area for each day plus tasks. Plan your work, not just check boxes.",
-		siteName: "Planner7",
+		title: `${SITE_NAME} | Weekly Planner for Rich Daily Notes and Tasks`,
+		description: SITE_DESCRIPTION,
+		siteName: SITE_NAME,
 		type: "website",
+		url: "/",
 		images: [
 			{
 				url: "/icon-512.png",
-				alt: "Planner7 logo",
+				alt: `${SITE_NAME} logo`,
 			},
 		],
 	},
 	twitter: {
 		card: "summary",
-		title: "Planner7",
-		description:
-			"Planner7 is a weekly planner with a rich text planning area for each day plus tasks. Plan your work, not just check boxes.",
+		title: `${SITE_NAME} | Weekly Planner for Rich Daily Notes and Tasks`,
+		description: SITE_DESCRIPTION,
 		images: ["/icon-512.png"],
 	},
 	appleWebApp: {
 		capable: true,
 		statusBarStyle: "default",
-		title: "Planner7",
+		title: SITE_NAME,
 	},
 	manifest: "/manifest.json",
 };

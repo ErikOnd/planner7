@@ -8,8 +8,7 @@
 }
 
 .header,
-.main,
-.footer {
+.main {
 	position: relative;
 	z-index: 1;
 }
@@ -19,10 +18,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	gap: var(--space-lg);
 	padding: var(--space-md) var(--space-xl);
 	max-width: 75rem;
 	margin: 0 auto;
 	width: 100%;
+	flex-wrap: wrap;
 }
 
 .logo {
@@ -294,54 +295,5 @@
 	}
 	50% {
 		opacity: 0;
-	}
-}
-
-// Footer
-.footer {
-	max-width: 75rem;
-	margin: 0 auto;
-	padding: var(--space-2xl) var(--space-xl);
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: var(--space-lg);
-	border-top: var(--border-width-hairline) solid var(--color-sidebar-border);
-	text-align: center;
-
-	@include mixins.phone {
-		flex-direction: row;
-		text-align: center;
-		gap: var(--space-md);
-	}
-}
-
-.footer-text {
-	color: var(--color-sidebar-text-soft);
-}
-
-.footer-links {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-sm);
-	flex-wrap: wrap;
-	align-items: center;
-
-	@include mixins.phone {
-		flex-direction: row;
-		gap: var(--space-lg);
-		align-items: center;
-		justify-content: center;
-	}
-}
-
-.footer-link {
-	color: var(--color-sidebar-text-soft);
-	font-size: var(--text-sm);
-	text-underline-offset: 0.14rem;
-
-	&:hover {
-		color: var(--color-primary);
 	}
 }

@@ -1,6 +1,16 @@
 import { Button } from "@atoms/Button/Button";
 import { Text } from "@atoms/Text/Text";
+import type { Metadata } from "next";
 import styles from "./AuthCodeError.module.scss";
+
+export const metadata: Metadata = {
+	title: "Authentication Error",
+	description: "Authentication failed while verifying your Planner7 account.",
+	robots: {
+		index: false,
+		follow: false,
+	},
+};
 
 export default function AuthCodeError() {
 	return (

@@ -2,7 +2,16 @@ import styles from "../legal/LegalPage.module.scss";
 
 import { Headline } from "@atoms/Headline/Headline";
 import { Text } from "@atoms/Text/Text";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+	title: "Terms of Service",
+	description: "Read the terms that govern the use of Planner7.",
+	alternates: {
+		canonical: "/terms",
+	},
+};
 
 export default function TermsPage() {
 	return (

@@ -1,0 +1,36 @@
+@use "../../styles/variables" as variables;
+
+.footer {
+	max-width: 75rem;
+	margin: 0 auto;
+	padding: var(--space-2xl) var(--space-xl);
+	border-top: var(--border-width-hairline) solid var(--color-sidebar-border);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-md);
+	text-align: center;
+}
+
+.footerMeta {
+	color: var(--color-sidebar-text-soft);
+}
+
+.footerLinks {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--space-lg);
+}
+
+.footerLink {
+	color: var(--color-primary);
+	text-decoration: none;
+	text-underline-offset: 0.14rem;
+	font-weight: 600;
+	transition: color variables.$transition-base;
+
+	&:hover {
+		color: var(--color-primary-hover);
+	}
+}

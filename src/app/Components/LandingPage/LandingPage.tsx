@@ -6,9 +6,9 @@ import { Button } from "@atoms/Button/Button";
 import { Headline } from "@atoms/Headline/Headline";
 import { Icon } from "@atoms/Icons/Icon";
 import { Text } from "@atoms/Text/Text";
+import { PublicSiteFooter } from "@components/PublicSiteFooter/PublicSiteFooter";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { useRef } from "react";
 import { MagneticButton } from "./MagneticButton";
 import { TypingAnimation } from "./TypingAnimation";
@@ -227,12 +227,7 @@ export function LandingPage() {
 					</motion.section>
 				</section>
 			</main>
-			<footer className={styles.footer}>
-				<div className={styles["footer-links"]}>
-					<Link href="/privacy" className={styles["footer-link"]}>Privacy Policy</Link>
-					<Link href="/terms" className={styles["footer-link"]}>Terms of Service</Link>
-				</div>
-			</footer>
+			<PublicSiteFooter />
 		</div>
 	);
 }

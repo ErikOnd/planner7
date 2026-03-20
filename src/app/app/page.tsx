@@ -8,9 +8,13 @@ import { redirect } from "next/navigation";
 import { BootstrapHydrator } from "./BootstrapHydrator";
 
 export const metadata: Metadata = {
-	title: "Planner7 – Weekly Overview",
+	title: "Weekly Overview",
 	description:
 		"Plan your week with a rich text planning area for each day plus task tracking in one clear weekly overview.",
+	robots: {
+		index: false,
+		follow: false,
+	},
 };
 
 export default async function ProtectedPage() {
