@@ -4,13 +4,12 @@ import webpush from "web-push";
 
 export const runtime = "nodejs";
 
-webpush.setVapidDetails(
-	process.env.VAPID_MAILTO!,
-	process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-	process.env.VAPID_PRIVATE_KEY!,
-);
-
 export async function GET(request: Request) {
+	webpush.setVapidDetails(
+		process.env.VAPID_MAILTO!,
+		process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+		process.env.VAPID_PRIVATE_KEY!,
+	);
 	const authHeader = request.headers.get("authorization");
 	if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
