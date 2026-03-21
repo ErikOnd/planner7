@@ -1,5 +1,10 @@
 self.addEventListener("push", (event) => {
-	const data = event.data?.json() ?? {};
+	let data = {};
+	try {
+		data = event.data?.json() ?? {};
+	} catch {
+		data = { body: event.data?.text() ?? "You have a reminder" };
+	}
 	event.waitUntil(
 		self.registration.showNotification(data.title ?? "Planner7", {
 			body: data.body ?? "You have a reminder",
