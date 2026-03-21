@@ -46,6 +46,11 @@ export async function GET(request: Request) {
 
 	const sent = results.filter((r) => r.status === "fulfilled").length;
 	const failed = results.filter((r) => r.status === "rejected").length;
+	const errors = results
+		.filter((r): r is PromiseRejectedResult => r.status === "rejected")
+		.map((r) => String(r.reason));
 
-	return NextResponse.json({ sent, failed });
+	console.log("[cron/reminders]", { reminders: dueReminders.length, sent, failed, errors });
+
+	return NextResponse.json({ sent, failed, errors });
 }
