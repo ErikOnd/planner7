@@ -105,7 +105,7 @@ export function WorkspaceManagerPanel(props: WorkspaceManagerPanelProps) {
 		: detailWorkspace?.name || "Workspace";
 	const detailInitials = getWorkspaceInitials(detailName);
 	const isDeleteConfirmationValid = deleteWorkspace
-		? deleteWorkspaceConfirmation.trim() === deleteWorkspace.name.trim()
+		? deleteWorkspaceConfirmation.trim().toLowerCase() === deleteWorkspace.name.trim().toLowerCase()
 		: false;
 
 	const closeCreate = () => setIsCreateOpen(false);
@@ -366,7 +366,11 @@ export function WorkspaceManagerPanel(props: WorkspaceManagerPanelProps) {
 
 									<label className={clsx(styles["workspace-field"], styles["workspace-delete-field"])}>
 										<span className={styles["workspace-delete-label"]}>
-											Type {deleteWorkspace.name.toUpperCase()} to confirm
+											Type{" "}
+											<strong className={styles["workspace-delete-label-name"]}>
+												{deleteWorkspace.name.toUpperCase()}
+											</strong>{" "}
+											to confirm
 										</span>
 										<input
 											type="text"

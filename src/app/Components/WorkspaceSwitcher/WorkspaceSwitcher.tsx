@@ -98,7 +98,7 @@ function useWorkspaceManagerController(onAfterSwitch?: () => void) {
 	const onDeleteWorkspace = async () => {
 		if (!deleteWorkspaceTarget) return;
 		setLocalError(null);
-		if (deleteWorkspaceConfirmation.trim() !== deleteWorkspaceTarget.name.trim()) {
+		if (deleteWorkspaceConfirmation.trim().toLowerCase() !== deleteWorkspaceTarget.name.trim().toLowerCase()) {
 			setLocalError("Type the workspace name exactly to confirm deletion");
 			return;
 		}

@@ -23,3 +23,29 @@ export async function savePushSubscription(): Promise<boolean> {
 
 	return res.ok;
 }
+
+export type ReminderNotificationPermission = "granted" | "denied" | "unsupported";
+
+export function getReminderPermissionError(permission: ReminderNotificationPermission): string {
+	if (permission === "unsupported") {
+		return "Task saved, but this browser does not support notifications";
+	}
+	return "Task saved, but notification permission was not granted";
+}
+
+export async function ensureNotificationPermission(): Promise<ReminderNotificationPermission> {
+	if (typeof window === "undefined" || !("Notification" in window)) {
+		return "unsupported";
+	}
+
+	if (Notification.permission === "granted") {
+		return "granted";
+	}
+
+	try {
+		const permission = await Notification.requestPermission();
+		return permission === "granted" ? "granted" : "denied";
+	} catch {
+		return "denied";
+	}
+}

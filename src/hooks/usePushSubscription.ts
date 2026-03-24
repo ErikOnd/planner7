@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 
 /**
  * Re-registers the push subscription on each app load if permission is already granted.
- * The initial subscription happens inside TimeReminderPlugin when the user confirms a reminder.
+ * The initial subscription can happen when a todo reminder is created from the task flows.
  */
 export function usePushSubscription() {
 	const subscribedRef = useRef(false);

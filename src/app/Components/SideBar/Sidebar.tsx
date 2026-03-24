@@ -16,11 +16,13 @@ import { useBacklogController } from "@hooks/useBacklogController";
 import { useKeyboardShortcut } from "@hooks/useKeyboardShortcut";
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
+import { useState } from "react";
 import styles from "./Sidebar.module.scss";
 
 export function Sidebar() {
 	const todosState = useBacklog();
-	const { addTodo, updateTodo, updateTodoCompletion, silentRefresh } = todosState;
+	const { addTodo, updateTodo, updateTodoCompletion, removeTodoReminder, silentRefresh, remindersByText } = todosState;
+	const [reminderDeleteTarget, setReminderDeleteTarget] = useState<{ todoId: string; text: string } | null>(null);
 	const { activeWorkspaceId } = useWorkspace();
 	const {
 		isAddOpen,
@@ -84,7 +86,7 @@ export function Sidebar() {
 				</Button>
 
 				<div className={styles["backlog-header"]}>
-					<span className={styles["backlog-title"]}>Backlog</span>
+					<span className={styles["backlog-title"]}>Tasks</span>
 				</div>
 
 				<div className={styles["backlog-panel"]}>
@@ -118,7 +120,9 @@ export function Sidebar() {
 												checked={checkedTodos.has(todo.id)}
 												onToggle={checked => handleTodoToggle(todo.id, checked)}
 												onEdit={() => handleEditTodo(todo)}
+												onRemoveReminder={() => setReminderDeleteTarget({ todoId: todo.id, text: todo.text })}
 												onDelete={() => setDeleteTargetId(todo.id)}
+												manualReminderScheduledAt={remindersByText.get(todo.text)}
 											/>
 										))}
 									</SortableContext>
@@ -167,6 +171,21 @@ export function Sidebar() {
 					if (!open) setDeleteTargetId(null);
 				}}
 				onConfirm={handleDelete}
+			/>
+			<DeleteTodoDialog
+				open={Boolean(reminderDeleteTarget)}
+				onOpenChange={(open) => {
+					if (!open) setReminderDeleteTarget(null);
+				}}
+				onConfirm={() => {
+					if (reminderDeleteTarget) {
+						void removeTodoReminder(reminderDeleteTarget.todoId, reminderDeleteTarget.text);
+						setReminderDeleteTarget(null);
+					}
+				}}
+				title="Remove reminder?"
+				description="The reminder notification for this task will be cancelled."
+				confirmLabel="Remove reminder"
 			/>
 			<Dialog.Root open={isCompletedOpen} onOpenChange={setIsCompletedOpen}>
 				<Dialog.Portal>

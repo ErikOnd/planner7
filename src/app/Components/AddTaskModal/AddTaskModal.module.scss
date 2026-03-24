@@ -108,32 +108,131 @@
 
 .task-input {
 	width: 100%;
-	min-height: 15.5rem;
-	resize: vertical;
-	padding: 2rem 1.9rem;
-	border: var(--border-width-base) solid var(--color-border);
-	border-radius: var(--radius-2xl);
-	background: var(--color-bg-main);
+	padding: 1.1rem 1.4rem;
+	border: none;
+	border-radius: var(--radius-xl);
+	background: var(--color-surface-muted, #f0f0ee);
 	color: var(--color-text-primary);
 	font: inherit;
 	@include typography.text-lg;
 	font-weight: 500;
-	line-height: 1.6;
-	transition:
-		border-color variables.$transition-base,
-		box-shadow variables.$transition-base,
-		background-color variables.$transition-base;
+	transition: box-shadow variables.$transition-base, background-color variables.$transition-base;
 
 	&::placeholder {
 		color: var(--color-text-muted);
-		@include typography.text-xl;
 	}
 
 	&:focus {
 		outline: none;
-		border-color: var(--color-primary-hover);
 		box-shadow: var(--ring-focus);
 		background: var(--color-bg-surface);
+	}
+}
+
+.chips {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.4rem 0.9rem;
+	border-radius: var(--radius-pill);
+	border: var(--border-width-base) solid var(--color-border);
+	background: var(--color-bg-surface);
+	color: var(--color-text-secondary);
+	cursor: pointer;
+	@include typography.text-sm;
+	font-weight: 500;
+	transition: background-color variables.$transition-base, color variables.$transition-base;
+
+	svg {
+		width: 1rem;
+		height: 1rem;
+		opacity: 0.7;
+	}
+
+	&:hover {
+		background: var(--color-surface-muted);
+		color: var(--color-text-primary);
+	}
+}
+
+.chip--detected {
+	cursor: default;
+	border-color: var(--color-border);
+	background: var(--color-bg-surface);
+	color: var(--color-text-secondary);
+	padding-right: 0.35rem;
+
+	svg {
+		opacity: 0.8;
+	}
+
+	&[data-ready="true"] {
+		border-color: var(--color-surface-primary-hover-accent);
+		background: var(--color-surface-primary);
+		color: var(--color-primary-active);
+		font-weight: 600;
+	}
+}
+
+.chip-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.chip-dismiss {
+	width: 1.6rem;
+	height: 1.6rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	border-radius: 999px;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	padding: 0;
+	flex: 0 0 auto;
+
+	&:hover,
+	&:focus-visible {
+		background: rgba(0, 0, 0, 0.08);
+	}
+
+	&:focus-visible {
+		outline: none;
+		box-shadow: var(--ring-focus);
+	}
+}
+
+.hidden-date {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+	width: 0;
+	height: 0;
+}
+
+.time-input {
+	padding: 0.4rem 0.9rem;
+	border-radius: var(--radius-pill);
+	border: var(--border-width-base) solid var(--color-primary);
+	background: var(--color-bg-surface);
+	color: var(--color-text-primary);
+	font: inherit;
+	@include typography.text-sm;
+	font-weight: 500;
+
+	&:focus {
+		outline: none;
+		box-shadow: var(--ring-focus);
 	}
 }
 
@@ -150,22 +249,7 @@
 }
 
 .close-action {
-	min-height: auto;
-	padding-inline: 0;
-	border-color: transparent;
-	background: transparent;
-	box-shadow: none;
-	color: var(--color-text-secondary);
-	@include typography.text-xl;
-	font-weight: 700;
-	justify-content: flex-start;
-
-	&:hover,
-	&:focus-visible {
-		background: transparent;
-		box-shadow: none;
-		color: var(--color-text-primary);
-	}
+	min-width: 11rem;
 }
 
 @media (max-width: 47.9375rem) {

@@ -30,7 +30,7 @@
 		border-radius: var(--radius-lg);
 		background: transparent;
 		border: var(--border-width-base) solid transparent;
-		align-items: center;
+		align-items: flex-start;
 		gap: 0.7rem;
 		transition: background-color variables.$transition-base, border-color variables.$transition-base;
 
@@ -38,6 +38,14 @@
 		&:focus-within {
 			background: var(--color-surface-sidebar);
 			border-color: var(--color-sidebar-border);
+		}
+
+		.todo-main {
+			flex: 1 1 auto;
+			min-width: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 0.35rem;
 		}
 
 		.todo-checkbox {
@@ -95,17 +103,51 @@
 			line-height: 1.4;
 		}
 
+		.todo-reminder {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.28rem;
+			align-self: flex-start;
+			margin-left: calc(1.28rem + 0.72rem);
+			padding: 0;
+			border: none;
+			background: none;
+			cursor: pointer;
+			color: var(--color-primary);
+			font-size: 0.7rem;
+			line-height: 1.2;
+			font-weight: 600;
+			white-space: nowrap;
+			transition: color variables.$transition-base;
+
+			&:hover,
+			&:focus-visible {
+				color: var(--color-primary-hover);
+			}
+
+			&:focus-visible {
+				outline: none;
+			}
+
+			.todo-reminder-close {
+				opacity: 0;
+				transition: opacity variables.$transition-base;
+			}
+		}
+
+		&:hover .todo-reminder .todo-reminder-close,
+		.todo-content:focus-within .todo-reminder .todo-reminder-close {
+			opacity: 1;
+		}
+
 		.action-buttons {
 			position: absolute;
-			right: 0.18rem;
-			top: 0.18rem;
-			bottom: 0.18rem;
-			transform: translate(0.25rem, 0);
+			right: 0.2rem;
+			top: 50%;
+			transform: translateY(-50%) translateX(0.3rem);
 			display: flex;
-			align-items: stretch;
-			gap: 0.12rem;
-			padding: 0;
-			background: transparent;
+			flex-direction: row;
+			gap: 0.2rem;
 			opacity: 0;
 			pointer-events: none;
 			transition: opacity variables.$transition-base, transform variables.$transition-base;
@@ -113,51 +155,42 @@
 
 		.edit-button,
 		.delete-button {
-			width: 2.05rem;
-			height: 100%;
-			border: var(--border-width-base) solid transparent;
+			width: 1.5rem;
+			height: 1.5rem;
+			border: var(--border-width-base) solid var(--color-sidebar-border-strong);
+			background: var(--color-surface-sidebar-button);
 			cursor: pointer;
 			padding: 0;
-			border-radius: var(--radius-md);
+			border-radius: var(--radius-sm);
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			color: var(--color-sidebar-icon-soft);
 			transition: background-color variables.$transition-fast, color variables.$transition-fast, border-color variables.$transition-fast;
+
+			&:focus-visible {
+				outline: 2px solid var(--color-primary);
+				outline-offset: 2px;
+			}
 		}
 
 		.edit-button {
-			background-color: var(--color-primary);
-			border-color: var(--color-primary);
-			color: var(--color-text-primary);
-
 			&:hover,
 			&:focus-visible {
-				background: var(--color-primary-hover);
+				background: var(--color-surface-sidebar-button-hover);
+				color: var(--color-primary);
 				border-color: var(--color-primary-hover);
-				color: var(--color-text-primary);
-			}
-
-			&:focus-visible {
-				outline: none;
-				box-shadow: var(--ring-primary-soft);
 			}
 		}
 
 		.delete-button {
-			background-color: var(--color-danger);
-			border-color: var(--color-danger);
-			color: var(--color-text-inverse);
+			color: var(--color-danger-text-soft);
 
 			&:hover,
 			&:focus-visible {
-				background: var(--color-danger-solid-hover);
-				border-color: var(--color-danger-solid-hover);
-				color: var(--color-text-inverse);
-			}
-
-			&:focus-visible {
-				outline: none;
-				box-shadow: var(--ring-danger-soft);
+				background: var(--color-surface-sidebar-button-hover);
+				color: var(--color-danger-text-strong);
+				border-color: var(--color-danger-border-dark);
 			}
 		}
 	}
@@ -166,6 +199,6 @@
 	.todo-content:focus-within .action-buttons {
 		opacity: 1;
 		pointer-events: auto;
-		transform: translate(0, 0);
+		transform: translateY(-50%) translateX(0);
 	}
 }

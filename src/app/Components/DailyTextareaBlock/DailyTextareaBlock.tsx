@@ -222,7 +222,6 @@ function DailyTextareaBlockComponent(props: DailyTextareaProps) {
 						initialContent={content}
 						onChange={handleChange}
 						ariaLabel={`Notes for ${weekday}, ${date}`}
-						noteDate={textareaDate}
 					/>
 				)}
 			</div>

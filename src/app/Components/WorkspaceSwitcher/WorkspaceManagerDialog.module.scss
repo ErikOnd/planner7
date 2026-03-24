@@ -15,7 +15,7 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	width: min(92vw, 40rem);
+	width: min(92vw, 65rem);
 	height: min(84vh, 42rem);
 	z-index: var(--z-modal);
 
@@ -411,7 +411,8 @@
 }
 
 .workspace-detail-card--delete {
-	overflow: hidden;
+	overflow-y: auto;
+	justify-content: flex-start;
 	padding: clamp(1.4rem, 2.2vw, 2rem);
 }
 
@@ -628,6 +629,14 @@
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
 	color: var(--color-text-secondary);
+}
+
+.workspace-delete-label-name {
+	color: var(--color-danger);
+	background: var(--color-danger-surface);
+	border-radius: var(--radius-sm);
+	padding: 0.1em 0.35em;
+	font-weight: 900;
 }
 
 .workspace-delete-input {

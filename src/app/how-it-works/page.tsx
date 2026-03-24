@@ -20,7 +20,7 @@ const steps = [
 	{
 		title: "Write the daily plan with real context",
 		description:
-			"Use each day’s note area to outline approach, dependencies, reminders, and the sequence that will make execution smoother.",
+			"Use each day’s note area to outline approach, dependencies, follow-ups, and the sequence that will make execution smoother.",
 	},
 	{
 		title: "Review, adjust, and carry forward intelligently",

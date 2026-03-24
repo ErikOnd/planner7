@@ -33,7 +33,6 @@ import { ImageNode } from "./nodes/ImageNode";
 import CodeHighlightingPlugin from "./plugins/CodeHighlightingPlugin";
 import ImageUploadDropPlugin from "./plugins/ImageUploadDropPlugin";
 import SlashCommandPlugin from "./plugins/SlashCommandPlugin";
-import TimeReminderPlugin from "./plugins/TimeReminderPlugin";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
 import {
 	blockNoteToMarkdown,
@@ -48,7 +47,6 @@ type SmartEditorProps = {
 	initialContent?: NoteContent;
 	onChange?: (content: NoteContent) => void;
 	ariaLabel?: string;
-	noteDate?: Date;
 };
 
 function createParagraphNodeJSON(line: string) {
@@ -132,7 +130,7 @@ function EditorStateSyncPlugin({ serializedEditorState }: { serializedEditorStat
 	return null;
 }
 
-export default function SmartEditor({ initialContent, onChange, ariaLabel, noteDate }: SmartEditorProps) {
+export default function SmartEditor({ initialContent, onChange, ariaLabel }: SmartEditorProps) {
 	const mounted = useMounted();
 	const { showEditorToolbar } = useWeekDisplayPreference();
 	const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
@@ -258,7 +256,6 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel, noteD
 				<HorizontalRulePlugin />
 				<MarkdownShortcutPlugin />
 				{isFocused && <SlashCommandPlugin />}
-				<TimeReminderPlugin noteDate={noteDate} />
 				<ImageUploadDropPlugin
 					onUploadStart={(count) => {
 						setImageUploadError(null);

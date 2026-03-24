@@ -5,19 +5,46 @@
 	@include typography.text-xs;
 	display: inline-flex;
 	align-items: center;
-	padding: var(--space-2xs) var(--space-sm);
-	border-radius: var(--radius-sm);
-	font-weight: 500;
+	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	white-space: nowrap;
 }
+
+// --- Shape ---
+
+.badge--rounded {
+	border-radius: var(--radius-sm);
+}
+
+.badge--pill {
+	border-radius: var(--radius-pill);
+}
+
+// --- Size ---
+
+.badge--sm {
+	padding: 0.18rem 0.5rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+}
+
+.badge--md {
+	padding: var(--space-2xs) var(--space-sm);
+}
+
+// --- Variant ---
 
 .badge--coming-soon {
 	background-color: var(--color-surface-primary-strong);
 	color: var(--color-text-muted);
 	border: var(--border-width-base) solid var(--color-border);
 	padding: calc(var(--space-xs) + 0.05rem) calc(var(--space-md) + 0.05rem);
+}
+
+.badge--primary {
+	background-color: var(--color-primary-soft);
+	color: var(--color-primary-active);
 }
 
 .badge--info {
