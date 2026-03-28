@@ -185,26 +185,26 @@
 	--border-width-base: 0.1rem;
 	--border-width-hairline: 0.06rem;
 
-	--space-xs: #{mixins.clamp-builder(0.4, 0.6)};
-	--space-sm: #{mixins.clamp-builder(0.6, 0.8)};
-	--space-md: #{mixins.clamp-builder(0.8, 1.0)};
-	--space-lg: #{mixins.clamp-builder(1.2, 1.6)};
-	--space-xl: #{mixins.clamp-builder(1.6, 2.0)};
-	--space-2xl: #{mixins.clamp-builder(2.0, 2.4)};
+	--space-xs: #{mixins.clamp-builder(0.32, 0.5)};
+	--space-sm: #{mixins.clamp-builder(0.48, 0.68)};
+	--space-md: #{mixins.clamp-builder(0.68, 0.88)};
+	--space-lg: #{mixins.clamp-builder(1.0, 1.35)};
+	--space-xl: #{mixins.clamp-builder(1.35, 1.7)};
+	--space-2xl: #{mixins.clamp-builder(1.7, 2.1)};
 	--space-layout-gap: #{variables.$space-layout-gap};
 	--space-layout-pad: #{variables.$space-layout-pad};
 
-	--content-spacing: #{mixins.clamp-builder(1.6, 4.8)};
+	--content-spacing: #{mixins.clamp-builder(1.3, 4)};
 
 	--button-height-sm: #{variables.$button-height-sm};
 	--button-height-base: #{variables.$button-height-base};
 	--button-height-lg: #{variables.$button-height-lg};
-	--control-size-xs: 2.25rem;
-	--control-size-sm: 2.6rem;
-	--control-size-md: 2.9rem;
-	--control-size-base: 3rem;
-	--control-size-lg: 3.2rem;
-	--control-size-xl: 3.7rem;
+	--control-size-xs: 2.1rem;
+	--control-size-sm: 2.45rem;
+	--control-size-md: 2.7rem;
+	--control-size-base: 2.85rem;
+	--control-size-lg: 3.05rem;
+	--control-size-xl: 3.4rem;
 	--button-padding-inline-sm: #{variables.$button-padding-inline-sm};
 	--button-padding-inline-base: #{variables.$button-padding-inline-base};
 	--button-padding-inline-lg: #{variables.$button-padding-inline-lg};
@@ -220,11 +220,11 @@
 	--button-gap: #{variables.$button-gap};
 	--button-font-weight: #{variables.$button-font-weight};
 
-	--font-size-xl: 1.25rem;
-	--font-size-lg: 1.0625rem;
-	--font-size-base: 0.9375rem;
-	--font-size-sm: 0.875rem;
-	--font-size-xs: 0.8125rem;
+	--font-size-xl: 1.125rem;
+	--font-size-lg: 1rem;
+	--font-size-base: 0.90625rem;
+	--font-size-sm: 0.84375rem;
+	--font-size-xs: 0.78125rem;
 	--font-size-2xs: #{variables.$font-size-2xs};
 
 	/* Z-index scale */

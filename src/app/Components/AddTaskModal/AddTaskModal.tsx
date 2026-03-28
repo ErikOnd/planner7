@@ -14,13 +14,25 @@ import {
 	getTaskReminderKey,
 	toDateInputValue,
 } from "@/lib/taskReminderParser";
+import {
+	formatDateTimeChipLabel,
+	formatTimePart,
+	formatTimeValue,
+	getSuggestedReminderTime,
+	parseTimeInput,
+	parseTimeValue,
+	type ReminderPickerStep,
+	type ReminderSeed,
+	todayDateString,
+} from "@/lib/taskReminderPicker";
 import { Button } from "@atoms/Button/Button";
 import { Icon } from "@atoms/Icons/Icon";
 import { Message } from "@atoms/Message/Message";
 import { Text } from "@atoms/Text/Text";
+import { ReminderPickerOverlay } from "@components/ReminderPicker/ReminderPicker";
 import type { GeneralTodo } from "@prisma/client";
 import * as Dialog from "@radix-ui/react-dialog";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "react-toastify";
 import { saveGeneralTodo } from "../../actions/generalTodos";
 
@@ -37,21 +49,6 @@ type AddTaskModalProps = {
 	onOptimisticUpdate?: (todoId: string, text: string) => void;
 	onSuccess?: () => void;
 };
-
-function todayDateString() {
-	return toDateInputValue(new Date());
-}
-
-function formatDateLabel(dateStr: string): string {
-	const today = todayDateString();
-	const tomorrow = new Date();
-	tomorrow.setDate(tomorrow.getDate() + 1);
-	const tomorrowStr = toDateInputValue(tomorrow);
-
-	if (dateStr === today) return "Today";
-	if (dateStr === tomorrowStr) return "Tomorrow";
-	return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
 
 export function AddTaskModal(props: AddTaskModalProps) {
 	const {
@@ -71,66 +68,104 @@ export function AddTaskModal(props: AddTaskModalProps) {
 	const [error, setError] = useState<string | undefined>(undefined);
 	const [isPending, startTransition] = useTransition();
 	const formRef = useRef<HTMLFormElement>(null);
-	const dateInputRef = useRef<HTMLInputElement>(null);
-	const timeInputRef = useRef<HTMLInputElement>(null);
 	const [taskText, setTaskText] = useState(seedText);
 	const [detectedReminder, setDetectedReminder] = useState(initialReminder);
-	const [removedReminderSeed, setRemovedReminderSeed] = useState<{ message: string; scheduledAt: Date } | null>(null);
+	const [removedReminderSeed, setRemovedReminderSeed] = useState<ReminderSeed | null>(null);
 	const [dismissedReminderKey, setDismissedReminderKey] = useState<string | null>(null);
 
 	const [reminderDate, setReminderDate] = useState(initialReminder?.dateValue ?? todayDateString());
 	const [reminderTime, setReminderTime] = useState(initialReminder?.timeValue ?? "");
-	const [showTimeInput, setShowTimeInput] = useState(Boolean(initialReminder?.timeValue));
 	const [reminderMode, setReminderMode] = useState<"default" | "detected" | "manual">(
 		initialReminder ? "detected" : "default",
 	);
+	const initialPickerTime = parseTimeValue(
+		getSuggestedReminderTime(initialReminder?.dateValue ?? todayDateString(), initialReminder?.timeValue),
+	);
+	const initialReminderSeed: ReminderSeed | null = initialReminder?.hasExplicitTime && seedText.trim()
+		? {
+			message: seedText.trim(),
+			scheduledAt: initialReminder.scheduledAt,
+		}
+		: null;
+	const [pickerStep, setPickerStep] = useState<ReminderPickerStep | null>(null);
+	const [pickerHour, setPickerHour] = useState(formatTimePart(initialPickerTime.hour));
+	const [pickerMinute, setPickerMinute] = useState(formatTimePart(initialPickerTime.minute));
 
-	const resetReminder = () => {
-		setReminderDate(todayDateString());
+	const closePicker = useCallback(() => {
+		setPickerStep(null);
+	}, [setPickerStep]);
+
+	const syncPickerTime = useCallback((dateValue: string, timeValue: string) => {
+		const nextPickerTime = parseTimeValue(getSuggestedReminderTime(dateValue, timeValue));
+		setPickerHour(formatTimePart(nextPickerTime.hour));
+		setPickerMinute(formatTimePart(nextPickerTime.minute));
+	}, [setPickerHour, setPickerMinute]);
+
+	const resetReminder = useCallback(() => {
+		const nextDate = todayDateString();
+		setReminderDate(nextDate);
 		setReminderTime("");
-		setShowTimeInput(false);
-	};
+		syncPickerTime(nextDate, "");
+	}, [setReminderDate, setReminderTime, syncPickerTime]);
 
-	const initializeFormState = (text: string) => {
+	const initializeFormState = useCallback((text: string) => {
 		const reminder = detectTaskReminder(text);
 		setTaskText(text);
 		setDetectedReminder(reminder);
 		setError(undefined);
 		setRemovedReminderSeed(null);
 		setDismissedReminderKey(null);
+		closePicker();
 
 		if (reminder) {
 			setReminderDate(reminder.dateValue);
 			setReminderTime(reminder.timeValue);
-			setShowTimeInput(Boolean(reminder.timeValue));
+			syncPickerTime(reminder.dateValue, reminder.timeValue);
 			setReminderMode("detected");
 			return;
 		}
 
 		resetReminder();
 		setReminderMode("default");
-	};
+	}, [
+		closePicker,
+		resetReminder,
+		setDetectedReminder,
+		setDismissedReminderKey,
+		setError,
+		setReminderDate,
+		setReminderMode,
+		setReminderTime,
+		setRemovedReminderSeed,
+		setTaskText,
+		syncPickerTime,
+	]);
 
 	useEffect(() => {
 		initializeFormState(seedText);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [seedText]);
+	}, [initializeFormState, seedText]);
 
 	useEffect(() => {
 		if (open) return;
 		initializeFormState(seedText);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [open, seedText]);
-
-	useEffect(() => {
-		if (showTimeInput && reminderMode === "manual") {
-			timeInputRef.current?.focus();
-		}
-	}, [showTimeInput, reminderMode]);
+	}, [initializeFormState, open, seedText]);
 
 	const activeReminder = detectedReminder && getTaskReminderKey(detectedReminder) !== dismissedReminderKey
 		? detectedReminder
 		: null;
+	const shouldShowManualReminderClear = reminderMode === "manual" && Boolean(reminderTime) && !activeReminder;
+	const resolvePickerHour = () => parseTimeInput(pickerHour, 9, 23);
+	const resolvePickerMinute = () => parseTimeInput(pickerMinute, 30, 59);
+	const queueInitialReminderRemoval = () => {
+		if (initialReminderSeed) {
+			setRemovedReminderSeed(initialReminderSeed);
+		}
+	};
+	const resetToDefaultReminder = () => {
+		closePicker();
+		resetReminder();
+		setReminderMode("default");
+	};
 
 	const handleTaskTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const nextText = event.target.value;
@@ -146,7 +181,7 @@ export function AddTaskModal(props: AddTaskModalProps) {
 			if (!isDismissedReminder && reminderMode !== "manual") {
 				setReminderDate(reminder.dateValue);
 				setReminderTime(reminder.timeValue);
-				setShowTimeInput(Boolean(reminder.timeValue));
+				syncPickerTime(reminder.dateValue, reminder.timeValue);
 				setReminderMode("detected");
 			}
 			return;
@@ -160,22 +195,88 @@ export function AddTaskModal(props: AddTaskModalProps) {
 	};
 
 	const handleDialogOpenChange = (nextOpen: boolean) => {
+		if (!nextOpen) {
+			closePicker();
+		}
 		onOpenAction(nextOpen);
 	};
 
 	const handleDismissReminder = () => {
 		if (!activeReminder) return;
 
-		if (initialReminder?.hasExplicitTime && seedText.trim()) {
-			setRemovedReminderSeed({
-				message: seedText.trim(),
-				scheduledAt: initialReminder.scheduledAt,
-			});
-		}
-
+		queueInitialReminderRemoval();
 		setDismissedReminderKey(getTaskReminderKey(activeReminder));
-		resetReminder();
-		setReminderMode("default");
+		resetToDefaultReminder();
+	};
+
+	const handleClearManualReminder = () => {
+		queueInitialReminderRemoval();
+		resetToDefaultReminder();
+	};
+
+	const openReminderPicker = () => {
+		syncPickerTime(reminderDate, reminderTime);
+		setPickerStep("calendar");
+	};
+
+	const handleCalendarDateSelect = (date: Date) => {
+		const nextDate = toDateInputValue(date);
+		setReminderDate(nextDate);
+		setReminderMode("manual");
+		syncPickerTime(nextDate, reminderTime);
+		setPickerStep("time");
+	};
+
+	const handlePickerHourBlur = () => {
+		setPickerHour(formatTimePart(resolvePickerHour()));
+	};
+
+	const handlePickerMinuteBlur = () => {
+		setPickerMinute(formatTimePart(resolvePickerMinute()));
+	};
+
+	const adjustPickerHour = (delta: number) => {
+		setPickerHour((current) => {
+			const nextHour = (parseTimeInput(current, 9, 23) + delta + 24) % 24;
+			return formatTimePart(nextHour);
+		});
+	};
+
+	const adjustPickerMinute = (delta: number) => {
+		setPickerMinute((currentMinute) => {
+			const parsedMinute = parseTimeInput(currentMinute, 30, 59);
+			const nextMinute = parsedMinute + delta;
+
+			if (nextMinute >= 60) {
+				setPickerHour((currentHour) => {
+					const nextHour = (parseTimeInput(currentHour, 9, 23) + 1) % 24;
+					return formatTimePart(nextHour);
+				});
+				return formatTimePart(nextMinute - 60);
+			}
+
+			if (nextMinute < 0) {
+				setPickerHour((currentHour) => {
+					const nextHour = (parseTimeInput(currentHour, 9, 23) + 23) % 24;
+					return formatTimePart(nextHour);
+				});
+				return formatTimePart(nextMinute + 60);
+			}
+
+			return formatTimePart(nextMinute);
+		});
+	};
+
+	const handleConfirmPickerTime = () => {
+		const resolvedHour = resolvePickerHour();
+		const resolvedMinute = resolvePickerMinute();
+		const nextTimeValue = formatTimeValue(resolvedHour, resolvedMinute);
+
+		setPickerHour(formatTimePart(resolvedHour));
+		setPickerMinute(formatTimePart(resolvedMinute));
+		setReminderTime(nextTimeValue);
+		setReminderMode("manual");
+		closePicker();
 	};
 
 	const handleSaveClick = async () => {
@@ -193,6 +294,17 @@ export function AddTaskModal(props: AddTaskModalProps) {
 
 		const reminderAt = reminderTime ? new Date(`${reminderDate}T${reminderTime}:00`) : null;
 		const shouldCreateReminder = Boolean(reminderAt && reminderAt > new Date());
+		const reminderToRemove = removedReminderSeed
+			?? (
+				initialReminderSeed
+					&& (
+						text !== initialReminderSeed.message
+						|| !reminderAt
+						|| reminderAt.getTime() !== initialReminderSeed.scheduledAt.getTime()
+					)
+					? initialReminderSeed
+					: null
+			);
 		let reminderPermission: ReminderNotificationPermission | null = null;
 
 		if (shouldCreateReminder) {
@@ -217,6 +329,7 @@ export function AddTaskModal(props: AddTaskModalProps) {
 			} as GeneralTodo);
 		}
 
+		closePicker();
 		onOpenAction(false);
 
 		startTransition(async () => {
@@ -228,8 +341,8 @@ export function AddTaskModal(props: AddTaskModalProps) {
 				return;
 			}
 
-			if (result.success && removedReminderSeed) {
-				const deleted = await deleteTaskReminder(removedReminderSeed.message, removedReminderSeed.scheduledAt);
+			if (result.success && reminderToRemove) {
+				const deleted = await deleteTaskReminder(reminderToRemove.message, reminderToRemove.scheduledAt);
 				if (!deleted) {
 					toast.error("Task updated, but the previous reminder could not be removed");
 				}
@@ -276,7 +389,15 @@ export function AddTaskModal(props: AddTaskModalProps) {
 			)}
 			<Dialog.Portal>
 				<Dialog.Overlay className={styles["overlay"]} />
-				<Dialog.Content className={styles["content"]}>
+				<Dialog.Content
+					className={styles["content"]}
+					onEscapeKeyDown={(event) => {
+						if (pickerStep) {
+							event.preventDefault();
+							closePicker();
+						}
+					}}
+				>
 					<div className={styles["sheet-handle"]} aria-hidden="true" />
 					<div className={styles["header"]}>
 						<Dialog.Title className={styles["title"]}>
@@ -327,53 +448,24 @@ export function AddTaskModal(props: AddTaskModalProps) {
 									</button>
 								</span>
 							)}
-							{/* Hidden native date input triggered by the chip */}
-							<input
-								ref={dateInputRef}
-								type="date"
-								className={styles["hidden-date"]}
-								value={reminderDate}
-								min={todayDateString()}
-								onChange={(e) => {
-									setReminderDate(e.target.value);
-									setReminderMode("manual");
-								}}
-							/>
 							<button
 								type="button"
 								className={styles["chip"]}
-								onClick={() => dateInputRef.current?.showPicker?.()}
+								onClick={openReminderPicker}
 							>
-								<Icon name="calendar" />
-								{formatDateLabel(reminderDate)}
+								<Icon name={reminderTime ? "bell" : "calendar"} />
+								{formatDateTimeChipLabel(reminderDate, reminderTime)}
 							</button>
-
-							{showTimeInput
-								? (
-									<input
-										ref={timeInputRef}
-										type="time"
-										className={styles["time-input"]}
-										value={reminderTime}
-										onChange={(e) => {
-											setReminderTime(e.target.value);
-											setReminderMode("manual");
-										}}
-									/>
-								)
-								: (
-									<button
-										type="button"
-										className={styles["chip"]}
-										onClick={() => {
-											setShowTimeInput(true);
-											setReminderMode("manual");
-										}}
-									>
-										<Icon name="bell" />
-										Set Time
-									</button>
-								)}
+							{shouldShowManualReminderClear && (
+								<button
+									type="button"
+									className={`${styles["chip"]} ${styles["chip--icon"]}`}
+									onClick={handleClearManualReminder}
+									aria-label="Clear reminder"
+								>
+									<Icon name="close" size={14} />
+								</button>
+							)}
 						</div>
 
 						{error && <Message variant="error">{error}</Message>}
@@ -404,6 +496,23 @@ export function AddTaskModal(props: AddTaskModalProps) {
 							</Button>
 						</div>
 					</form>
+					<ReminderPickerOverlay
+						step={pickerStep}
+						reminderDate={reminderDate}
+						pickerHour={pickerHour}
+						pickerMinute={pickerMinute}
+						onClose={closePicker}
+						onDateSelect={handleCalendarDateSelect}
+						onBackToCalendar={() => setPickerStep("calendar")}
+						onConfirm={handleConfirmPickerTime}
+						onHourChange={setPickerHour}
+						onHourBlur={handlePickerHourBlur}
+						onHourStep={adjustPickerHour}
+						onMinuteChange={setPickerMinute}
+						onMinuteBlur={handlePickerMinuteBlur}
+						onMinuteStep={adjustPickerMinute}
+						styles={styles}
+					/>
 				</Dialog.Content>
 			</Dialog.Portal>
 		</Dialog.Root>

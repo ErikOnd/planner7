@@ -122,7 +122,7 @@ export function DraggableTodoItem(
 							aria-label="Edit task"
 							type="button"
 						>
-							<Icon name="pencil" size={13} />
+							<Icon name="pencil" size={20} />
 						</button>
 					)}
 					{onDelete && (
@@ -132,7 +132,7 @@ export function DraggableTodoItem(
 							aria-label="Delete task"
 							type="button"
 						>
-							<Icon name="trash" size={13} />
+							<Icon name="trash" size={20} />
 						</button>
 					)}
 				</div>

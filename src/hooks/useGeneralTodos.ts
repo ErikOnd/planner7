@@ -93,7 +93,7 @@ export function useGeneralTodos() {
 			return;
 		}
 		fetchTodos();
-	}, [activeWorkspaceId, fetchTodos]);
+	}, [activeWorkspaceId, fetchTodos, remindersByText, todos]);
 
 	const silentRefresh = useCallback(() => fetchTodos({ force: true, silent: true }), [fetchTodos]);
 
@@ -123,7 +123,7 @@ export function useGeneralTodos() {
 			await fetchTodos();
 			console.error("Error deleting todo:", fetchError);
 		}
-	}, [activeWorkspaceId, fetchTodos]);
+	}, [activeWorkspaceId, fetchTodos, remindersByText, todos]);
 
 	const addTodo = useCallback((todo: GeneralTodo) => {
 		setTodos(prev => [...prev, todo]);

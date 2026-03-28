@@ -30,8 +30,8 @@
 		.date-content {
 			display: inline-flex;
 			align-items: center;
-			gap: .75rem;
-			padding: .45rem .75rem;
+			gap: .62rem;
+			padding: .35rem .62rem;
 			border-radius: var(--radius-lg);
 			border: var(--border-width-base) solid var(--color-primary);
 			background-color: var(--color-surface-primary);
@@ -55,15 +55,15 @@
 		display: flex;
 		align-items: center;
 		border-bottom: var(--border-width-base) solid var(--color-border);
-		padding: 1rem 1.15rem;
-		gap: .72rem;
+		padding: 0.82rem 1rem;
+		gap: .6rem;
 		background-color: var(--color-surface-primary);
 	}
 
 	.date-content {
 		display: inline-flex;
 		align-items: center;
-		gap: .72rem;
+		gap: .6rem;
 	}
 
 	.date-content-mobile {
@@ -76,8 +76,8 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 1.95rem;
-		padding: 0.3rem 0.65rem;
+		min-height: 1.75rem;
+		padding: 0.22rem 0.55rem;
 		border-radius: var(--radius-md);
 		background: var(--color-surface-primary-selected);
 		border: var(--border-width-base) solid var(--color-primary);
@@ -103,7 +103,7 @@
 		align-items: center;
 		justify-content: center;
 		min-width: 0;
-		gap: .16rem;
+		gap: .12rem;
 		padding: 0;
 		border-radius: 0;
 		background: transparent;
@@ -125,7 +125,7 @@
 		width: 100%;
 		@include typography.text-2xs;
 		font-weight: 700;
-		letter-spacing: .08em;
+		letter-spacing: .06em;
 		color: var(--color-text-secondary);
 		line-height: 1;
 		text-align: center;
@@ -144,14 +144,14 @@
 
 	.date-divider {
 		width: .1rem;
-		height: var(--control-size-base);
+		height: var(--control-size-sm);
 		align-self: center;
 		background-color: var(--color-surface-border);
 	}
 
 	.editor-container {
 		cursor: text;
-		min-height: 13.5rem;
+		min-height: 11.75rem;
 		display: flex;
 		flex-direction: column;
 		background-color: var(--color-surface);
@@ -163,9 +163,9 @@
 	}
 
 	.editor-loading {
-		min-height: 13.5rem;
+		min-height: 11.75rem;
 		display: flex;
-		padding: 1.35rem 1.5rem 1.8rem;
+		padding: 1.1rem 1.2rem 1.45rem;
 		background-color: var(--color-surface);
 	}
 
@@ -173,12 +173,12 @@
 		width: 100%;
 		display: flex;
 		flex-direction: column;
-		gap: .85rem;
+		gap: .65rem;
 	}
 
 	.editor-skeleton-line {
 		display: block;
-		height: 1rem;
+		height: 0.9rem;
 		border-radius: var(--radius-sm);
 		background: var(--color-surface-border-strong);
 	}
@@ -205,10 +205,10 @@
 
 	.textarea {
 		@include typography.text-base;
-		min-height: 12.5rem;
+		min-height: 11.25rem;
 		resize: vertical;
-		padding: var(--space-md);
-		margin: var(--space-md);
+		padding: var(--space-sm);
+		margin: var(--space-sm);
 		border: 0.0625rem solid var(--color-border);
 		border-radius: var(--radius-xs);
 
@@ -223,16 +223,16 @@
 
 	@include mixins.tablet {
 		.editor-container {
-			min-height: 15rem;
+			min-height: 13.5rem;
 		}
 
 		.editor-loading {
-			min-height: 15rem;
-			padding: 1.5rem 1.65rem 2rem;
+			min-height: 13.5rem;
+			padding: 1.25rem 1.4rem 1.6rem;
 		}
 
 		.textarea {
-			min-height: 25rem;
+			min-height: 21rem;
 		}
 	}
 
@@ -248,8 +248,8 @@
 		}
 
 		.date {
-			padding: 0.56rem 0.82rem;
-			gap: .45rem;
+			padding: 0.48rem 0.72rem;
+			gap: .38rem;
 		}
 
 		.date-content {
@@ -275,11 +275,11 @@
 		}
 
 		.editor-container {
-			min-height: 16rem;
+			min-height: 14.5rem;
 		}
 
 		.editor-loading {
-			padding: 1rem 1rem 1.4rem;
+			padding: 0.85rem 0.85rem 1.15rem;
 		}
 
 		.day-batch {

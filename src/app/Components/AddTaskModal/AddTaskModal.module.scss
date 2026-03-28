@@ -3,10 +3,10 @@
 
 .add-task-button {
 	position: fixed;
-	right: 1.5rem;
-	bottom: 1.5rem;
-	width: 3.5rem;
-	height: 3.5rem;
+	right: 1.25rem;
+	bottom: 1.25rem;
+	width: 3.15rem;
+	height: 3.15rem;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -48,17 +48,18 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	width: min(100vw - 2rem, 60rem);
+	width: min(100vw - 2rem, 56rem);
 	display: flex;
 	flex-direction: column;
-	gap: 2rem;
-	padding: 2.8rem 3rem 2.6rem;
+	gap: 1.45rem;
+	padding: 2.1rem 2.35rem 2rem;
 	border: var(--border-width-base) solid var(--color-border);
 	border-radius: var(--radius-2xl);
 	background: var(--color-bg-surface);
 	box-shadow: var(--shadow-dialog);
 	animation: dialog-desktop-in variables.$transition-smooth ease;
 	z-index: var(--z-overlay);
+	overflow: visible;
 
 	&:focus {
 		outline: none;
@@ -72,7 +73,7 @@
 .header {
 	display: flex;
 	flex-direction: column;
-	gap: 0.6rem;
+	gap: 0.45rem;
 }
 
 .title {
@@ -89,15 +90,15 @@
 .description {
 	margin: 0;
 	color: var(--color-text-secondary);
-	@include typography.text-xl;
+	@include typography.text-lg;
 	font-weight: 500;
-	line-height: 1.45;
+	line-height: 1.35;
 }
 
 .form {
 	display: flex;
 	flex-direction: column;
-	gap: 1.2rem;
+	gap: 0.95rem;
 }
 
 .fieldset {
@@ -108,14 +109,15 @@
 
 .task-input {
 	width: 100%;
-	padding: 1.1rem 1.4rem;
+	padding: 0.9rem 1.15rem;
 	border: none;
-	border-radius: var(--radius-xl);
+	border-radius: var(--radius-lg);
 	background: var(--color-surface-muted, #f0f0ee);
 	color: var(--color-text-primary);
 	font: inherit;
-	@include typography.text-lg;
+	@include typography.text-base;
 	font-weight: 500;
+	line-height: 1.35;
 	transition: box-shadow variables.$transition-base, background-color variables.$transition-base;
 
 	&::placeholder {
@@ -132,21 +134,21 @@
 .chips {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: 0.4rem;
 	flex-wrap: wrap;
 }
 
 .chip {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.35rem;
-	padding: 0.4rem 0.9rem;
-	border-radius: var(--radius-pill);
+	gap: 0.3rem;
+	padding: 0.35rem 0.72rem;
+	border-radius: var(--radius-lg);
 	border: var(--border-width-base) solid var(--color-border);
 	background: var(--color-bg-surface);
 	color: var(--color-text-secondary);
 	cursor: pointer;
-	@include typography.text-sm;
+	@include typography.text-xs;
 	font-weight: 500;
 	transition: background-color variables.$transition-base, color variables.$transition-base;
 
@@ -162,12 +164,20 @@
 	}
 }
 
+.chip--icon {
+	width: 1.95rem;
+	height: 1.95rem;
+	padding: 0;
+	justify-content: center;
+	flex: 0 0 auto;
+}
+
 .chip--detected {
 	cursor: default;
 	border-color: var(--color-border);
 	background: var(--color-bg-surface);
 	color: var(--color-text-secondary);
-	padding-right: 0.35rem;
+	padding-right: 0.25rem;
 
 	svg {
 		opacity: 0.8;
@@ -184,17 +194,17 @@
 .chip-label {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.35rem;
+	gap: 0.3rem;
 }
 
 .chip-dismiss {
-	width: 1.6rem;
-	height: 1.6rem;
+	width: 1.35rem;
+	height: 1.35rem;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	border: 0;
-	border-radius: 999px;
+	border-radius: var(--radius-sm);
 	background: transparent;
 	color: inherit;
 	cursor: pointer;
@@ -212,59 +222,222 @@
 	}
 }
 
-.hidden-date {
+.picker-layer {
 	position: absolute;
-	opacity: 0;
-	pointer-events: none;
-	width: 0;
-	height: 0;
+	inset: 0;
+	z-index: 5;
 }
 
-.time-input {
-	padding: 0.4rem 0.9rem;
-	border-radius: var(--radius-pill);
-	border: var(--border-width-base) solid var(--color-primary);
+.picker-overlay {
+	position: absolute;
+	inset: 0;
+	background: var(--color-overlay);
+	border-radius: inherit;
+}
+
+.picker-dialog {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	pointer-events: none;
+}
+
+.picker-calendar {
+	width: min(92vw, 32rem);
+	pointer-events: auto;
+}
+
+.time-picker {
+	width: min(92vw, 25rem);
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 1.35rem 1.25rem 1.15rem;
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-xl);
 	background: var(--color-bg-surface);
+	box-shadow: var(--shadow-dialog);
+	pointer-events: auto;
+}
+
+.time-picker-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.75rem;
+}
+
+.time-picker-heading {
+	display: flex;
+	flex-direction: column;
+	gap: 0.18rem;
+}
+
+.time-picker-title {
+	margin: 0;
 	color: var(--color-text-primary);
-	font: inherit;
+	@include typography.text-xl;
+	font-weight: 700;
+}
+
+.time-picker-subtitle {
+	margin: 0;
+	color: var(--color-text-secondary);
 	@include typography.text-sm;
-	font-weight: 500;
+}
+
+.time-picker-change-date {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	padding: 0.3rem 0.55rem;
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-md);
+	background: var(--color-bg-surface);
+	color: var(--color-text-secondary);
+	cursor: pointer;
+	@include typography.text-xs;
+	font-weight: 600;
+	transition:
+		background-color variables.$transition-base,
+		border-color variables.$transition-base,
+		color variables.$transition-base;
+
+	&:hover,
+	&:focus-visible {
+		background: var(--color-surface-muted);
+		border-color: var(--color-primary-hover);
+		color: var(--color-text-primary);
+		outline: none;
+	}
+}
+
+.time-picker-controls {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.72rem;
+}
+
+.time-picker-column {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.time-picker-step {
+	width: 2rem;
+	height: 2rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-md);
+	background: var(--color-bg-surface);
+	color: var(--color-text-secondary);
+	cursor: pointer;
+	transition:
+		background-color variables.$transition-base,
+		border-color variables.$transition-base,
+		color variables.$transition-base;
+
+	&:hover,
+	&:focus-visible {
+		background: var(--color-surface-muted);
+		border-color: var(--color-primary-hover);
+		color: var(--color-text-primary);
+		outline: none;
+	}
+}
+
+.time-picker-step-icon--up {
+	transform: rotate(-90deg);
+}
+
+.time-picker-step-icon--down {
+	transform: rotate(90deg);
+}
+
+.time-picker-input {
+	min-width: 4.5rem;
+	min-height: 4.75rem;
+	width: 4.5rem;
+	display: inline-block;
+	padding: 0.4rem 0.75rem;
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-lg);
+	background: var(--color-surface-muted);
+	color: var(--color-text-primary);
+	@include typography.display-lg;
+	font-weight: 700;
+	line-height: 1;
+	text-align: center;
+	font-variant-numeric: tabular-nums;
 
 	&:focus {
 		outline: none;
 		box-shadow: var(--ring-focus);
 	}
+
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		margin: 0;
+		appearance: none;
+	}
+}
+
+.time-picker-separator {
+	padding-bottom: 0.25rem;
+	color: var(--color-text-secondary);
+	@include typography.display-md;
+	font-weight: 600;
+	line-height: 1;
+}
+
+.time-picker-actions {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.65rem;
+}
+
+.time-picker-action {
+	width: 100%;
 }
 
 .button-group {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 1rem;
-	margin-top: 0.2rem;
+	gap: 0.75rem;
+	margin-top: 0.1rem;
 }
 
 .save-action {
-	min-width: 15rem;
+	min-width: 13.5rem;
 }
 
 .close-action {
-	min-width: 11rem;
+	min-width: 10rem;
 }
 
 @media (max-width: 47.9375rem) {
 	.content {
-		top: 0.75rem;
-		right: 0.75rem;
-		bottom: 0.75rem;
-		left: 0.75rem;
+		top: 0.5rem;
+		right: 0.5rem;
+		bottom: 0.5rem;
+		left: 0.5rem;
 		transform: none;
 		width: auto;
 		max-height: none;
 		overflow-y: auto;
-		gap: 1.45rem;
-		padding: 1.1rem 1rem 1rem;
-		border-radius: var(--radius-xl);
+		gap: 1.15rem;
+		padding: 0.95rem 0.9rem 0.9rem;
+		border-radius: var(--radius-lg);
 		animation: dialog-sheet-in variables.$transition-smooth ease;
 	}
 
@@ -278,7 +451,7 @@
 	}
 
 	.header {
-		gap: 0.28rem;
+		gap: 0.2rem;
 		padding-inline: 0.1rem;
 	}
 
@@ -293,10 +466,43 @@
 	}
 
 	.task-input {
-		min-height: 8.3rem;
-		padding: 1.2rem 1rem;
-		border-radius: var(--radius-xl);
+		min-height: 7.25rem;
+		padding: 1rem 0.9rem;
+		border-radius: var(--radius-lg);
 		@include typography.text-base;
+	}
+
+	.picker-dialog {
+		padding: 0.75rem;
+	}
+
+	.picker-calendar {
+		width: min(94vw, 30rem);
+	}
+
+	.time-picker {
+		width: min(94vw, 24rem);
+		padding: 1rem 0.95rem 0.95rem;
+		gap: 0.85rem;
+	}
+
+	.time-picker-header {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.time-picker-change-date {
+		align-self: flex-start;
+	}
+
+	.time-picker-controls {
+		gap: 0.55rem;
+	}
+
+	.time-picker-input {
+		min-width: 4rem;
+		min-height: 4.2rem;
+		width: 4rem;
 	}
 
 	.button-group {
@@ -309,13 +515,13 @@
 	.close-action {
 		width: 100%;
 		min-width: 0;
-		border-radius: var(--radius-xl);
-		@include typography.text-lg;
+		border-radius: var(--radius-lg);
+		@include typography.text-base;
 	}
 
 	.close-action {
-		min-height: var(--button-height-lg);
-		padding-inline: var(--button-padding-inline-lg);
+		min-height: var(--button-height-base);
+		padding-inline: var(--button-padding-inline-base);
 		border: var(--border-width-base) solid var(--color-border);
 		background: var(--color-bg-surface);
 		color: var(--color-text-secondary);
