@@ -3,6 +3,7 @@
 import { useBacklog } from "@/contexts/BacklogContext";
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { Button } from "@atoms/Button/Button";
+import { CalendarOverlay } from "@atoms/CalendarOverlay/CalendarOverlay";
 import Checkbox from "@atoms/Checkbox/Checkbox";
 import { Icon } from "@atoms/Icons/Icon";
 import { Text } from "@atoms/Text/Text";
@@ -16,10 +17,17 @@ import { useBacklogController } from "@hooks/useBacklogController";
 import { useKeyboardShortcut } from "@hooks/useKeyboardShortcut";
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import styles from "./Sidebar.module.scss";
 
-export function Sidebar() {
+type SidebarProps = {
+	onDateSelect?: (date: Date) => void;
+	activeDate?: Date;
+	showWeekends?: boolean;
+};
+
+export function Sidebar({ onDateSelect, activeDate, showWeekends = true }: SidebarProps) {
 	const todosState = useBacklog();
 	const { addTodo, updateTodo, updateTodoCompletion, removeTodoReminder, silentRefresh, remindersByText } = todosState;
 	const [reminderDeleteTarget, setReminderDeleteTarget] = useState<{ todoId: string; text: string } | null>(null);
@@ -85,8 +93,45 @@ export function Sidebar() {
 					<span className={styles["quick-add-text"]}>Add Task</span>
 				</Button>
 
+				<nav className={styles["nav-section"]} aria-label="Sidebar navigation">
+					{onDateSelect
+						? (
+							<CalendarOverlay
+								onDateSelect={onDateSelect}
+								activeDate={activeDate}
+								showWeekends={showWeekends}
+							>
+								<button type="button" className={styles["nav-link"]} aria-label="Open calendar">
+									<span className={styles["nav-icon"]} aria-hidden="true">
+										<Icon name="calendar" size={15} />
+									</span>
+									<span className={styles["nav-label"]}>Calendar</span>
+								</button>
+							</CalendarOverlay>
+						)
+						: (
+							<Link
+								href="/app"
+								className={`${styles["nav-link"]} ${styles["nav-link-active"]}`}
+								aria-current="page"
+							>
+								<span className={styles["nav-icon"]} aria-hidden="true">
+									<Icon name="calendar" size={15} />
+								</span>
+								<span className={styles["nav-label"]}>Calendar</span>
+							</Link>
+						)}
+					<Link href="/app/docs" className={styles["nav-link"]}>
+						<span className={styles["nav-icon"]} aria-hidden="true">
+							<Icon name="editor" size={15} />
+						</span>
+						<span className={styles["nav-label"]}>Documents</span>
+					</Link>
+				</nav>
+
 				<div className={styles["backlog-header"]}>
 					<span className={styles["backlog-title"]}>Tasks</span>
+					<span className={styles["backlog-count"]}>{localTodos.length}</span>
 				</div>
 
 				<div className={styles["backlog-panel"]}>
@@ -138,17 +183,19 @@ export function Sidebar() {
 								</DndContext>
 							)}
 					</div>
-					<Button
-						type="button"
-						variant="secondary"
-						className={styles["completed-link"]}
-						onClick={() => setIsCompletedOpen(true)}
-						fontWeight={600}
-						wrapText={false}
-					>
-						<span className={styles["completed-link-icon"]} aria-hidden="true" />
-						<span className={styles["completed-link-text"]}>Completed</span>
-					</Button>
+					<div className={styles["completed-footer"]}>
+						<Button
+							type="button"
+							variant="secondary"
+							className={styles["completed-link"]}
+							onClick={() => setIsCompletedOpen(true)}
+							fontWeight={600}
+							wrapText={false}
+						>
+							<span className={styles["completed-link-icon"]} aria-hidden="true" />
+							<span className={styles["completed-link-text"]}>Completed Tasks</span>
+						</Button>
+					</div>
 				</div>
 			</div>
 			<AddTaskModal

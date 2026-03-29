@@ -26,17 +26,17 @@
 	.todo-content {
 		position: relative;
 		display: flex;
-		padding: 0.42rem 0.15rem 0.42rem 0.05rem;
-		border-radius: var(--radius-md);
+		padding: 0.34rem 0.12rem 0.34rem 0.04rem;
+		border-radius: var(--radius-sm);
 		background: transparent;
 		border: var(--border-width-base) solid transparent;
 		align-items: flex-start;
-		gap: 0.55rem;
+		gap: 0.48rem;
 		transition: background-color variables.$transition-base, border-color variables.$transition-base;
 
 		&:hover,
 		&:focus-within {
-			background: var(--color-surface-sidebar);
+			background: var(--color-surface-sidebar-hover);
 			border-color: var(--color-sidebar-border);
 		}
 
@@ -51,20 +51,19 @@
 		.todo-checkbox {
 			flex: 1 1 auto;
 			min-width: 0;
-			gap: 0.6rem;
+			gap: 0.5rem;
 			align-items: center;
 
 			> span {
-				width: 1.18rem;
-				height: 1.18rem;
+				width: 1.02rem;
+				height: 1.02rem;
 				border-radius: var(--radius-sm);
-				border: 0.12rem solid var(--color-sidebar-border-strong);
-				background: var(--color-surface-sidebar-active);
+				border: 0.12rem solid var(--color-sidebar-border);
+				background: transparent;
 				box-shadow: none;
 			}
 
 			&:hover > span {
-				background: var(--color-surface-sidebar-active);
 				border-color: var(--color-text-inverse);
 			}
 
@@ -97,10 +96,10 @@
 		.todo-label {
 			min-width: 0;
 			word-break: break-word;
-			color: var(--color-sidebar-icon-soft);
+			color: var(--color-sidebar-text-soft);
 			@include typography.text-sm;
 			font-weight: 500;
-			line-height: 1.3;
+			line-height: 1.35;
 		}
 
 		.todo-reminder {
@@ -108,13 +107,13 @@
 			align-items: center;
 			gap: 0.22rem;
 			align-self: flex-start;
-			margin-left: calc(1.18rem + 0.6rem);
+			margin-left: calc(1.02rem + 0.5rem);
 			padding: 0;
 			border: none;
 			background: none;
 			cursor: pointer;
 			color: var(--color-primary);
-			font-size: 0.64rem;
+			font-size: 0.62rem;
 			line-height: 1.1;
 			font-weight: 600;
 			white-space: nowrap;
@@ -142,7 +141,7 @@
 
 		.action-buttons {
 			position: absolute;
-			right: 0.2rem;
+			right: 0;
 			top: 50%;
 			transform: translateY(-50%) translateX(0.3rem);
 			display: flex;

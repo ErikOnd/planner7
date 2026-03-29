@@ -10,9 +10,9 @@
 	display: flex;
 	flex-direction: column;
 	background-color: var(--color-bg-sidebar);
-	width: 30vw;
+	width: clamp(16.5rem, 21vw, 18.75rem);
 	min-width: 16rem;
-	max-width: 30rem;
+	max-width: 18.75rem;
 	border-right: var(--border-width-base) solid var(--color-sidebar-border);
 	overflow: hidden;
 	flex-shrink: 0;
@@ -24,7 +24,7 @@
 		padding: var(--space-layout-gap) var(--space-layout-pad);
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-layout-gap);
+		gap: 0.85rem;
 	}
 
 	.section {
@@ -43,6 +43,62 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-sm);
+	}
+
+	.nav-section {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.nav-link {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		min-height: 2.5rem;
+		padding: 0.55rem 0.7rem;
+		border-radius: var(--radius-md);
+		border: var(--border-width-base) solid transparent;
+		background: transparent;
+		color: var(--color-sidebar-text-soft);
+		text-decoration: none;
+		cursor: pointer;
+		transition:
+			background-color variables.$transition-base,
+			border-color variables.$transition-base,
+			color variables.$transition-base,
+			transform variables.$transition-fast;
+
+		&:hover,
+		&:focus-visible {
+			outline: none;
+			background: var(--color-surface-sidebar-hover);
+			border-color: var(--color-sidebar-border);
+			color: var(--color-text-inverse);
+			transform: translateX(0.05rem);
+		}
+	}
+
+	.nav-link-active {
+		color: var(--color-text-inverse);
+	}
+
+	.nav-icon {
+		width: 1rem;
+		height: 1rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		color: currentColor;
+		flex: 0 0 auto;
+	}
+
+	.nav-label {
+		@include typography.text-sm;
+		font-weight: 600;
+		line-height: 1.1;
 	}
 
 	.brand {
@@ -68,29 +124,34 @@
 		justify-content: center;
 		gap: 0.45rem;
 		min-height: var(--control-size-base);
-		padding: 0.65rem 0.85rem;
+		padding: 0.72rem 0.85rem;
 		border-radius: var(--radius-lg);
-		background: var(--color-primary);
-		border: var(--border-width-base) solid transparent;
-		color: var(--color-text-primary);
+		background: transparent;
+		border: var(--border-width-base) solid var(--color-sidebar-border);
+		color: var(--color-text-inverse);
 		font-weight: 700;
 		cursor: pointer;
-		transition: background-color variables.$transition-base, transform variables.$transition-fast;
+		transition:
+			background-color variables.$transition-base,
+			border-color variables.$transition-base,
+			transform variables.$transition-fast;
 		box-shadow: none;
 
 		&:hover {
-			background-color: var(--color-primary-hover);
+			background-color: var(--color-surface-sidebar-hover);
+			border-color: var(--color-sidebar-border-strong);
 			box-shadow: none;
 			transform: translateY(-0.0625rem);
 		}
 
 		&:focus-visible {
-			outline: 0.13rem solid var(--color-primary);
+			outline: 0.13rem solid var(--color-text-inverse);
 			outline-offset: 0.13rem;
 		}
 
 		&:active {
-			background-color: var(--color-primary-hover);
+			background-color: var(--color-surface-sidebar-hover);
+			border-color: var(--color-sidebar-border-strong);
 			transform: translateY(0);
 			box-shadow: none;
 		}
@@ -129,7 +190,7 @@
 		background: var(--color-surface-sidebar);
 		border: var(--border-width-base) solid var(--color-sidebar-border);
 		border-radius: var(--radius-pill);
-		padding: 0.12rem 0.42rem;
+		padding: 0.14rem 0.42rem;
 		@include typography.text-2xs;
 		color: var(--color-sidebar-text-muted);
 	}
@@ -141,7 +202,7 @@
 		padding: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 0.6rem;
+		gap: 0.8rem;
 		flex: 1 1 auto;
 		min-height: 0;
 		box-shadow: none;
@@ -187,12 +248,12 @@
 	.remember-items {
 		display: flex;
 		flex-direction: column;
-		gap: 0.28rem;
-		height: auto;
-		max-height: 50rem;
+		gap: 0.18rem;
+		flex: 1 1 auto;
+		min-height: 0;
 		overflow-x: hidden;
 		overflow-y: auto;
-		padding-inline: 0;
+		padding-right: 0.08rem;
 
 		&::-webkit-scrollbar {
 			width: 0.35rem;
@@ -227,23 +288,23 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: flex-start;
-		gap: 0.75rem;
-		min-height: var(--control-size-lg);
-		padding-inline: 0.95rem;
+		gap: 0.55rem;
+		min-height: 2.4rem;
+		padding-inline: 0.15rem;
 		background: transparent;
-		border: 0.12rem solid var(--color-sidebar-border);
-		border-radius: var(--radius-md);
-		color: var(--color-text-inverse);
+		border: 0;
+		border-radius: 0;
+		color: var(--color-sidebar-text-soft);
 		width: 100%;
 		transition:
 			transform variables.$transition-fast,
-			border-color variables.$transition-base,
-			background-color variables.$transition-base;
+			background-color variables.$transition-base,
+			color variables.$transition-base;
 		box-shadow: none;
 
 		&:hover {
-			background: var(--color-surface-sidebar);
-			border-color: var(--color-sidebar-border-strong);
+			background: transparent;
+			color: var(--color-text-inverse);
 			transform: translateY(-0.0625rem);
 			box-shadow: none;
 		}
@@ -256,11 +317,11 @@
 
 	.completed-link-icon {
 		position: relative;
-		width: 1.55rem;
-		height: 1.55rem;
+		width: 1rem;
+		height: 1rem;
 		border-radius: var(--radius-pill);
 		background: transparent;
-		border: 0.12rem solid var(--color-text-inverse);
+		border: 0.12rem solid currentColor;
 		flex: 0 0 auto;
 
 		&::after {
@@ -268,18 +329,24 @@
 			position: absolute;
 			left: 50%;
 			top: 50%;
-			width: 0.28rem;
-			height: 0.52rem;
-			border: solid var(--color-text-inverse);
+			width: 0.2rem;
+			height: 0.4rem;
+			border: solid currentColor;
 			border-width: 0 0.12rem 0.12rem 0;
 			transform: translate(-48%, -58%) rotate(45deg);
 		}
 	}
 
 	.completed-link-text {
-		@include typography.text-base;
-		font-weight: 500;
+		@include typography.text-sm;
+		font-weight: 600;
 		letter-spacing: 0;
+	}
+
+	.completed-footer {
+		margin-top: auto;
+		padding-top: 0.95rem;
+		border-top: var(--border-width-base) solid var(--color-sidebar-border);
 	}
 
 	.remember-loading {

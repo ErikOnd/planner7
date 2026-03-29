@@ -130,7 +130,11 @@ function EditorStateSyncPlugin({ serializedEditorState }: { serializedEditorStat
 	return null;
 }
 
-export default function SmartEditor({ initialContent, onChange, ariaLabel }: SmartEditorProps) {
+export default function SmartEditor({
+	initialContent,
+	onChange,
+	ariaLabel,
+}: SmartEditorProps) {
 	const mounted = useMounted();
 	const { showEditorToolbar } = useWeekDisplayPreference();
 	const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
@@ -145,6 +149,7 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 	const serializedEditorState = useMemo(() => {
 		return JSON.stringify(toLexicalStateJSON(initialContent));
 	}, [initialContent]);
+	const shouldShowToolbar = showEditorToolbar;
 
 	const initialConfig = useMemo<InitialConfigType>(() => {
 		return {
@@ -212,7 +217,7 @@ export default function SmartEditor({ initialContent, onChange, ariaLabel }: Sma
 			}}
 		>
 			<LexicalComposer initialConfig={initialConfig}>
-				{showEditorToolbar && <ToolbarPlugin />}
+				{shouldShowToolbar && <ToolbarPlugin />}
 				{activeImageUploads > 0 && (
 					<div className={styles["smart-editor__upload-status"]} role="status" aria-live="polite">
 						Uploading image{activeImageUploads > 1 ? "s" : ""}...

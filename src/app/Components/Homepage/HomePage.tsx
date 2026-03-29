@@ -236,15 +236,16 @@ export default function HomePage() {
 				: (
 					<div className={styles["desktop-view"]}>
 						<div className={styles["desktop-layout"]}>
-							<Sidebar />
+							<Sidebar
+								onDateSelect={handleCalendarDateSelect}
+								activeDate={baseDate}
+								showWeekends={showWeekends}
+							/>
 							<div className={styles["desktop-main"]}>
 								<DesktopNavigation
 									rangeLabel={rangeLabel}
-									onDateSelect={handleCalendarDateSelect}
-									activeDate={baseDate}
 									baseDate={baseDate}
 									setBaseDateAction={setBaseDate}
-									showWeekends={showWeekends}
 								/>
 								<DesktopContent
 									baseDate={baseDate}

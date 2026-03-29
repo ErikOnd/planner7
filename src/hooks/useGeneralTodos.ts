@@ -93,7 +93,7 @@ export function useGeneralTodos() {
 			return;
 		}
 		fetchTodos();
-	}, [activeWorkspaceId, fetchTodos, remindersByText, todos]);
+	}, [activeWorkspaceId, fetchTodos]);
 
 	const silentRefresh = useCallback(() => fetchTodos({ force: true, silent: true }), [fetchTodos]);
 
