@@ -3,16 +3,20 @@
 import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { Button } from "@atoms/Button/Button";
 import { Icon } from "@atoms/Icons/Icon";
+import SmartEditor from "@atoms/SmartEditor/SmartEditor";
+import { emptyState, isLexicalEditorState } from "@atoms/SmartEditor/utils/content";
 import { Text } from "@atoms/Text/Text";
 import Image from "next/image";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import type { NoteContent } from "types/noteContent";
 import styles from "./DocsModeShell.module.scss";
 
 type DocsDocument = {
 	id: string;
 	title: string;
-	summary: string;
-	lastEdited: string;
+	content: string;
+	createdAt: number;
+	updatedAt: number;
 	tag?: string;
 };
 
@@ -26,14 +30,47 @@ const DOC_TAG_OPTIONS = [
 
 const INITIAL_DOCS: DocsDocument[] = [];
 const DOCS_STORAGE_KEY = "planner7:docs:v1";
+const EMPTY_DOC_CONTENT = JSON.stringify(emptyState);
+const EMPTY_DOCUMENT_PREVIEW = "Start writing in this document.";
 
 type PersistedDocsState = {
 	documents: DocsDocument[];
 	selectedDocumentId: string | null;
 };
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null;
+}
+
 function buildDocsStorageKey(workspaceId: string | null) {
 	return `${DOCS_STORAGE_KEY}:${workspaceId ?? "default"}`;
+}
+
+function normalizePersistedDocument(rawDocument: unknown): DocsDocument | null {
+	if (!isRecord(rawDocument)) return null;
+
+	const id = typeof rawDocument.id === "string" ? rawDocument.id : "";
+	const title = typeof rawDocument.title === "string" ? rawDocument.title.trim() : "";
+	if (!id || !title) return null;
+
+	const fallbackTimestamp = Date.now();
+	const createdAt = typeof rawDocument.createdAt === "number" ? rawDocument.createdAt : fallbackTimestamp;
+	const updatedAt = typeof rawDocument.updatedAt === "number" ? rawDocument.updatedAt : createdAt;
+	const tag = typeof rawDocument.tag === "string" && rawDocument.tag.trim().length > 0
+		? rawDocument.tag.trim()
+		: undefined;
+	const content = typeof rawDocument.content === "string" && rawDocument.content.trim().length > 0
+		? rawDocument.content
+		: EMPTY_DOC_CONTENT;
+
+	return {
+		id,
+		title,
+		content,
+		createdAt,
+		updatedAt,
+		tag,
+	};
 }
 
 function readPersistedDocs(workspaceId: string | null): PersistedDocsState | null {
@@ -47,7 +84,9 @@ function readPersistedDocs(workspaceId: string | null): PersistedDocsState | nul
 		if (!parsed || !Array.isArray(parsed.documents)) return null;
 
 		return {
-			documents: parsed.documents,
+			documents: parsed.documents
+				.map((document) => normalizePersistedDocument(document))
+				.filter((document): document is DocsDocument => document !== null),
 			selectedDocumentId: typeof parsed.selectedDocumentId === "string" ? parsed.selectedDocumentId : null,
 		};
 	} catch {
@@ -65,25 +104,84 @@ function persistDocs(workspaceId: string | null, state: PersistedDocsState) {
 	}
 }
 
-function buildDocumentSummary(tag?: string) {
-	if (!tag) return "Fresh draft ready for the editor surface.";
+function getRelativeTimeLabel(timestamp: number) {
+	const elapsedMs = Date.now() - timestamp;
+	const elapsedMinutes = Math.max(0, Math.floor(elapsedMs / 60000));
 
-	return `${tag} draft ready for the editor surface.`;
+	if (elapsedMinutes < 1) return "just now";
+	if (elapsedMinutes < 60) return `${elapsedMinutes} min ago`;
+
+	const elapsedHours = Math.floor(elapsedMinutes / 60);
+	if (elapsedHours < 24) return elapsedHours === 1 ? "1 hour ago" : `${elapsedHours} hours ago`;
+
+	const elapsedDays = Math.floor(elapsedHours / 24);
+	if (elapsedDays < 7) return elapsedDays === 1 ? "yesterday" : `${elapsedDays} days ago`;
+
+	const elapsedWeeks = Math.floor(elapsedDays / 7);
+	return elapsedWeeks === 1 ? "last week" : `${elapsedWeeks} weeks ago`;
+}
+
+function extractTextFromLexicalNode(node: unknown): string {
+	if (!isRecord(node)) return "";
+
+	if (node.type === "text" && typeof node.text === "string") {
+		return node.text;
+	}
+
+	if (!Array.isArray(node.children)) return "";
+
+	return node.children
+		.map((child) => extractTextFromLexicalNode(child))
+		.filter(Boolean)
+		.join(" ");
+}
+
+function buildDocumentPreview(content: string) {
+	try {
+		const parsedContent = JSON.parse(content);
+		if (!isLexicalEditorState(parsedContent)) {
+			return EMPTY_DOCUMENT_PREVIEW;
+		}
+
+		const rawText = extractTextFromLexicalNode(parsedContent.root).replace(/\s+/g, " ").trim();
+		if (!rawText) {
+			return EMPTY_DOCUMENT_PREVIEW;
+		}
+
+		return rawText.length > 72 ? `${rawText.slice(0, 71).trimEnd()}…` : rawText;
+	} catch {
+		return EMPTY_DOCUMENT_PREVIEW;
+	}
+}
+
+function buildDocumentMeta(document: DocsDocument) {
+	const prefix = document.updatedAt > document.createdAt ? "Edited" : "Created";
+	return `${prefix} ${getRelativeTimeLabel(document.updatedAt)}`;
+}
+
+function normalizeDocumentContent(content: NoteContent) {
+	if (typeof content === "string" && content.trim().length > 0) {
+		return content;
+	}
+
+	return EMPTY_DOC_CONTENT;
 }
 
 function buildDocument(title: string, tag?: string): DocsDocument {
 	const trimmedTitle = title.trim();
 	const trimmedTag = tag?.trim() || undefined;
+	const timestamp = Date.now();
 	const normalizedId = trimmedTitle
 		.toLowerCase()
 		.replace(/[^a-z0-9]+/g, "-")
 		.replace(/^-+|-+$/g, "");
 
 	return {
-		id: `${normalizedId || "untitled-document"}-${Date.now()}`,
+		id: `${normalizedId || "untitled-document"}-${timestamp}`,
 		title: trimmedTitle,
-		summary: buildDocumentSummary(trimmedTag),
-		lastEdited: "Created just now",
+		content: EMPTY_DOC_CONTENT,
+		createdAt: timestamp,
+		updatedAt: timestamp,
 		tag: trimmedTag,
 	};
 }
@@ -135,6 +233,31 @@ export function DocsModeShell() {
 		closeCreateComposer();
 	};
 
+	const handleDocumentContentChange = useCallback((documentId: string, nextContent: NoteContent) => {
+		const normalizedContent = normalizeDocumentContent(nextContent);
+
+		setDocuments((currentDocuments) => {
+			const documentIndex = currentDocuments.findIndex((document) => document.id === documentId);
+			if (documentIndex === -1) {
+				return currentDocuments;
+			}
+
+			const currentDocument = currentDocuments[documentIndex];
+			if (currentDocument.content === normalizedContent) {
+				return currentDocuments;
+			}
+
+			const nextDocuments = [...currentDocuments];
+			nextDocuments[documentIndex] = {
+				...currentDocument,
+				content: normalizedContent,
+				updatedAt: Date.now(),
+			};
+
+			return nextDocuments;
+		});
+	}, []);
+
 	useEffect(() => {
 		const nextStorageKey = buildDocsStorageKey(activeWorkspaceId);
 		const persistedState = readPersistedDocs(activeWorkspaceId);
@@ -179,7 +302,7 @@ export function DocsModeShell() {
 					<div className={styles["panel-heading"]}>
 						<h1 className={styles["panel-title"]}>Documents</h1>
 						<p className={styles["panel-copy"]}>
-							Create rich planning sheets here. Full Lexical editing, tables, and Excalidraw are coming next.
+							Create rich planning sheets here with full Lexical editing, tables, sticky notes, and Excalidraw.
 						</p>
 					</div>
 				</div>
@@ -232,12 +355,12 @@ export function DocsModeShell() {
 									>
 										<div className={styles["document-card-title-row"]}>
 											<span className={styles["document-card-title"]}>{document.title}</span>
-											<span className={styles["document-card-meta"]}>{document.lastEdited}</span>
+											<span className={styles["document-card-meta"]}>{buildDocumentMeta(document)}</span>
 										</div>
 										{document.tag
 											? <span className={styles["document-card-tag"]}>{document.tag}</span>
 											: null}
-										<p className={styles["document-card-copy"]}>{document.summary}</p>
+										<p className={styles["document-card-copy"]}>{buildDocumentPreview(document.content)}</p>
 									</button>
 								);
 							})}
@@ -257,6 +380,9 @@ export function DocsModeShell() {
 					>
 						Back to Planner
 					</Button>
+					{!showSetupState && selectedDocument
+						? <h2 className={styles["main-document-title"]}>{selectedDocument.title}</h2>
+						: null}
 				</div>
 				{showSetupState
 					? (
@@ -358,23 +484,15 @@ export function DocsModeShell() {
 					)
 					: selectedDocument
 					? (
-						<div className={styles["document-paper-overlay"]} role="status" aria-live="polite">
-							<div className={styles["document-paper-overlay-card"]}>
-								<div className={styles["document-paper-illustration"]}>
-									<div className={styles["document-paper-illustration-sheet"]}>
-										<span className={styles["document-paper-illustration-line"]} />
-										<span className={styles["document-paper-illustration-line"]} />
-										<span className={styles["document-paper-illustration-line"]} />
-										<span className={styles["document-paper-illustration-line"]} />
-									</div>
-									<div className={styles["document-paper-illustration-badge"]}>
-										<Icon name="notebook-pen" size={28} />
-									</div>
-								</div>
-								<h4 className={styles["document-paper-overlay-title"]}>Under construction</h4>
-								<p className={styles["document-paper-overlay-copy"]}>
-									This document surface is still being built out.
-								</p>
+						<div className={styles["document-editor-stage"]}>
+							<div className={styles["document-editor-shell"]}>
+								<SmartEditor
+									initialContent={selectedDocument.content}
+									onChange={(content) => handleDocumentContentChange(selectedDocument.id, content)}
+									ariaLabel={`${selectedDocument.title} document editor`}
+									variant="document"
+									placeholder="Start writing your document…"
+								/>
 							</div>
 						</div>
 					)

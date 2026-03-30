@@ -25,14 +25,22 @@ import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPl
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
+import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
+import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
+import clsx from "clsx";
 import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import type { LexicalEditorStateJSON, NoteContent } from "types/noteContent";
+import { ExcalidrawNode } from "./nodes/ExcalidrawNode";
 import { ImageNode } from "./nodes/ImageNode";
+import { StickyNoteNode } from "./nodes/StickyNoteNode";
 import CodeHighlightingPlugin from "./plugins/CodeHighlightingPlugin";
+import DocumentBlocksPlugin from "./plugins/DocumentBlocksPlugin";
 import ImageUploadDropPlugin from "./plugins/ImageUploadDropPlugin";
 import SlashCommandPlugin from "./plugins/SlashCommandPlugin";
+import TableActionMenuPlugin from "./plugins/TableActionMenuPlugin";
+import TableCellResizerPlugin from "./plugins/TableCellResizerPlugin";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
 import {
 	blockNoteToMarkdown,
@@ -47,20 +55,24 @@ type SmartEditorProps = {
 	initialContent?: NoteContent;
 	onChange?: (content: NoteContent) => void;
 	ariaLabel?: string;
+	variant?: "default" | "document";
+	placeholder?: string;
 };
 
 function createParagraphNodeJSON(line: string) {
 	return {
 		children: line
-			? [{
-				detail: 0,
-				format: 0,
-				mode: "normal",
-				style: "",
-				text: line,
-				type: "text",
-				version: 1,
-			}]
+			? [
+				{
+					detail: 0,
+					format: 0,
+					mode: "normal",
+					style: "",
+					text: line,
+					type: "text",
+					version: 1,
+				},
+			]
 			: [],
 		direction: null,
 		format: "",
@@ -70,48 +82,87 @@ function createParagraphNodeJSON(line: string) {
 	};
 }
 
-function toLexicalStateJSON(initialContent?: NoteContent): LexicalEditorStateJSON {
+function stripIndentFromValue<T>(value: T): T {
+	if (Array.isArray(value)) {
+		return value.map((item) => stripIndentFromValue(item)) as T;
+	}
+
+	if (typeof value !== "object" || value === null) {
+		return value;
+	}
+
+	return Object.fromEntries(
+		Object.entries(value).map(([key, entryValue]) => {
+			if (key === "indent") {
+				return [key, 0];
+			}
+
+			return [key, stripIndentFromValue(entryValue)];
+		}),
+	) as T;
+}
+
+function normalizeDocumentEditorState(editorState: LexicalEditorStateJSON, stripIndent: boolean) {
+	return stripIndent ? stripIndentFromValue(editorState) : editorState;
+}
+
+function normalizeEditorStateForPersistence(editorState: unknown, stripIndent: boolean) {
+	const normalizedEditorState = editorState as LexicalEditorStateJSON;
+	return isLexicalEditorStateEffectivelyEmpty(normalizedEditorState)
+		? emptyState
+		: normalizeDocumentEditorState(normalizedEditorState, stripIndent);
+}
+
+function toLexicalStateJSON(initialContent?: NoteContent, stripIndent = false): LexicalEditorStateJSON {
 	if (isLexicalEditorState(initialContent)) {
-		return hasNonEmptyRoot(initialContent) ? initialContent : emptyState;
+		const nextEditorState = hasNonEmptyRoot(initialContent) ? initialContent : emptyState;
+		return normalizeDocumentEditorState(nextEditorState, stripIndent);
 	}
 
 	if (typeof initialContent === "string") {
 		try {
 			const parsed = JSON.parse(initialContent);
 			if (isLexicalEditorState(parsed)) {
-				return hasNonEmptyRoot(parsed) ? parsed : emptyState;
+				const nextEditorState = hasNonEmptyRoot(parsed) ? parsed : emptyState;
+				return normalizeDocumentEditorState(nextEditorState, stripIndent);
 			}
 		} catch {
 			// treat as plain text
 		}
 
-		return {
+		return normalizeDocumentEditorState(
+			{
+				root: {
+					children: [createParagraphNodeJSON(initialContent)],
+					direction: null,
+					format: "",
+					indent: 0,
+					type: "root",
+					version: 1,
+				},
+			},
+			stripIndent,
+		);
+	}
+
+	const markdown = blockNoteToMarkdown(initialContent);
+	if (!markdown) {
+		return normalizeDocumentEditorState(emptyState, stripIndent);
+	}
+
+	return normalizeDocumentEditorState(
+		{
 			root: {
-				children: [createParagraphNodeJSON(initialContent)],
+				children: markdown.split("\n").map((line) => createParagraphNodeJSON(line)),
 				direction: null,
 				format: "",
 				indent: 0,
 				type: "root",
 				version: 1,
 			},
-		};
-	}
-
-	const markdown = blockNoteToMarkdown(initialContent);
-	if (!markdown) {
-		return emptyState;
-	}
-
-	return {
-		root: {
-			children: markdown.split("\n").map((line) => createParagraphNodeJSON(line)),
-			direction: null,
-			format: "",
-			indent: 0,
-			type: "root",
-			version: 1,
 		},
-	};
+		stripIndent,
+	);
 }
 
 function EditorStateSyncPlugin({ serializedEditorState }: { serializedEditorState: string }) {
@@ -134,6 +185,8 @@ export default function SmartEditor({
 	initialContent,
 	onChange,
 	ariaLabel,
+	variant = "default",
+	placeholder = "Start writing, or type / for commands…",
 }: SmartEditorProps) {
 	const mounted = useMounted();
 	const { showEditorToolbar } = useWeekDisplayPreference();
@@ -145,17 +198,19 @@ export default function SmartEditor({
 	const [showImageLimitNotice, setShowImageLimitNotice] = useState(false);
 	const dragMenuRef = useRef<HTMLElement>(null);
 	const dragTargetLineRef = useRef<HTMLElement>(null);
+	const isDocumentVariant = variant === "document";
 
 	const serializedEditorState = useMemo(() => {
-		return JSON.stringify(toLexicalStateJSON(initialContent));
-	}, [initialContent]);
-	const shouldShowToolbar = showEditorToolbar;
+		return JSON.stringify(toLexicalStateJSON(initialContent, isDocumentVariant));
+	}, [initialContent, isDocumentVariant]);
+	const shouldShowToolbar = isDocumentVariant || showEditorToolbar;
 
 	const initialConfig = useMemo<InitialConfigType>(() => {
 		return {
 			namespace: "planner-smart-editor",
 			theme: {
 				paragraph: styles["smart-editor__paragraph"],
+				code: styles["smart-editor__code"],
 				heading: {
 					h1: styles["smart-editor__h1"],
 					h2: styles["smart-editor__h2"],
@@ -179,6 +234,12 @@ export default function SmartEditor({
 					listitemChecked: styles["smart-editor__li-checked"],
 					listitemUnchecked: styles["smart-editor__li-unchecked"],
 				},
+				table: styles["smart-editor__table"],
+				tableCell: styles["smart-editor__table-cell"],
+				tableCellHeader: styles["smart-editor__table-cell-header"],
+				tableCellSelected: styles["smart-editor__table-cell-selected"],
+				tableRow: styles["smart-editor__table-row"],
+				tableSelection: styles["smart-editor__table-selection"],
 			},
 			nodes: [
 				HeadingNode,
@@ -191,19 +252,25 @@ export default function SmartEditor({
 				LinkNode,
 				AutoLinkNode,
 				ImageNode,
+				...(isDocumentVariant ? [TableNode, TableRowNode, TableCellNode, StickyNoteNode, ExcalidrawNode] : []),
 			],
 			editorState: serializedEditorState,
 			onError(error: Error) {
 				console.error(error);
 			},
 		};
-	}, [serializedEditorState]);
+	}, [serializedEditorState, isDocumentVariant]);
 
-	if (typeof window === "undefined" || !mounted) return null;
+	if (typeof window === "undefined" || !mounted) {
+		return null;
+	}
 
 	return (
 		<div
-			className={styles["smart-editor"]}
+			className={clsx(
+				styles["smart-editor"],
+				isDocumentVariant && styles["smart-editor--document"],
+			)}
 			ref={setFloatingAnchorElem}
 			onFocusCapture={() => {
 				setIsFocused(true);
@@ -217,7 +284,7 @@ export default function SmartEditor({
 			}}
 		>
 			<LexicalComposer initialConfig={initialConfig}>
-				{shouldShowToolbar && <ToolbarPlugin />}
+				{shouldShowToolbar && !isDocumentVariant && <ToolbarPlugin />}
 				{activeImageUploads > 0 && (
 					<div className={styles["smart-editor__upload-status"]} role="status" aria-live="polite">
 						Uploading image{activeImageUploads > 1 ? "s" : ""}...
@@ -228,11 +295,19 @@ export default function SmartEditor({
 						{imageUploadError}
 					</div>
 				)}
-				<div className={styles["smart-editor__content-area"]}>
+				<div
+					className={clsx(
+						styles["smart-editor__content-area"],
+						isDocumentVariant && styles["smart-editor__content-area--document"],
+					)}
+				>
 					<RichTextPlugin
 						contentEditable={
 							<ContentEditable
-								className={styles["smart-editor__contenteditable"]}
+								className={clsx(
+									styles["smart-editor__contenteditable"],
+									isDocumentVariant && styles["smart-editor__contenteditable--document"],
+								)}
 								aria-label={ariaLabel || "Text editor"}
 								spellCheck={true}
 								autoCorrect="on"
@@ -243,24 +318,34 @@ export default function SmartEditor({
 							/>
 						}
 						placeholder={
-							<div className={styles["smart-editor__placeholder"]}>
-								Start writing, or type / for commands…
+							<div
+								className={clsx(
+									styles["smart-editor__placeholder"],
+									isDocumentVariant && styles["smart-editor__placeholder--document"],
+								)}
+							>
+								{placeholder}
 							</div>
 						}
 						ErrorBoundary={LexicalErrorBoundary}
 					/>
 				</div>
+				{shouldShowToolbar && isDocumentVariant && <ToolbarPlugin variant="floating" />}
 				<HistoryPlugin />
 				<CodeHighlightingPlugin />
-				<TabIndentationPlugin />
+				{!isDocumentVariant && <TabIndentationPlugin />}
 				<LinkPlugin />
 				<ClickableLinkPlugin />
 				<AutoLinkPlugin matchers={LINK_MATCHERS} />
 				<ListPlugin />
 				<CheckListPlugin />
 				<HorizontalRulePlugin />
+				{isDocumentVariant && <TablePlugin hasHorizontalScroll={false} />}
+				{isDocumentVariant && <TableCellResizerPlugin />}
+				{isDocumentVariant && floatingAnchorElem && <TableActionMenuPlugin anchorElem={floatingAnchorElem} />}
 				<MarkdownShortcutPlugin />
 				{isFocused && <SlashCommandPlugin />}
+				{isDocumentVariant && <DocumentBlocksPlugin />}
 				<ImageUploadDropPlugin
 					onUploadStart={(count) => {
 						setImageUploadError(null);
@@ -278,7 +363,7 @@ export default function SmartEditor({
 						}
 					}}
 				/>
-				{isFocused && floatingAnchorElem && (
+				{!isDocumentVariant && isFocused && floatingAnchorElem && (
 					<DraggableBlockPlugin_EXPERIMENTAL
 						anchorElem={floatingAnchorElem}
 						menuRef={dragMenuRef as unknown as RefObject<HTMLElement>}
@@ -308,12 +393,17 @@ export default function SmartEditor({
 					/>
 				)}
 				<OnChangePlugin
+					ignoreSelectionChange={true}
 					onChange={(nextEditorState, _editor, tags) => {
-						if (tags.has("external-sync")) return;
-						const editorStateJSON = nextEditorState.toJSON();
-						const normalizedEditorState = isLexicalEditorStateEffectivelyEmpty(editorStateJSON)
-							? emptyState
-							: editorStateJSON;
+						if (tags.has("external-sync")) {
+							return;
+						}
+
+						const normalizedEditorState = normalizeEditorStateForPersistence(
+							nextEditorState.toJSON(),
+							isDocumentVariant,
+						);
+
 						onChange?.(JSON.stringify(normalizedEditorState));
 					}}
 				/>

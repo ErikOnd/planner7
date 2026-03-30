@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
 			bodySizeLimit: "10mb",
 		},
 	},
+	transpilePackages: ["@excalidraw/excalidraw"],
 	webpack(config) {
 		const fileLoaderRule = config.module.rules.find((rule: any) => rule.test?.test?.(".svg"));
 		if (fileLoaderRule) {

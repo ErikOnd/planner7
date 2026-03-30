@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@excalidraw/excalidraw/index.css";
 import "./globals.scss";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
