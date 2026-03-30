@@ -143,6 +143,178 @@
 	margin-left: auto;
 }
 
+.smart-editor__toolbar-item {
+	position: relative;
+	flex: 0 0 auto;
+}
+
+.smart-editor__highlight-trigger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.16rem;
+}
+
+.smart-editor__highlight-trigger-icon {
+	width: 1.08rem;
+	height: 1.08rem;
+}
+
+.smart-editor__highlight-trigger-chevron {
+	width: 0.92rem;
+	height: 0.92rem;
+	margin-left: -0.02rem;
+}
+
+.smart-editor__highlight-picker {
+	position: fixed;
+	z-index: calc(var(--z-editor-toolbar) + 1);
+	min-width: 14.8rem;
+	padding: 0.78rem;
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-lg);
+	background: var(--color-surface-elevated);
+	box-shadow: var(--shadow-popover);
+	display: grid;
+	gap: 0.72rem;
+}
+
+.smart-editor__highlight-grid {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	gap: 0.45rem;
+}
+
+.smart-editor__highlight-option {
+	width: 1.38rem;
+	height: 1.38rem;
+	border-radius: var(--radius-sm);
+	border: var(--border-width-base) solid var(--color-border);
+	cursor: pointer;
+	box-shadow: var(--shadow-control);
+	transition:
+		transform variables.$transition-fast,
+		border-color variables.$transition-fast,
+		box-shadow variables.$transition-fast;
+
+	&:hover {
+		transform: translateY(-0.04rem);
+		box-shadow: var(--shadow-control-hover);
+	}
+
+	&[data-active="true"] {
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 0.12rem var(--color-surface-primary-selected);
+	}
+
+	&:focus-visible {
+		outline: 0.14rem solid var(--color-primary-hover);
+		outline-offset: 0.08rem;
+	}
+}
+
+.smart-editor__highlight-custom {
+	display: grid;
+	gap: 0.38rem;
+}
+
+.smart-editor__highlight-label {
+	@include typography.text-xs;
+	font-weight: 700;
+	color: var(--color-text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+.smart-editor__highlight-custom-controls {
+	display: flex;
+	align-items: center;
+	gap: 0.62rem;
+}
+
+.smart-editor__highlight-color-trigger {
+	width: 2.6rem;
+	height: 2rem;
+	padding: 0.18rem;
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-md);
+	background: var(--color-surface-subtle);
+	cursor: pointer;
+	box-shadow: var(--shadow-control);
+	transition:
+		border-color variables.$transition-base,
+		box-shadow variables.$transition-base,
+		transform variables.$transition-fast;
+
+	&:hover {
+		border-color: var(--color-primary-hover);
+		box-shadow: var(--shadow-control-hover);
+		transform: translateY(-0.02rem);
+	}
+
+	&:focus-visible {
+		outline: 0.14rem solid var(--color-primary-hover);
+		outline-offset: 0.08rem;
+	}
+}
+
+.smart-editor__highlight-color-preview {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border-radius: calc(var(--radius-md) - 0.16rem);
+}
+
+.smart-editor__highlight-color-input {
+	position: absolute;
+	width: 0.0625rem;
+	height: 0.0625rem;
+	padding: 0;
+	border: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.smart-editor__highlight-value {
+	@include typography.text-xs;
+	font-weight: 700;
+	color: var(--color-text-secondary);
+	letter-spacing: 0.04em;
+}
+
+.smart-editor__highlight-actions {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.smart-editor__highlight-action-btn {
+	border: var(--border-width-base) solid var(--color-border);
+	border-radius: var(--radius-md);
+	background: var(--color-surface-subtle);
+	color: var(--color-text-primary);
+	padding: 0.42rem 0.68rem;
+	@include typography.text-xs;
+	font-weight: 700;
+	cursor: pointer;
+	transition:
+		background-color variables.$transition-base,
+		border-color variables.$transition-base,
+		box-shadow variables.$transition-base;
+
+	&:hover {
+		background-color: var(--color-surface-primary-hover);
+		border-color: var(--color-primary-hover);
+		box-shadow: var(--shadow-control);
+	}
+
+	&:focus-visible {
+		outline: 0.14rem solid var(--color-primary-hover);
+		outline-offset: 0.08rem;
+	}
+}
+
 .smart-editor__toolbar-icon {
 	display: block;
 	width: 1.25rem;

@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@atoms/Icons/Icon";
 import styles from "../SmartEditor.module.scss";
 
 import { TOGGLE_LINK_COMMAND } from "@lexical/link";
@@ -7,7 +8,7 @@ import { INSERT_CHECK_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERE
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
 import { $createHeadingNode } from "@lexical/rich-text";
-import { $setBlocksType } from "@lexical/selection";
+import { $getSelectionStyleValueForProperty, $patchStyleText, $setBlocksType } from "@lexical/selection";
 import {
 	$createParagraphNode,
 	$getSelection,
@@ -22,7 +23,35 @@ import {
 	SELECTION_CHANGE_COMMAND,
 	UNDO_COMMAND,
 } from "lexical";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+
+const DEFAULT_HIGHLIGHT_COLOR = "#f8e71c";
+const HIGHLIGHT_SWATCHES = ["#f8e71c", "#d9f36a", "#ffcf70", "#f9a8d4", "#93c5fd", "#c4b5fd", "#d4d4d4"];
+
+function isHexColor(value: string) {
+	return /^#[\da-f]{6}$/i.test(value);
+}
+
+function patchHighlightStyle(color: string | null) {
+	if (color === null) {
+		return {
+			"background-color": null,
+			"border-radius": null,
+			"box-decoration-break": null,
+			"-webkit-box-decoration-break": null,
+			"padding-inline": null,
+		};
+	}
+
+	return {
+		"background-color": color,
+		"border-radius": "0.28rem",
+		"box-decoration-break": "clone",
+		"-webkit-box-decoration-break": "clone",
+		"padding-inline": "0.08em",
+	};
+}
 
 function setBlockType(editor: LexicalEditor, createNode: () => ElementNode) {
 	editor.update(() => {
@@ -40,6 +69,14 @@ export default function ToolbarPlugin() {
 	const [isBold, setIsBold] = useState(false);
 	const [isItalic, setIsItalic] = useState(false);
 	const [isUnderline, setIsUnderline] = useState(false);
+	const [highlightColor, setHighlightColor] = useState("");
+	const [customHighlightColor, setCustomHighlightColor] = useState(DEFAULT_HIGHLIGHT_COLOR);
+	const [isHighlightPickerOpen, setIsHighlightPickerOpen] = useState(false);
+	const [highlightPickerPosition, setHighlightPickerPosition] = useState<{ top: number; left: number } | null>(null);
+	const highlightTriggerRef = useRef<HTMLButtonElement | null>(null);
+	const highlightPickerRef = useRef<HTMLDivElement | null>(null);
+	const customColorInputRef = useRef<HTMLInputElement | null>(null);
+	const hasHighlight = highlightColor !== "";
 
 	const handleToggleLink = () => {
 		const rawUrl = window.prompt("Enter URL (leave empty to remove link):", "https://");
@@ -62,6 +99,11 @@ export default function ToolbarPlugin() {
 				setIsBold(selection.hasFormat("bold"));
 				setIsItalic(selection.hasFormat("italic"));
 				setIsUnderline(selection.hasFormat("underline"));
+				const nextHighlightColor = $getSelectionStyleValueForProperty(selection, "background-color", "");
+				setHighlightColor(nextHighlightColor);
+				if (isHexColor(nextHighlightColor)) {
+					setCustomHighlightColor(nextHighlightColor);
+				}
 			}
 		};
 
@@ -106,6 +148,99 @@ export default function ToolbarPlugin() {
 		};
 	}, [editor]);
 
+	useEffect(() => {
+		if (!isHighlightPickerOpen) return;
+
+		const handlePointerDown = (event: MouseEvent) => {
+			const target = event.target as Node | null;
+			if (target && highlightPickerRef.current?.contains(target)) return;
+			if (target && highlightTriggerRef.current?.contains(target)) return;
+			setIsHighlightPickerOpen(false);
+		};
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				setIsHighlightPickerOpen(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handlePointerDown);
+		document.addEventListener("keydown", handleKeyDown);
+
+		return () => {
+			document.removeEventListener("mousedown", handlePointerDown);
+			document.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [isHighlightPickerOpen]);
+
+	const updateHighlightPickerPosition = useCallback(() => {
+		if (typeof window === "undefined") return;
+
+		const triggerRect = highlightTriggerRef.current?.getBoundingClientRect();
+		if (!triggerRect) return;
+
+		const pickerRect = highlightPickerRef.current?.getBoundingClientRect();
+		const viewportPadding = 12;
+		const offset = 8;
+		const pickerWidth = pickerRect?.width ?? 237;
+		const pickerHeight = pickerRect?.height ?? 220;
+
+		let left = triggerRect.left;
+		if (left + pickerWidth > window.innerWidth - viewportPadding) {
+			left = window.innerWidth - pickerWidth - viewportPadding;
+		}
+		left = Math.max(viewportPadding, left);
+
+		let top = triggerRect.bottom + offset;
+		if (top + pickerHeight > window.innerHeight - viewportPadding) {
+			top = triggerRect.top - pickerHeight - offset;
+		}
+		top = Math.max(viewportPadding, top);
+
+		setHighlightPickerPosition({ top, left });
+	}, []);
+
+	useEffect(() => {
+		if (!isHighlightPickerOpen) {
+			setHighlightPickerPosition(null);
+			return;
+		}
+
+		updateHighlightPickerPosition();
+		const frame = window.requestAnimationFrame(updateHighlightPickerPosition);
+
+		window.addEventListener("resize", updateHighlightPickerPosition);
+		window.addEventListener("scroll", updateHighlightPickerPosition, true);
+
+		return () => {
+			window.cancelAnimationFrame(frame);
+			window.removeEventListener("resize", updateHighlightPickerPosition);
+			window.removeEventListener("scroll", updateHighlightPickerPosition, true);
+		};
+	}, [isHighlightPickerOpen, updateHighlightPickerPosition]);
+
+	const applyHighlightColor = (color: string) => {
+		editor.update(() => {
+			const selection = $getSelection();
+			if ($isRangeSelection(selection)) {
+				$patchStyleText(selection, patchHighlightStyle(color));
+			}
+		});
+		setCustomHighlightColor(color);
+		setHighlightColor(color);
+	};
+
+	const clearHighlightColor = () => {
+		editor.update(() => {
+			const selection = $getSelection();
+			if ($isRangeSelection(selection)) {
+				$patchStyleText(selection, patchHighlightStyle(null));
+			}
+		});
+		setHighlightColor("");
+		setIsHighlightPickerOpen(false);
+	};
+
 	const historyButtons = (
 		<>
 			<button
@@ -115,10 +250,7 @@ export default function ToolbarPlugin() {
 				disabled={!canUndo}
 				aria-label="Undo"
 			>
-				<svg viewBox="0 0 20 20" className={styles["smart-editor__toolbar-icon"]} aria-hidden="true">
-					<path d="M8.5 6.5H13.25C15.0449 6.5 16.5 7.95507 16.5 9.75C16.5 11.5449 15.0449 13 13.25 13H7.25" />
-					<path d="M9.75 3.75L6.5 7L9.75 10.25" />
-				</svg>
+				<Icon name="undo" size={18} className={styles["smart-editor__toolbar-icon"]} />
 			</button>
 			<button
 				type="button"
@@ -127,10 +259,7 @@ export default function ToolbarPlugin() {
 				disabled={!canRedo}
 				aria-label="Redo"
 			>
-				<svg viewBox="0 0 20 20" className={styles["smart-editor__toolbar-icon"]} aria-hidden="true">
-					<path d="M11.5 6.5H6.75C4.95508 6.5 3.5 7.95507 3.5 9.75C3.5 11.5449 4.95508 13 6.75 13H12.75" />
-					<path d="M10.25 3.75L13.5 7L10.25 10.25" />
-				</svg>
+				<Icon name="redo" size={18} className={styles["smart-editor__toolbar-icon"]} />
 			</button>
 		</>
 	);
@@ -164,6 +293,25 @@ export default function ToolbarPlugin() {
 			>
 				U
 			</button>
+			<div className={styles["smart-editor__toolbar-item"]}>
+				<button
+					type="button"
+					className={styles["smart-editor__toolbar-btn"]}
+					ref={highlightTriggerRef}
+					onClick={() => {
+						setIsHighlightPickerOpen((currentValue) => !currentValue);
+					}}
+					data-active={hasHighlight}
+					aria-label="Highlight color"
+					aria-haspopup="dialog"
+					aria-expanded={isHighlightPickerOpen}
+				>
+					<span className={styles["smart-editor__highlight-trigger"]} aria-hidden="true">
+						<Icon name="highlighter" size={18} className={styles["smart-editor__highlight-trigger-icon"]} />
+						<Icon name="chevron-down" size={14} className={styles["smart-editor__highlight-trigger-chevron"]} />
+					</span>
+				</button>
+			</div>
 			<button
 				type="button"
 				className={styles["smart-editor__toolbar-btn"]}
@@ -229,6 +377,91 @@ export default function ToolbarPlugin() {
 				Link
 			</button>
 			{historyButtons}
+			{isHighlightPickerOpen && typeof document !== "undefined"
+				? createPortal(
+						<div
+							ref={highlightPickerRef}
+							className={styles["smart-editor__highlight-picker"]}
+							role="dialog"
+							aria-label="Choose highlight color"
+							style={
+								highlightPickerPosition
+									? { top: highlightPickerPosition.top, left: highlightPickerPosition.left }
+									: { visibility: "hidden" }
+							}
+						>
+							<div className={styles["smart-editor__highlight-grid"]}>
+								{HIGHLIGHT_SWATCHES.map((swatchColor) => (
+									<button
+										key={swatchColor}
+										type="button"
+										className={styles["smart-editor__highlight-option"]}
+										style={{ backgroundColor: swatchColor }}
+										data-active={highlightColor.toLowerCase() === swatchColor.toLowerCase()}
+										onClick={() => {
+											applyHighlightColor(swatchColor);
+											setIsHighlightPickerOpen(false);
+										}}
+										aria-label={`Use highlight color ${swatchColor}`}
+									/>
+								))}
+							</div>
+							<div className={styles["smart-editor__highlight-custom"]}>
+								<span className={styles["smart-editor__highlight-label"]}>Custom</span>
+								<div className={styles["smart-editor__highlight-custom-controls"]}>
+									<button
+										type="button"
+										className={styles["smart-editor__highlight-color-trigger"]}
+										onClick={() => {
+											customColorInputRef.current?.click();
+										}}
+										aria-label="Open custom highlight color picker"
+									>
+										<span
+											className={styles["smart-editor__highlight-color-preview"]}
+											style={{ backgroundColor: customHighlightColor }}
+											aria-hidden="true"
+										/>
+									</button>
+									<input
+										ref={customColorInputRef}
+										type="color"
+										value={customHighlightColor}
+										className={styles["smart-editor__highlight-color-input"]}
+										onChange={(event) => {
+											const nextColor = event.target.value;
+											setCustomHighlightColor(nextColor);
+											applyHighlightColor(nextColor);
+										}}
+										aria-label="Choose custom highlight color"
+										tabIndex={-1}
+									/>
+									<span className={styles["smart-editor__highlight-value"]}>{customHighlightColor.toUpperCase()}</span>
+								</div>
+							</div>
+							<div className={styles["smart-editor__highlight-actions"]}>
+								<button
+									type="button"
+									className={styles["smart-editor__highlight-action-btn"]}
+									onClick={() => {
+										applyHighlightColor(customHighlightColor);
+										setIsHighlightPickerOpen(false);
+									}}
+								>
+									Apply
+								</button>
+								<button
+									type="button"
+									className={styles["smart-editor__highlight-action-btn"]}
+									onClick={clearHighlightColor}
+								>
+									Clear
+								</button>
+							</div>
+						</div>,
+						document.body,
+					)
+				: null}
 		</div>
 	);
 }

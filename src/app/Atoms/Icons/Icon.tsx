@@ -2,6 +2,7 @@ import Appearance from "@assets/icons/appearance.svg";
 import ArrowDownRight from "@assets/icons/arrow-down-right.svg";
 import Bug from "@assets/icons/bug.svg";
 import Calendar from "@assets/icons/calendar.svg";
+import ChevronDown from "@assets/icons/chevron-down.svg";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import ChevronRight from "@assets/icons/chevron-right.svg";
 import Close from "@assets/icons/close.svg";
@@ -12,6 +13,7 @@ import DoubleChevronRight from "@assets/icons/double-chevron-right.svg";
 import Editor from "@assets/icons/editor.svg";
 import Eye from "@assets/icons/eye.svg";
 import Google from "@assets/icons/google.svg";
+import Highlighter from "@assets/icons/highlighter.svg";
 import Megaphone from "@assets/icons/megaphone.svg";
 import Moon from "@assets/icons/moon.svg";
 import NotebookPen from "@assets/icons/notebook-pen.svg";
@@ -22,6 +24,7 @@ import Plus from "@assets/icons/plus.svg";
 import Preferences from "@assets/icons/preferences.svg";
 import Profile from "@assets/icons/profile.svg";
 import Questionmark from "@assets/icons/questionmark.svg";
+import Redo from "@assets/icons/redo.svg";
 import Send from "@assets/icons/send.svg";
 import Settings from "@assets/icons/settings.svg";
 import SignOut from "@assets/icons/sign-out.svg";
@@ -30,6 +33,7 @@ import Star from "@assets/icons/star.svg";
 import Storage from "@assets/icons/storage.svg";
 import Sun from "@assets/icons/sun.svg";
 import Trash from "@assets/icons/trash.svg";
+import Undo from "@assets/icons/undo.svg";
 import User from "@assets/icons/user.svg";
 import Week from "@assets/icons/week.svg";
 
@@ -41,8 +45,10 @@ const icons = {
 	"bug": Bug,
 	"chevron-left": ChevronLeft,
 	"chevron-right": ChevronRight,
+	"chevron-down": ChevronDown,
 	"plus": Plus,
 	"questionmark": Questionmark,
+	"redo": Redo,
 	"settings": Settings,
 	"sign-out": SignOut,
 	"star": Star,
@@ -58,6 +64,7 @@ const icons = {
 	"general": Profile,
 	"close": Close,
 	"trash": Trash,
+	"undo": Undo,
 	"danger": Trash,
 	"calendar": Calendar,
 	"double-chevron-left": DoubleChevronLeft,
@@ -78,6 +85,7 @@ const icons = {
 	"calendar-range": Week,
 	"editor": Editor,
 	"pencil-line": Editor,
+	"highlighter": Highlighter,
 	"storage": Storage,
 	"image": Storage,
 	"circle-user-round": Profile,
