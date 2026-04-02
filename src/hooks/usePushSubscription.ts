@@ -1,6 +1,6 @@
 "use client";
 
-import { savePushSubscription } from "@/lib/pushSubscription";
+import { savePushSubscription, supportsNotificationPermissionApi } from "@/lib/pushSubscription";
 import { useEffect, useRef } from "react";
 
 /**
@@ -12,7 +12,7 @@ export function usePushSubscription() {
 
 	useEffect(() => {
 		if (subscribedRef.current) return;
-		if (typeof window === "undefined") return;
+		if (!supportsNotificationPermissionApi()) return;
 		if (Notification.permission !== "granted") return;
 
 		subscribedRef.current = true;

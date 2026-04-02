@@ -3,8 +3,13 @@
  * Reuses an existing subscription if one already exists in the browser.
  * Assumes notification permission has already been granted.
  */
+export function supportsNotificationPermissionApi() {
+	return typeof window !== "undefined" && "Notification" in window;
+}
+
 export async function savePushSubscription(): Promise<boolean> {
 	if (typeof window === "undefined") return false;
+	if (!supportsNotificationPermissionApi()) return false;
 	if (!("serviceWorker" in navigator) || !("PushManager" in window)) return false;
 
 	const registration = await navigator.serviceWorker.register("/sw.js");
@@ -34,7 +39,7 @@ export function getReminderPermissionError(permission: ReminderNotificationPermi
 }
 
 export async function ensureNotificationPermission(): Promise<ReminderNotificationPermission> {
-	if (typeof window === "undefined" || !("Notification" in window)) {
+	if (!supportsNotificationPermissionApi()) {
 		return "unsupported";
 	}
 
