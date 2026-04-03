@@ -5,6 +5,7 @@ import Calendar from "@assets/icons/calendar.svg";
 import ChevronDown from "@assets/icons/chevron-down.svg";
 import ChevronLeft from "@assets/icons/chevron-left.svg";
 import ChevronRight from "@assets/icons/chevron-right.svg";
+import Clipboard from "@assets/icons/clipboard.svg";
 import Close from "@assets/icons/close.svg";
 import ClosedEye from "@assets/icons/closed-eye.svg";
 import Connectors from "@assets/icons/connectors.svg";
@@ -67,6 +68,7 @@ const icons = {
 	"undo": Undo,
 	"danger": Trash,
 	"calendar": Calendar,
+	"clipboard": Clipboard,
 	"double-chevron-left": DoubleChevronLeft,
 	"double-chevron-right": DoubleChevronRight,
 	"google": Google,

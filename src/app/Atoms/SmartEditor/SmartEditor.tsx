@@ -35,6 +35,7 @@ import type { LexicalEditorStateJSON, NoteContent } from "types/noteContent";
 import { ExcalidrawNode } from "./nodes/ExcalidrawNode";
 import { ImageNode } from "./nodes/ImageNode";
 import { StickyNoteNode } from "./nodes/StickyNoteNode";
+import CodeBlockHeaderPlugin from "./plugins/CodeBlockHeaderPlugin";
 import CodeHighlightingPlugin from "./plugins/CodeHighlightingPlugin";
 import DocumentBlocksPlugin from "./plugins/DocumentBlocksPlugin";
 import ImageUploadDropPlugin from "./plugins/ImageUploadDropPlugin";
@@ -59,6 +60,89 @@ type SmartEditorProps = {
 	placeholder?: string;
 };
 
+const SMART_EDITOR_CODE_HIGHLIGHT_THEME = {
+	atrule: styles["smart-editor__code-token--atrule"],
+	attr: styles["smart-editor__code-token--attr"],
+	boolean: styles["smart-editor__code-token--boolean"],
+	builtin: styles["smart-editor__code-token--builtin"],
+	cdata: styles["smart-editor__code-token--cdata"],
+	char: styles["smart-editor__code-token--char"],
+	class: styles["smart-editor__code-token--class"],
+	"class-name": styles["smart-editor__code-token--class-name"],
+	comment: styles["smart-editor__code-token--comment"],
+	constant: styles["smart-editor__code-token--constant"],
+	deleted: styles["smart-editor__code-token--deleted"],
+	doctype: styles["smart-editor__code-token--doctype"],
+	entity: styles["smart-editor__code-token--entity"],
+	function: styles["smart-editor__code-token--function"],
+	important: styles["smart-editor__code-token--important"],
+	inserted: styles["smart-editor__code-token--inserted"],
+	keyword: styles["smart-editor__code-token--keyword"],
+	namespace: styles["smart-editor__code-token--namespace"],
+	number: styles["smart-editor__code-token--number"],
+	operator: styles["smart-editor__code-token--operator"],
+	prolog: styles["smart-editor__code-token--prolog"],
+	property: styles["smart-editor__code-token--property"],
+	punctuation: styles["smart-editor__code-token--punctuation"],
+	regex: styles["smart-editor__code-token--regex"],
+	selector: styles["smart-editor__code-token--selector"],
+	string: styles["smart-editor__code-token--string"],
+	symbol: styles["smart-editor__code-token--symbol"],
+	tag: styles["smart-editor__code-token--tag"],
+	url: styles["smart-editor__code-token--url"],
+	variable: styles["smart-editor__code-token--variable"],
+} as const;
+
+const SMART_EDITOR_THEME = {
+	paragraph: styles["smart-editor__paragraph"],
+	code: styles["smart-editor__code"],
+	codeHighlight: SMART_EDITOR_CODE_HIGHLIGHT_THEME,
+	heading: {
+		h1: styles["smart-editor__h1"],
+		h2: styles["smart-editor__h2"],
+		h3: styles["smart-editor__h3"],
+	},
+	quote: styles["smart-editor__quote"],
+	link: styles["smart-editor__link"],
+	text: {
+		bold: styles["smart-editor__text--bold"],
+		italic: styles["smart-editor__text--italic"],
+		underline: styles["smart-editor__text--underline"],
+	},
+	list: {
+		checklist: styles["smart-editor__checklist"],
+		ul: styles["smart-editor__ul"],
+		ol: styles["smart-editor__ol"],
+		listitem: styles["smart-editor__li"],
+		nested: {
+			listitem: styles["smart-editor__li-nested"],
+		},
+		listitemChecked: styles["smart-editor__li-checked"],
+		listitemUnchecked: styles["smart-editor__li-unchecked"],
+	},
+	table: styles["smart-editor__table"],
+	tableCell: styles["smart-editor__table-cell"],
+	tableCellHeader: styles["smart-editor__table-cell-header"],
+	tableCellSelected: styles["smart-editor__table-cell-selected"],
+	tableRow: styles["smart-editor__table-row"],
+	tableSelection: styles["smart-editor__table-selection"],
+} as const;
+
+const BASE_EDITOR_NODES = [
+	HeadingNode,
+	QuoteNode,
+	ListNode,
+	ListItemNode,
+	HorizontalRuleNode,
+	CodeNode,
+	CodeHighlightNode,
+	LinkNode,
+	AutoLinkNode,
+	ImageNode,
+];
+
+const DOCUMENT_EDITOR_NODES = [TableNode, TableRowNode, TableCellNode, StickyNoteNode, ExcalidrawNode];
+
 function createParagraphNodeJSON(line: string) {
 	return {
 		children: line
@@ -77,9 +161,15 @@ function createParagraphNodeJSON(line: string) {
 		direction: null,
 		format: "",
 		indent: 0,
+		textFormat: 0,
+		textStyle: "",
 		type: "paragraph",
 		version: 1,
 	};
+}
+
+function isNodeRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null;
 }
 
 function stripIndentFromValue<T>(value: T): T {
@@ -102,8 +192,26 @@ function stripIndentFromValue<T>(value: T): T {
 	) as T;
 }
 
+function ensureTrailingParagraphAfterCode(editorState: LexicalEditorStateJSON): LexicalEditorStateJSON {
+	const rootChildren = Array.isArray(editorState.root.children) ? editorState.root.children : [];
+	const lastChild = rootChildren[rootChildren.length - 1];
+
+	if (!isNodeRecord(lastChild) || lastChild.type !== "code") {
+		return editorState;
+	}
+
+	return {
+		...editorState,
+		root: {
+			...editorState.root,
+			children: [...rootChildren, createParagraphNodeJSON("")],
+		},
+	};
+}
+
 function normalizeDocumentEditorState(editorState: LexicalEditorStateJSON, stripIndent: boolean) {
-	return stripIndent ? stripIndentFromValue(editorState) : editorState;
+	const normalizedEditorState = ensureTrailingParagraphAfterCode(editorState);
+	return stripIndent ? stripIndentFromValue(normalizedEditorState) : normalizedEditorState;
 }
 
 function normalizeEditorStateForPersistence(editorState: unknown, stripIndent: boolean) {
@@ -167,8 +275,17 @@ function toLexicalStateJSON(initialContent?: NoteContent, stripIndent = false): 
 
 function EditorStateSyncPlugin({ serializedEditorState }: { serializedEditorState: string }) {
 	const [editor] = useLexicalComposerContext();
+	const previousSerializedEditorStateRef = useRef<string | null>(null);
 
 	useEffect(() => {
+		if (previousSerializedEditorStateRef.current === null) {
+			previousSerializedEditorStateRef.current = serializedEditorState;
+			return;
+		}
+
+		if (previousSerializedEditorStateRef.current === serializedEditorState) return;
+
+		previousSerializedEditorStateRef.current = serializedEditorState;
 		const currentState = JSON.stringify(editor.getEditorState().toJSON());
 		if (currentState === serializedEditorState) return;
 
@@ -208,52 +325,8 @@ export default function SmartEditor({
 	const initialConfig = useMemo<InitialConfigType>(() => {
 		return {
 			namespace: "planner-smart-editor",
-			theme: {
-				paragraph: styles["smart-editor__paragraph"],
-				code: styles["smart-editor__code"],
-				heading: {
-					h1: styles["smart-editor__h1"],
-					h2: styles["smart-editor__h2"],
-					h3: styles["smart-editor__h3"],
-				},
-				quote: styles["smart-editor__quote"],
-				link: styles["smart-editor__link"],
-				text: {
-					bold: styles["smart-editor__text--bold"],
-					italic: styles["smart-editor__text--italic"],
-					underline: styles["smart-editor__text--underline"],
-				},
-				list: {
-					checklist: styles["smart-editor__checklist"],
-					ul: styles["smart-editor__ul"],
-					ol: styles["smart-editor__ol"],
-					listitem: styles["smart-editor__li"],
-					nested: {
-						listitem: styles["smart-editor__li-nested"],
-					},
-					listitemChecked: styles["smart-editor__li-checked"],
-					listitemUnchecked: styles["smart-editor__li-unchecked"],
-				},
-				table: styles["smart-editor__table"],
-				tableCell: styles["smart-editor__table-cell"],
-				tableCellHeader: styles["smart-editor__table-cell-header"],
-				tableCellSelected: styles["smart-editor__table-cell-selected"],
-				tableRow: styles["smart-editor__table-row"],
-				tableSelection: styles["smart-editor__table-selection"],
-			},
-			nodes: [
-				HeadingNode,
-				QuoteNode,
-				ListNode,
-				ListItemNode,
-				HorizontalRuleNode,
-				CodeNode,
-				CodeHighlightNode,
-				LinkNode,
-				AutoLinkNode,
-				ImageNode,
-				...(isDocumentVariant ? [TableNode, TableRowNode, TableCellNode, StickyNoteNode, ExcalidrawNode] : []),
-			],
+			theme: SMART_EDITOR_THEME,
+			nodes: [...BASE_EDITOR_NODES, ...(isDocumentVariant ? DOCUMENT_EDITOR_NODES : [])],
 			editorState: serializedEditorState,
 			onError(error: Error) {
 				console.error(error);
@@ -333,6 +406,7 @@ export default function SmartEditor({
 				{shouldShowToolbar && isDocumentVariant && <ToolbarPlugin variant="floating" />}
 				<HistoryPlugin />
 				<CodeHighlightingPlugin />
+				{floatingAnchorElem && <CodeBlockHeaderPlugin anchorElem={floatingAnchorElem} />}
 				{!isDocumentVariant && <TabIndentationPlugin />}
 				<LinkPlugin />
 				<ClickableLinkPlugin />

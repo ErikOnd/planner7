@@ -699,17 +699,176 @@
 }
 
 .smart-editor__code {
+	--code-background: var(--color-bg-sidebar);
+	--code-border: var(--color-sidebar-border-strong);
+	--code-foreground: #d7dae0;
+	--code-muted: #7d8590;
+	--code-keyword: #c678dd;
+	--code-tag: #e5c07b;
+	--code-constant: #61afef;
+	--code-string: #98c379;
+	--code-function: #56b6c2;
+	--code-deleted-background: rgba(190, 80, 70, 0.18);
+	--code-inserted-background: rgba(152, 195, 121, 0.18);
 	display: block;
 	margin: 0.9rem 0;
-	padding: 0.9rem 1rem;
-	border: var(--border-width-base) solid var(--color-border);
+	position: relative;
+	padding: 1rem 4rem 1rem 3.6rem;
+	border: var(--border-width-base) solid var(--code-border);
 	border-radius: var(--radius-lg);
-	background: var(--color-surface-muted);
-	color: var(--color-text-primary);
+	background: var(--code-background);
+	color: var(--code-foreground);
 	font-family: "SFMono-Regular", ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
 	font-size: 0.95em;
 	line-height: 1.6;
-	white-space: pre-wrap;
+	tab-size: 2;
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: pre;
+
+	&::selection,
+	*::selection {
+		background: rgba(97, 175, 239, 0.32);
+		color: #f3f6fb;
+	}
+
+	&[data-gutter]::before {
+		content: attr(data-gutter);
+		position: absolute;
+		top: 1rem;
+		left: 0;
+		bottom: 1rem;
+		width: 2.35rem;
+		padding: 0 0.65rem 0 0.6rem;
+		border-right: var(--border-width-base) solid color-mix(in srgb, var(--code-border) 90%, transparent);
+		color: var(--code-muted);
+		font-size: inherit;
+		line-height: inherit;
+		text-align: right;
+		white-space: pre;
+		opacity: 0.72;
+		pointer-events: none;
+		user-select: none;
+	}
+}
+
+.smart-editor__code-block-header {
+	position: absolute;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.45rem;
+	box-sizing: border-box;
+	padding: 0.18rem 0.32rem 0 0;
+	pointer-events: none;
+}
+
+.smart-editor__code-block-action {
+	width: 2.25rem;
+	height: 2.25rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.22rem;
+	border: var(--border-width-base) solid color-mix(in srgb, var(--code-border) 90%, transparent);
+	border-radius: var(--radius-md);
+	background: color-mix(in srgb, var(--color-surface-sidebar-hover) 88%, transparent);
+	color: #cfd5de;
+	box-shadow: none;
+	cursor: pointer;
+	pointer-events: auto;
+	transition:
+		background-color variables.$transition-base,
+		border-color variables.$transition-base,
+		color variables.$transition-base,
+		transform variables.$transition-fast;
+
+	&:hover,
+	&:focus-visible,
+	&[data-active="true"] {
+		outline: none;
+		transform: translateY(-0.04rem);
+		border-color: #707985;
+		background: #454c57;
+		color: #f4f7fb;
+	}
+
+	:global(svg) {
+		width: 1.1rem;
+		height: 1.1rem;
+		display: block;
+		overflow: visible;
+		flex: 0 0 auto;
+	}
+}
+
+.smart-editor__code-token--comment,
+.smart-editor__code-token--prolog,
+.smart-editor__code-token--doctype,
+.smart-editor__code-token--cdata {
+	color: var(--code-muted);
+	font-style: italic;
+}
+
+.smart-editor__code-token--punctuation,
+.smart-editor__code-token--operator {
+	color: var(--code-foreground);
+}
+
+.smart-editor__code-token--keyword,
+.smart-editor__code-token--atrule,
+.smart-editor__code-token--important,
+.smart-editor__code-token--namespace {
+	color: var(--code-keyword);
+	font-weight: 600;
+}
+
+.smart-editor__code-token--tag,
+.smart-editor__code-token--selector {
+	color: var(--code-tag);
+}
+
+.smart-editor__code-token--property,
+.smart-editor__code-token--attr {
+	color: var(--code-foreground);
+}
+
+.smart-editor__code-token--boolean,
+.smart-editor__code-token--number,
+.smart-editor__code-token--constant,
+.smart-editor__code-token--symbol {
+	color: var(--code-constant);
+}
+
+.smart-editor__code-token--builtin,
+.smart-editor__code-token--variable {
+	color: var(--code-string);
+}
+
+.smart-editor__code-token--string,
+.smart-editor__code-token--char,
+.smart-editor__code-token--url,
+.smart-editor__code-token--regex,
+.smart-editor__code-token--entity {
+	color: var(--code-string);
+}
+
+.smart-editor__code-token--function,
+.smart-editor__code-token--class,
+.smart-editor__code-token--class-name {
+	color: var(--code-function);
+	font-weight: 600;
+}
+
+.smart-editor__code-token--inserted {
+	color: var(--code-string);
+	background: var(--code-inserted-background);
+}
+
+.smart-editor__code-token--deleted {
+	color: var(--code-keyword);
+	background: var(--code-deleted-background);
 }
 
 .smart-editor__quote {

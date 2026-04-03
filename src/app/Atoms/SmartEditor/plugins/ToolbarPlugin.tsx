@@ -48,12 +48,51 @@ type ToolbarPluginProps = {
 };
 
 type FloatingLayer = "highlight" | "align" | "insert";
+type TrackedBlockType = "paragraph" | "h1" | "h2" | "code";
 
 const MAX_TABLE_COLUMNS = 50;
 const MAX_TABLE_ROWS = 500;
+const TRACKED_BLOCK_TYPES = new Set<TrackedBlockType>(["paragraph", "h1", "h2", "code"]);
+const BLOCK_BUTTONS: Array<{
+	key: TrackedBlockType;
+	label: string;
+	ariaLabel: string;
+	createNode: () => ElementNode;
+	requiresAdvanced?: boolean;
+}> = [
+	{
+		key: "paragraph",
+		label: "P",
+		ariaLabel: "Paragraph",
+		createNode: () => $createParagraphNode(),
+	},
+	{
+		key: "h1",
+		label: "H1",
+		ariaLabel: "Heading 1",
+		createNode: () => $createHeadingNode("h1"),
+	},
+	{
+		key: "h2",
+		label: "H2",
+		ariaLabel: "Heading 2",
+		createNode: () => $createHeadingNode("h2"),
+	},
+	{
+		key: "code",
+		label: "Code",
+		ariaLabel: "Code block",
+		createNode: () => $createCodeNode(),
+		requiresAdvanced: true,
+	},
+];
 
 function isHexColor(value: string) {
 	return /^#[\da-f]{6}$/i.test(value);
+}
+
+function isTrackedBlockType(value: string): value is TrackedBlockType {
+	return TRACKED_BLOCK_TYPES.has(value as TrackedBlockType);
 }
 
 function patchHighlightStyle(color: string | null) {
@@ -172,6 +211,7 @@ export default function ToolbarPlugin({ variant = "default" }: ToolbarPluginProp
 	const alignTriggerRef = useRef<HTMLButtonElement | null>(null);
 	const insertTriggerRef = useRef<HTMLButtonElement | null>(null);
 	const customColorInputRef = useRef<HTMLInputElement | null>(null);
+	const blockButtonRefs = useRef<Partial<Record<TrackedBlockType, HTMLButtonElement | null>>>({});
 	const hasHighlight = highlightColor !== "";
 	const isFloatingVariant = variant === "floating";
 	const supportsAdvancedBlocks = isFloatingVariant;
@@ -324,6 +364,19 @@ export default function ToolbarPlugin({ variant = "default" }: ToolbarPluginProp
 		};
 	}, [alignLayerRef, highlightLayerRef, insertLayerRef, openLayer]);
 
+	useEffect(() => {
+		if (!isFloatingVariant || !isTrackedBlockType(blockType)) return;
+
+		const activeBlockButton = blockButtonRefs.current[blockType];
+		if (!activeBlockButton) return;
+
+		activeBlockButton.scrollIntoView({
+			behavior: "smooth",
+			block: "nearest",
+			inline: "center",
+		});
+	}, [blockType, isFloatingVariant]);
+
 	const applyHighlightColor = (color: string) => {
 		editor.update(() => {
 			const selection = $getSelection();
@@ -451,46 +504,27 @@ export default function ToolbarPlugin({ variant = "default" }: ToolbarPluginProp
 					</span>
 				</button>
 			</div>
-			<button
-				type="button"
-				className={styles["smart-editor__toolbar-btn"]}
-				onClick={() => setBlockType(editor, () => $createParagraphNode())}
-				data-active={blockType === "paragraph"}
-				aria-label="Paragraph"
-			>
-				P
-			</button>
-			<button
-				type="button"
-				className={styles["smart-editor__toolbar-btn"]}
-				onClick={() => setBlockType(editor, () => $createHeadingNode("h1"))}
-				data-active={blockType === "h1"}
-				aria-label="Heading 1"
-			>
-				H1
-			</button>
-			<button
-				type="button"
-				className={styles["smart-editor__toolbar-btn"]}
-				onClick={() => setBlockType(editor, () => $createHeadingNode("h2"))}
-				data-active={blockType === "h2"}
-				aria-label="Heading 2"
-			>
-				H2
-			</button>
-			{supportsAdvancedBlocks
-				? (
+			{BLOCK_BUTTONS.map((blockButton) => {
+				if (blockButton.requiresAdvanced && !supportsAdvancedBlocks) {
+					return null;
+				}
+
+				return (
 					<button
+						key={blockButton.key}
 						type="button"
 						className={styles["smart-editor__toolbar-btn"]}
-						onClick={() => setBlockType(editor, () => $createCodeNode())}
-						data-active={blockType === "code"}
-						aria-label="Code block"
+						ref={(element) => {
+							blockButtonRefs.current[blockButton.key] = element;
+						}}
+						onClick={() => setBlockType(editor, blockButton.createNode)}
+						data-active={blockType === blockButton.key}
+						aria-label={blockButton.ariaLabel}
 					>
-						Code
+						{blockButton.label}
 					</button>
-				)
-				: null}
+				);
+			})}
 			<button
 				type="button"
 				className={styles["smart-editor__toolbar-btn"]}
